@@ -1,0 +1,9 @@
+line,reference_designator,function,description,manufacturer,manufacturer_part_number,quantity,package,status
+1,U1,Iridium 9704 modem,Iridium Certus 9704 IMT modem,Iridium,Coming soon,1,Module,Coming soon
+2,,Input protection,"Reverse-polarity, over-voltage and surge protection",Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+3,,Regulation,Converts the input supply to the modem and logic rails,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+4,,Energy storage,Supplies the modem's transmit current bursts,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+5,,Power sequencing,Enable and booted-signal handshake and rail sequencing,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+6,,Host interface,Logic-level interface to the host microcontroller,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+7,,RF connector or antenna,Antenna connection for the selected configuration,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
+8,,Indicators,Power and ready indicators,Coming soon,Coming soon,Coming soon,Coming soon,Coming soon
