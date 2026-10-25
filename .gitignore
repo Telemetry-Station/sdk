@@ -53,3 +53,11 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Build and coverage output
+build/
+build-*/
+*.gcda
+*.gcno
+*.gcov
+.DS_Store
