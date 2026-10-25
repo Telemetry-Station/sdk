@@ -1,0 +1,111 @@
+{
+  "format": "telemetry-station-payload",
+  "version": 2,
+  "network": "sbd",
+  "fields": [
+    {
+      "id": "default-latitude",
+      "name": "latitude",
+      "label": "Latitude",
+      "dataType": "float",
+      "exampleValue": "32.87051",
+      "size": 25,
+      "sizeUnit": "bits",
+      "decimalPlaces": 5,
+      "minimum": -90,
+      "maximum": 90,
+      "maximumBytes": 0
+    },
+    {
+      "id": "default-longitude",
+      "name": "longitude",
+      "label": "Longitude",
+      "dataType": "float",
+      "exampleValue": "-117.24103",
+      "size": 26,
+      "sizeUnit": "bits",
+      "decimalPlaces": 5,
+      "minimum": -180,
+      "maximum": 180,
+      "maximumBytes": 0
+    },
+    {
+      "id": "default-message-sequence",
+      "name": "message_sequence",
+      "label": "Message sequence",
+      "dataType": "unsigned",
+      "exampleValue": "37",
+      "size": 12,
+      "sizeUnit": "bits",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "maximumBytes": 0
+    },
+    {
+      "id": "default-temperature",
+      "name": "temperature_tenths_c",
+      "label": "Temperature (tenths C)",
+      "dataType": "signed",
+      "exampleValue": "-27",
+      "size": 16,
+      "sizeUnit": "bits",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "maximumBytes": 0
+    },
+    {
+      "id": "default-gps-fix",
+      "name": "gps_fix",
+      "label": "GPS fix",
+      "dataType": "boolean",
+      "exampleValue": "true",
+      "size": 1,
+      "sizeUnit": "bits",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "maximumBytes": 0
+    },
+    {
+      "id": "default-device-id",
+      "name": "device_id",
+      "label": "Device ID",
+      "dataType": "ascii",
+      "exampleValue": "BUOY-01",
+      "size": 0,
+      "sizeUnit": "bytes",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "maximumBytes": 12
+    },
+    {
+      "id": "default-diagnostics",
+      "name": "diagnostic_bytes",
+      "label": "Diagnostic bytes",
+      "dataType": "bytes",
+      "exampleValue": "01ff10",
+      "size": 0,
+      "sizeUnit": "bytes",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "maximumBytes": 8
+    }
+  ],
+  "calculatorSize": "example",
+  "code": "",
+  "codeCustomized": false,
+  "generatedCode": "",
+  "encoding": {
+    "version": 1,
+    "bitOrder": "msb-first",
+    "finalBytePadding": "zero",
+    "signedIntegers": "twos-complement",
+    "decimals": "round((value - minimum) * 10^decimalPlaces)",
+    "variableLengths": "prefix-bits = max(1, ceil(log2(maximumBytes + 1))); content follows immediately",
+    "fieldOrder": "array-order"
+  }
+}
