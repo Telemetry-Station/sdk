@@ -1,0 +1,11 @@
+signal,direction,type,description,sdk_hal_function,pin_assignment,electrical_limits
+VIN,input,power,Main power input to the module,n/a (host supply),Published at Rev A release,Published in the datasheet
+GND,reference,ground,Power and signal return,n/a,Published at Rev A release,n/a
+ENABLE,input,logic,Switches the modem on (high) and off (low) following the sequence in docs/03_Hardware_Interface.md,power_start / power_stop,Published at Rev A release,Published in the datasheet
+BOOTED,output,logic,High once the modem has finished booting; low once it has shut down,boot_ready,Published at Rev A release,Published in the datasheet
+TXD,output,logic,Serial data from the module to the host (host RX),serial_read,Published at Rev A release,Published in the datasheet
+RXD,input,logic,Serial data from the host to the module (host TX),serial_write,Published at Rev A release,Published in the datasheet
+TX_ACTIVE,output,logic,High while the modem is transmitting; lets a host manage its own power during bursts (optional use),not used by the SDK today,Published at Rev A release,Published in the datasheet
+WAKE_IN,input,logic,Reserved for waking the modem from a host-controlled low-power state,not used by the SDK today,Published at Rev A release,Published in the datasheet
+WAKE_OUT,output,logic,Reserved for waking the host when the modem has an event,not used by the SDK today,Published at Rev A release,Published in the datasheet
+ANT,RF,rf,Iridium L-band antenna connection (connector or integrated antenna depending on configuration),n/a,Published at Rev A release,Published in the datasheet
