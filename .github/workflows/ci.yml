@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sdk:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mt: [ON, OFF]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (warnings are errors) and test
+        working-directory: Telemetry_Station_SDK
+        run: |
+          cmake -S . -B build -DTS_ENABLE_MT=${{ matrix.mt }} -DTS_WERROR=ON
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test under AddressSanitizer and UBSan
+        working-directory: Telemetry_Station_SDK
+        run: |
+          cmake -S . -B build -DTS_SANITIZE=ON -DTS_WERROR=ON
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+
+  coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mt: [ON, OFF]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every line of the driver is tested
+        working-directory: Telemetry_Station_SDK
+        run: sh tests/coverage.sh -DTS_ENABLE_MT=${{ matrix.mt }}
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clang static analyzer (driver and ports)
+        working-directory: Telemetry_Station_SDK
+        run: |
+          for mt in 1 0; do
+            for f in src/*.c ports/template/*.c ports/posix/*.c; do
+              clang --analyze -std=c99 -Xclang -analyzer-werror \
+                -Iinclude -Isrc -Iports/posix -DTS_ENABLE_MT=$mt "$f"
+            done
+          done
+
+  kit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shared files match the SDK
+        run: |
+          cmp Telemetry_Station_SDK/include/ts_activation.h Iridium_Development_Kit_9704/src/ts_activation.h
+          cmp Telemetry_Station_SDK/src/ts_activation.c Iridium_Development_Kit_9704/src/ts_activation.c
+      - name: Test
+        working-directory: Iridium_Development_Kit_9704
+        run: |
+          sh tests/run_tests.sh
+          sh tests/compile_adapter.sh
