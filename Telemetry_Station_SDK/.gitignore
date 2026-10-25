@@ -1,0 +1,29 @@
+# Build outputs and IDE workspace (keep source, docs, CMake, CCS example source)
+/build/
+/build-*/
+/Debug/
+/Release/
+**/.settings/
+**/.metadata/
+**/*.out
+**/*.elf
+**/*.map
+**/*.obj
+**/*.o
+**/*.d
+**/*.dSYM/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+# Customers own their generated schema; do not check into the PUBLIC SDK.
+/generated/telemetry_payload.c
+/generated/telemetry_payload.h
+# Credentials, private production pin configurations, bench logs
+*.pem
+*.key
+.env
+.env.*
+*.log
+/secrets/
+/private-board-config/
