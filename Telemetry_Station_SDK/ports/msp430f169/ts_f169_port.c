@@ -33,9 +33,9 @@ void ts_f169_init(void)
 #endif
 
     /* MCLK and SMCLK from the 8 MHz XT2 crystal. */
-    BCSCTL1 &= ~XT2OFF;
+    BCSCTL1 &= (uint8_t)~XT2OFF;
     do {
-        IFG1 &= ~OFIFG;
+        IFG1 &= (uint8_t)~OFIFG;
         for (i = 0xFF; i; --i) { }
     } while (IFG1 & OFIFG);
     BCSCTL2 = SELM_2 | SELS;
