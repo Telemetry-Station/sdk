@@ -1,0 +1,10 @@
+# Generated build outputs (but NOT the checked-in generated codec source)
+.DS_Store
+*.o
+*.out
+*.elf
+*.bin
+*.hex
+build/
+.tmp/
+.vscode/

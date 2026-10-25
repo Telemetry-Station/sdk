@@ -1,0 +1,37 @@
+{
+  "schemaId": "ts-payload-v1-97a8f3e1",
+  "encodingVersion": 1,
+  "notes": "These are application bytes only. No Iridium CRC or modem framing. The supplied sample schema was exported with the SBD network selection; regenerate as Certus for 9704 production use.",
+  "vectors": [
+    {
+      "name": "uploaded-ui-golden-example",
+      "bitLength": 168,
+      "payloadBytes": 21,
+      "hex": "5dbe258bf867204bffcb742554f592d3031301ff10",
+      "values": {
+        "latitude": "32.87051",
+        "longitude": "-117.24103",
+        "message_sequence": "37",
+        "temperature_tenths_c": "-27",
+        "gps_fix": true,
+        "device_id": "BUOY-01",
+        "diagnostic_bytes": "01ff10"
+      }
+    },
+    {
+      "name": "arduino-demo-3820mv-3bars-seq1",
+      "bitLength": 184,
+      "payloadBytes": 23,
+      "hex": "5dbe258bf8672003ffca944454d4f2d3937303430eec03",
+      "values": {
+        "latitude": "32.87051",
+        "longitude": "-117.24103",
+        "message_sequence": "1",
+        "temperature_tenths_c": "-27",
+        "gps_fix": false,
+        "device_id": "DEMO-9704",
+        "diagnostic_bytes": "0eec03"
+      }
+    }
+  ]
+}
