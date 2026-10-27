@@ -99,8 +99,8 @@ void printHex(const uint8_t *bytes, int length) {
 
 void requestOneMessage() {
   if (TS_TOPIC_ID < 64) {
-    Serial.println("SEND BLOCKED: set TS_TOPIC_ID (64 or higher) in src/ts_config.h.");
-    Serial.println("Type 'i' to see how to get one from Telemetry Station.");
+    Serial.println("SEND BLOCKED: set TS_TOPIC_ID (394) in src/ts_config.h.");
+    Serial.println("Type 'i' to see how to get one from Telemetry Station."); // Default: 394
     return;
   }
   if (tracker.phase != TS_MO_IDLE || !transceiver.isReadyToSendMessage() ||
