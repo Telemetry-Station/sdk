@@ -7,11 +7,11 @@
  * same values carry over when you move to your own microcontroller.
  */
 
-/* Your IMT topic from Telemetry Station (64 or higher). Get it by activating
+/* Your IMT topic from Telemetry Station (394). Get it by activating
  * the modem with the IMEI this sketch prints (type 'i' in the Serial Monitor).
  * 0 means "not set yet" and blocks sending. */
 #ifndef TS_TOPIC_ID
-#define TS_TOPIC_ID 0
+#define TS_TOPIC_ID 394
 #endif
 
 /* Largest payload in bytes, before the 2-byte transport CRC. Use the
