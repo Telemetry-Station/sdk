@@ -35,7 +35,7 @@ The driver is **cooperative and polled**. You call `ts_bear_poll()` from your ma
 
 ### Worst-case time per poll
 
-Proportional to `TS_POLL_BYTE_BUDGET` (default 64) plus one parse of a line of up to `TS_LINE_CAP` bytes. Measure it with your toolchain on your target before choosing a watchdog period. Published target figures are **coming soon**.
+Proportional to `TS_POLL_BYTE_BUDGET` (default 64) plus one parse of a line of up to `TS_LINE_CAP` bytes. Measure it with your toolchain on your target before choosing a watchdog period. Validated target measurements **[Pending decision]** will be published with each platform port.
 
 ## State machine
 
@@ -88,7 +88,7 @@ Timestamps are 32-bit milliseconds. Comparisons use signed subtraction, so the c
 | stdio (`printf` family) | None in the driver core. A CI test fails the build if it appears |
 | Stack | Small and flat. Command lines are built in place, and the base64 encoder writes into the transmit buffer |
 | Driver RAM | `sizeof(ts_bear9704_t)` is **800 bytes** with defaults and receive support, **728 bytes** without it. Measured on a 64-bit computer. A 16-bit MCU has smaller pointers, so expect a little less. Measure on your target |
-| Flash | Per-target figures coming soon |
+| Flash | Per-target figures **[Pending decision]**; measure and publish with each validated platform port |
 
 Buffer sizes follow `TS_LINE_CAP` (twice) and `TS_MAX_PAYLOAD` (up to twice), set in [`ts_config.h`](../include/ts_config.h). Invalid combinations fail at compile time.
 

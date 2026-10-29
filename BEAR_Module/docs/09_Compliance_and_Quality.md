@@ -14,7 +14,7 @@ Customers integrating a radio module need to know which approvals exist, what is
 | European Union | Radio and EMC, safety | RED 2014/53/EU with EN 301 441, EN 301 489, EN 62368-1 | Planned |
 | United Kingdom | Radio and EMC | UKCA | Planned |
 | Australia and New Zealand | EMC | RCM | Planned |
-| Other regions | On demand | To be announced | Coming soon |
+| Other regions | Scope assessed on demand | Applicable local radio and EMC requirements **[Pending decision]** | Scope **[Pending decision]** |
 
 The exact standards list and test scope is confirmed with the accredited test laboratory at the certification gate (G4). The modem's own approvals reduce the module-level scope. Details are published with the certificates.
 
@@ -25,8 +25,8 @@ The exact standards list and test scope is confirmed with the accredited test la
 | RoHS (EU 2011/65/EU) | Design requirement |
 | REACH substances reporting | Design requirement |
 | WEEE labeling | Planned |
-| Conflict minerals reporting | Coming soon |
-| Country of origin | Published with each order |
+| Conflict minerals reporting | Supplier declarations and applicable customer/regulatory reporting scope **[Pending decision]** |
+| Country of origin | Publish with product and order documentation |
 
 ## Electromagnetic compatibility and safety (design)
 
@@ -64,6 +64,6 @@ The exact standards list and test scope is confirmed with the accredited test la
 
 | Item | Status |
 |---|---|
-| Export classification (ECCN, HS code) | Coming soon, with ordering information |
-| Warranty | Coming soon |
+| Export classification (ECCN, HS code) | Classification to be determined and published with ordering information **[Pending decision]** |
+| Warranty | Terms and duration **[Pending decision]**; publish before evaluation-kit orders open |
 | Hardware design license | Published with the design files |

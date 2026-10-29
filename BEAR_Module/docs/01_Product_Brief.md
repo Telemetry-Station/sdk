@@ -8,7 +8,7 @@ Adding satellite messaging to a remote sensor is harder than the sensor itself. 
 
 ## The BEAR Module answer
 
-A BEAR Module collapses that work into one board and one firmware library:
+The BEAR Module is a host-independent satellite communications module designed to become a production-qualified product. Its hardware interface does not require a particular host MCU or vendor-specific bus. The first product, BEAR Module 9704, combines an Iridium 9704 with on-module power management and a simple UART/control interface:
 
 | You need | BEAR Module provides |
 |---|---|
@@ -27,7 +27,7 @@ A BEAR Module collapses that work into one board and one firmware library:
 - OEMs that want satellite connectivity as a feature of their own product.
 - Research teams that need a documented, reproducible connectivity layer.
 
-The same module serves a single prototype and a production run. The host interface, firmware and activation flow are identical at both scales.
+The same module is intended to serve a single prototype and a production run. The host interface and activation flow are designed to remain consistent at both scales. Production qualification is not complete; it is an explicit release objective in the [roadmap](../ROADMAP.md).
 
 ## Key capabilities
 
@@ -36,7 +36,9 @@ The same module serves a single prototype and a production run. The host interfa
 | Iridium 9704 modem | Messages up to 100,000 bytes over the Iridium network | Defined |
 | Power management | Input conditioning, regulation, energy storage for transmit bursts, protected on/off sequencing | Defined |
 | Simple host interface | Power, an enable line, a booted line and one UART | Defined |
-| Any microcontroller | 3-wire style serial plus two control lines; no vendor-specific bus | Defined |
+| Host-independent interface | UART plus ENABLE and BOOTED; no vendor-specific bus or required host MCU | Defined |
+| Customer MCU compatibility | Intended for STM32, MSP430, Nordic, Microchip, ESP32 and other MCUs with a compatible UART/GPIO interface and SDK port | Design target |
+| Production qualification | Qualification and release evidence through EVT, DVT, certification and PVT | In development |
 | Antenna options | Connector for your antenna, or a qualified antenna | In development |
 | IMEI on the label | Each module carries its IMEI so activation can start before firmware exists | In development |
 | Open firmware | MIT-licensed SDK with a portable C99 driver and a hardware abstraction layer | Alpha |
@@ -53,12 +55,18 @@ The same module serves a single prototype and a production run. The host interfa
 
 You can use the BEAR Module with other data services. The workflow above is the one we design, document and support end to end.
 
+## Host and validation status
+
+The TI MSP430F169 is the SDK's first reference host and a current validation target. Development is also using existing embedded hardware to validate the modem interface and workflow before BEAR engineering units are available.
+
+The [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) provides an existing-hardware path to validate the 9704 workflow, including Telemetry Station activation and topic-ID configuration, while BEAR hardware is in development.
+
 ## Commercial scale
 
 | Stage | What you get | Status |
 |---|---|---|
-| Evaluate | Evaluation unit with documentation and SDK | Coming soon |
-| Pilot | Small quantities with full support and a stable configuration | Coming soon |
-| Production | Volume pricing, controlled revisions, change notification, supply commitments | Coming soon |
+| Evaluate | Evaluation unit, quickstarts and engineering documentation; firm kit dates published when supply and validation are confirmed | Planned; date **[Pending decision]** |
+| Pilot | Small quantities with support and a stable configuration | Planned; terms **[Pending decision]** |
+| Production | Volume pricing, controlled revisions, change notification, supply commitments and published service status/SLA | Planned; terms **[Pending decision]** |
 
 Pricing, lead times and terms are published at general availability. See [Ordering and support](11_Ordering_and_Support.md).
