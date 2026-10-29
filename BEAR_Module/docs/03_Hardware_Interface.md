@@ -2,7 +2,7 @@
 
 Document ID: BEAR-HI-9704 | Revision: P1 | Status: Preliminary
 
-This document defines how a host system connects to the BEAR Module 9704. Pin numbers, connector part numbers and electrical limits are published with the Rev A datasheet. The signal set, directions and sequencing below are defined.
+This document defines how a host system connects to the BEAR Module 9704. The signal set, directions and sequencing below are defined. Connector selection and electrical limits remain **[Pending decision]** and will be frozen and verified before the Rev A datasheet is released.
 
 ## Signals
 
@@ -31,7 +31,7 @@ Output states other than BOOTED are undefined while the module is not booted. Tr
 | Baud rate | 230400 (as used by the SDK reference port) |
 | Flow control | None |
 | Protocol | JSPR, the 9704's JSON-based command protocol, implemented by the SDK |
-| Logic levels | Coming soon (Rev A datasheet) |
+| Logic levels | 3.3 V CMOS proposed; thresholds, absolute limits and unpowered-host behavior **[Pending decision]** |
 
 At 230400 baud a byte arrives about every 43 microseconds. Use a receive interrupt or DMA with a buffer, not polling. Your clock source must generate this baud rate accurately. See [Integration guide](06_Integration_Guide.md).
 
@@ -93,22 +93,22 @@ The Iridium 9704 modem requires this handshake. Interrupting a boot or shutdown 
 
 | Symbol | Parameter | Value |
 |---|---|---|
-| t_BOOT | ENABLE high to BOOTED high | Coming soon |
-| t_DOWN | ENABLE low to BOOTED low | Coming soon |
-| t_VIN | VIN valid to ENABLE allowed | Coming soon |
-| t_UART | BOOTED high to first serial command accepted | Coming soon |
+| t_BOOT | ENABLE high to BOOTED high | TBD — characterize and set timeout margin **[Pending decision]** |
+| t_DOWN | ENABLE low to BOOTED low | TBD — characterize **[Pending decision]** |
+| t_VIN | VIN valid to ENABLE allowed | TBD — derive from power-stage startup **[Pending decision]** |
+| t_UART | BOOTED high to first serial command accepted | TBD — verify against modem behavior **[Pending decision]** |
 
 The SDK uses a generous default boot timeout (30 s). It is configurable with `TS_BOOT_TIMEOUT_MS`.
 
 ## Host compatibility
 
-The interface is designed for 3.3 V class microcontrollers. Confirm that your microcontroller's logic levels meet the datasheet limits. If your host runs at a different voltage, add a level translator on ENABLE, BOOTED, TXD and RXD. Do not connect 5 V logic directly.
+The interface is designed for 3.3 V class microcontrollers. Confirm that your microcontroller's logic levels meet the datasheet limits. The proposed host-I/O level is 3.3 V CMOS **[Pending decision]**. Confirm the final input thresholds, output levels, absolute maximum ratings and unpowered-host behavior in the released datasheet. Do not connect 5 V logic directly unless explicitly permitted by that specification.
 
 ## Connector
 
 | Item | Status |
 |---|---|
-| Host connector type and pitch | Coming soon |
-| RF connector (connector configuration) | Coming soon |
-| Mating parts and cable assemblies | Coming soon |
-| Evaluation adapter board | Coming soon |
+| Host connector type and pitch | Select a keyed, polarized connector with a documented mating part **[Pending decision]** |
+| RF connector (connector configuration) | Select by enclosure, RF loss and antenna SKU **[Pending decision]** |
+| Mating parts and cable assemblies | Publish manufacturer part numbers with the connector selection **[Pending decision]** |
+| Evaluation adapter board | Define and publish with the evaluation-kit interface package **[Pending decision]** |

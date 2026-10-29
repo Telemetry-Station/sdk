@@ -4,7 +4,7 @@ An Arduino sketch for sending test messages to [Telemetry Station](https://telem
 
 New to Iridium or these terms (IMEI, topic ID, payload)? Read [Getting started](../Telemetry_Station_SDK/docs/GETTING_STARTED.md) first.
 
-> **Note:** the sketch sends **demo** coordinates and temperature, not real readings. Sending messages may use credits. Contact hello@telemetrystation.com for questions.
+> **Note:** the sketch sends **demo** coordinates and temperature, not real readings. Sending messages may use credits. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
 ## The workflow
 
@@ -22,14 +22,14 @@ New to Iridium or these terms (IMEI, topic ID, payload)? Read [Getting started](
 
 ## Serial Monitor commands (115200 baud)
 
-| Command | What it does |
-|---|---|
-| `s` | Encode and send **one** demo message |
-| `i` | Explain how to find your IMEI |
-| `i <IMEI>` | Show your calculator and activation steps for that IMEI |
-| `d` | Show status: signal, battery, topic, send state |
-| `u` | Release an **unconfirmed** request. A duplicate may result. |
-| `?` | Help |
+| Command    | What it does                                                |
+| ---------- | ----------------------------------------------------------- |
+| `s`        | Encode and send **one** demo message                        |
+| `i`        | Explain how to find your IMEI                               |
+| `i <IMEI>` | Show your calculator and activation steps for that IMEI     |
+| `d`        | Show status: signal, battery, topic, send state             |
+| `u`        | Release an **unconfirmed** request. A duplicate may result. |
+| `?`        | Help                                                        |
 
 After sending, look for `ACCEPTED` (the modem queued it) and then `DELIVERED` (Iridium confirmed receipt). Accepted alone does not mean delivered. The kit never retries on its own, because a retry after an unknown result could send and bill the message twice.
 
