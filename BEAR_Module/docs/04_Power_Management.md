@@ -33,18 +33,18 @@ flowchart LR
 
 | Block | Function | Implementation |
 |---|---|---|
-| Input protection | Reverse polarity, over-voltage and surge protection | Coming soon |
-| Current limiting and charge control | Limits inrush and the average current drawn from your source | Coming soon |
-| Energy storage | Supplies transmit-burst current | Coming soon |
-| Regulation | Produces modem and interface rails with low ripple | Coming soon |
+| Input protection | Reverse-polarity and transient protection | Coordinate with final VIN range and installation profile **[Pending decision]** |
+| Current limiting and charge control | Limits inrush and source current | Set from source limits, inrush and transmit-burst profile **[Pending decision]** |
+| Energy storage | Supplies transmit-burst current | Size against Iridium OEM transmit profile and measured source impedance **[Pending decision]** |
+| Regulation | Produces modem and interface rails | Set rails, tolerances and ripple from controlled OEM requirements **[Pending decision]** |
 | Sequencing and supervision | Orders the rails and applies the ENABLE and BOOTED handshake | Defined |
 
 ## What it means for your design
 
-- **Smaller source.** Because energy is stored on the module, your supply is sized for the average load, not the peak. This is a key reason satellite integrations with small batteries and solar panels work.
-- **Charge time.** A module with energy storage needs time to charge before it can transmit. Expect a start-up delay after power is first applied. The delay is published as a parameter. Design your duty cycle around it.
-- **Brown-out ride-through (target).** If your supply is lost unexpectedly, stored energy is intended to give the modem time to finish and shut down cleanly. The hold-up time is published at Rev A.
-- **Supply options.** The module is designed to run from a battery or a regulated DC supply. Accepted voltage ranges are published at Rev A.
+- **Source sizing.** On-module energy storage is intended to buffer transmit bursts. The required source capability and any reduction from peak modem current will be established by the power design and load testing **[Pending decision]**; size from released specifications, not this design intent.
+- **Charge time.** If the selected energy-storage design needs a charge interval, the startup delay and operating conditions will be measured and specified **[Pending decision]**. Do not assume a charge time before it is published.
+- **Brown-out ride-through (target).** Hold-up behavior and time will be set from modem shutdown requirements and verified under load **[Pending decision]**. Do not assume the modem can complete shutdown after input power is lost until this is specified.
+- **Supply options.** A regulated DC input is the proposed baseline; permitted source types and the VIN range will be frozen after review of OEM requirements and the power design **[Pending decision]**.
 
 ## Power budget worksheet
 
@@ -52,11 +52,11 @@ Use this template to size your supply once the datasheet values are published.
 
 | State | Module current | Duration | Per message |
 |---|---|---|---|
-| Off (ENABLE low) | Coming soon | Most of the time | |
-| Boot | Coming soon | t_BOOT | |
-| Idle, registered | Coming soon | Until sent | |
-| Transmit burst | Coming soon (peak and average) | Per message | |
-| Shutdown | Coming soon | t_DOWN | |
+| Off (ENABLE low) | Characterize at specified VIN and temperature **[Pending decision]** | Most of the time | |
+| Boot | Characterize; publish peak and integrated charge **[Pending decision]** | t_BOOT | |
+| Idle, registered | Characterize against modem state **[Pending decision]** | Until sent | |
+| Transmit burst | Derive from OEM profile and verify peak/average **[Pending decision]** | Per message | |
+| Shutdown | Characterize at specified VIN and temperature **[Pending decision]** | t_DOWN | |
 
 Energy per message depends on how long the modem needs to find a satellite. Sky view and antenna quality matter. See [05 Antenna and RF](05_Antenna_and_RF.md).
 

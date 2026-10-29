@@ -79,7 +79,7 @@ When the modem reaches `TS_READY` the SDK queries its IMEI (`TS_QUERY_IMEI_ON_RE
 | `TS_LINE_CAP` | Serial line buffer size |
 | `TS_F169_WATCHDOG` | F169 port only. Enables the hardware watchdog (needs a 32.768 kHz crystal) |
 
-Defaults are sized for 2 KB of RAM (MSP430F169). The driver's state is 800 bytes with the defaults, measured on a computer. See the [design notes](../../Telemetry_Station_SDK/docs/DESIGN.md).
+The MSP430F169 is the first reference host and has 2 KB of RAM; defaults and payload sizes must be selected for the actual host's RAM and stack budget. The driver's state is 800 bytes with the defaults, measured on a computer. See the [design notes](../../Telemetry_Station_SDK/docs/DESIGN.md).
 
 ## Porting
 
@@ -87,14 +87,17 @@ To use another microcontroller, copy [`ports/template`](../../Telemetry_Station_
 
 | Port | Status |
 |---|---|
-| TI MSP430F169 | Reference port. Bench bring-up with the BEAR Module 9704 is on the [roadmap](../ROADMAP.md) |
+| TI MSP430F169 | First reference port and current validation target |
 | Linux and macOS with a USB-serial adapter | Bench use with an already-powered module |
-| Additional MCUs | Planned. Contributions welcome |
+| STM32, Nordic, Microchip, ESP32 and other MCUs | Intended customer targets; porting and validation are tracked per MCU. Contributions welcome |
+
+MCU compatibility depends on meeting the module's released electrical/timing limits and using a tested SDK port or equivalent driver.
 
 ## Validation status
 
 | Item | Status |
 |---|---|
 | Driver against a simulated modem | Passing in CI, with strict warnings and sanitizers |
-| Driver against BEAR Module EVT hardware | Coming soon, at G2 |
-| F169 port on target | Coming soon, at G2 |
+| Existing-hardware modem and workflow validation | In progress; see the [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) |
+| Driver against BEAR Module EVT hardware | Planned at G2; schedule **[Pending decision]** |
+| MSP430F169 port on target | Validation target; BEAR EVT validation is at G2 |

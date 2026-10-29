@@ -2,6 +2,8 @@
 
 Document ID: BEAR-SA-9704 | Revision: P1 | Status: Preliminary
 
+BEAR Module 9704 is defined as a host-independent satellite communications module intended for production-qualified deployment. Its host MCU belongs to the customer's system; no specific MCU is required. Production qualification remains in progress and is not implied by this preliminary architecture.
+
 ## Block diagram
 
 ```mermaid
@@ -44,7 +46,7 @@ flowchart LR
 
 1. **Few signals.** A host needs power, ground, ENABLE, BOOTED and a two-wire UART. Everything else is optional.
 2. **The module protects itself.** Start-up and shutdown order, input protection and burst handling live on the module, not in your design.
-3. **Microcontroller neutral.** No bus, clock or voltage beyond what a typical 3.3 V microcontroller provides.
+3. **Host independent.** The module does not require a particular MCU or vendor-specific bus. The host must meet the released electrical and timing specifications and have an SDK port or equivalent driver.
 4. **Firmware does not guess.** The SDK waits for BOOTED, never retries a send on its own, and reports delivery separately from acceptance.
 5. **Traceable.** Every module is serialized and linked to its IMEI for activation, support and production traceability.
 

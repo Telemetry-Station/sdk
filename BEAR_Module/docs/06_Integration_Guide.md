@@ -2,16 +2,16 @@
 
 Document ID: BEAR-IG-9704 | Revision: P1 | Status: Preliminary
 
-How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. This guide uses the TI MSP430F169, the first test platform, as a worked example. Any microcontroller with one UART and two GPIO pins works the same way.
+How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. BEAR is host-independent. The TI MSP430F169 is the first SDK reference host and worked example; STM32, MSP430, Nordic, Microchip, ESP32 and other hosts are intended integration targets when their electrical characteristics meet the released module specification and a suitable SDK port is available.
 
 ## What you need
 
 | Item | Notes |
 |---|---|
-| BEAR Module 9704 | Evaluation units: coming soon |
-| Power source | Battery or DC supply within the datasheet range (published at Rev A) |
+| BEAR Module 9704 | Evaluation-kit availability date **[Pending decision]**; see [ordering and support](11_Ordering_and_Support.md) |
+| Power source | Regulated DC input proposed; use only the released VIN range **[Pending decision]** |
 | Iridium antenna | Included or connected, per configuration. Needs a clear sky view |
-| Host microcontroller | One UART at 230400 baud, two GPIO pins, a millisecond timer |
+| Host microcontroller | One UART at 230400 baud, two GPIO pins, a millisecond timer, compatible logic levels and an SDK port |
 | USB-serial adapter | Optional, for a debug console |
 | Telemetry Station account | For the calculator and activation |
 
@@ -26,7 +26,7 @@ How to connect a BEAR Module 9704 to a microcontroller and bring it up with the 
 | Ground | GND | Common ground is required |
 | Supply | VIN | Within the datasheet range |
 
-Keep UART wires short. Add series resistance or a level translator if your host logic voltage differs from the module's.
+Keep UART wires short. The proposed host-I/O level is 3.3 V CMOS **[Pending decision]**. Confirm electrical limits in the released datasheet and add a level translator where required.
 
 ### Worked example: MSP430F169 test bench
 
@@ -43,6 +43,8 @@ These pins match the SDK reference port ([`ports/msp430f169`](../../Telemetry_St
 
 The F169 reference port uses an external 8 MHz crystal on XT2 for the main clock. The internal oscillator is not accurate enough for 230400 baud.
 
+For modem and workflow validation on existing hardware before BEAR engineering units are available, see the repository's [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md).
+
 ## Bring-up checklist
 
 Work through these in order. Stop at the first step that fails.
@@ -52,7 +54,7 @@ Work through these in order. Stop at the first step that fails.
 3. **Build the SDK tests.** Run the host tests in `Telemetry_Station_SDK` to confirm your toolchain and settings.
 4. **Add your platform file.** Implement the `ts_platform_t` functions for your microcontroller, or start from the F169 port. See [07 Firmware interface](07_Firmware_Interface.md).
 5. **Boot.** Call `ts_bear_start()`. Confirm ENABLE goes high and BOOTED follows. The SDK reports `TS_EVENT_READY` after the serial handshake.
-6. **Read the IMEI.** The SDK reports `TS_EVENT_IMEI`. Print it with `ts_activation_text()`. The 15-digit IMEI is also planned to appear on the module label.
+6. **Read the IMEI.** The SDK reports `TS_EVENT_IMEI`. Print it with `ts_activation_text()`. A printed/scannable module IMEI label is a target **[Pending decision]**.
 7. **Activate.** Use the printed links: size your plan in the calculator, then activate with the IMEI. Set the topic ID you receive as `TS_TOPIC_ID`.
 8. **First message.** Move outdoors with a clear view of the sky. Send one message and wait for `TS_EVENT_MO_DELIVERED`.
 9. **Shutdown.** Call `ts_bear_shutdown()`. Wait for `TS_EVENT_STOPPED` (BOOTED low) before removing power. The [simulated demo](../../Telemetry_Station_SDK/examples/host/simulated_demo.c) shows the expected sequence.

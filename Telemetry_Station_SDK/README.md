@@ -2,7 +2,7 @@
 
 Firmware reference in C99 for sending messages over Iridium with the **BEAR Module 9704**. It is small, has no dynamic memory, and does not depend on any one microcontroller. You supply a short platform file for your MCU, and the SDK does the rest.
 
-> **Status: alpha (version 0.2).** The driver has a complete test suite on a computer. Validation on the BEAR Module 9704 and the MSP430F169 reference port is next on the [roadmap](../BEAR_Module/ROADMAP.md). As with any new peripheral, plan bench time for your own board. Contact hello@telemetrystation.com for questions.
+> **Status: alpha (version 0.2).** The driver has a complete test suite on a computer. Validation on the BEAR Module 9704 and the MSP430F169 reference port is next on the [roadmap](../BEAR_Module/ROADMAP.md). As with any new peripheral, plan bench time for your own board. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
 **New here?** Read [Getting started](docs/GETTING_STARTED.md). It explains the terms and gets you to a working demo with no hardware. Firmware reviewers: see the [Design notes](docs/DESIGN.md).
 
@@ -52,31 +52,31 @@ A complete duty-cycled example for the MSP430F169 (module on only while there is
 
 ## Layout
 
-| Path | Purpose |
-|---|---|
-| `include/` | Public headers: driver, platform interface, config, activation help |
-| `src/` | Driver split by job: `ts_bear9704.c` (state machine), `ts_setup.c` (startup), `ts_mo.c` (send), `ts_mt.c` (receive), `ts_cmd.c` (command builder), plus protocol helpers. `ts_names.c` (log names) and `ts_activation.c` (console text) are optional |
-| `ports/msp430f169/` | MSP430F169 platform file and console |
-| `ports/template/` | Starting point for a new MCU. Compiles as-is |
-| `ports/posix/` | Linux/macOS platform for a bench modem on a USB serial adapter |
-| `examples/common/` | `app_payload.c`, the one file you edit to match your device |
-| `examples/msp430f169/`, `examples/host/` | Complete example programs, including `simulated_demo` |
-| `tests/` | Unit tests and the simulated modem (`sim_modem.c`) |
-| `docs/GETTING_STARTED.md` | Zero-context walkthrough, glossary, troubleshooting |
-| `docs/PORTING.md` | How to add a new microcontroller |
-| `docs/DESIGN.md` | Architecture, timing, memory, error handling, testing |
+| Path                                     | Purpose                                                                                                                                                                                                                                              |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include/`                               | Public headers: driver, platform interface, config, activation help                                                                                                                                                                                  |
+| `src/`                                   | Driver split by job: `ts_bear9704.c` (state machine), `ts_setup.c` (startup), `ts_mo.c` (send), `ts_mt.c` (receive), `ts_cmd.c` (command builder), plus protocol helpers. `ts_names.c` (log names) and `ts_activation.c` (console text) are optional |
+| `ports/msp430f169/`                      | MSP430F169 platform file and console                                                                                                                                                                                                                 |
+| `ports/template/`                        | Starting point for a new MCU. Compiles as-is                                                                                                                                                                                                         |
+| `ports/posix/`                           | Linux/macOS platform for a bench modem on a USB serial adapter                                                                                                                                                                                       |
+| `examples/common/`                       | `app_payload.c`, the one file you edit to match your device                                                                                                                                                                                          |
+| `examples/msp430f169/`, `examples/host/` | Complete example programs, including `simulated_demo`                                                                                                                                                                                                |
+| `tests/`                                 | Unit tests and the simulated modem (`sim_modem.c`)                                                                                                                                                                                                   |
+| `docs/GETTING_STARTED.md`                | Zero-context walkthrough, glossary, troubleshooting                                                                                                                                                                                                  |
+| `docs/PORTING.md`                        | How to add a new microcontroller                                                                                                                                                                                                                     |
+| `docs/DESIGN.md`                         | Architecture, timing, memory, error handling, testing                                                                                                                                                                                                |
 
 ## Configuration
 
 Set these at build time (for example `-DTS_MAX_PAYLOAD=40`) or in [`include/ts_config.h`](include/ts_config.h).
 
-| Setting | Default | Meaning |
-|---|---|---|
-| `TS_TOPIC_ID` | `0` | Your topic from Telemetry Station (64 or higher). Sending is blocked until set. |
-| `TS_MAX_PAYLOAD` | `64` | Largest message in bytes. Use your bytes per message. |
-| `TS_ENABLE_MT` | `1` | Set `0` if you never receive messages, to save RAM. |
-| `TS_LINE_CAP` | `256` | Modem line buffer size. |
-| `TS_QUERY_IMEI_ON_READY` | `1` | Read the IMEI as soon as the modem is ready. |
+| Setting                  | Default | Meaning                                                                         |
+| ------------------------ | ------- | ------------------------------------------------------------------------------- |
+| `TS_TOPIC_ID`            | `0`     | Your topic from Telemetry Station (64 or higher). Sending is blocked until set. |
+| `TS_MAX_PAYLOAD`         | `64`    | Largest message in bytes. Use your bytes per message.                           |
+| `TS_ENABLE_MT`           | `1`     | Set `0` if you never receive messages, to save RAM.                             |
+| `TS_LINE_CAP`            | `256`   | Modem line buffer size.                                                         |
+| `TS_QUERY_IMEI_ON_READY` | `1`     | Read the IMEI as soon as the modem is ready.                                    |
 
 Defaults are sized for the MSP430F169's 2 KB of RAM. The driver's state is 800 bytes with the defaults (728 without receive support), measured on a computer. See [Design notes](docs/DESIGN.md#memory).
 
