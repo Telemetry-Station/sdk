@@ -14,7 +14,7 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed and remain
 | G3 | DVT (design validation) | Full characterization and pre-compliance testing | All requirements in the [verification plan](docs/10_Requirements_and_Verification.md) verified or dispositioned | Planned; schedule **[Pending decision]** |
 | G4 | Certification | Regulatory and Iridium approvals | Certificates issued for the target regions | Planned; scope and schedule **[Pending decision]** |
 | G5 | PVT (production validation) | Pilot build on the production line | Yield and test coverage targets met | Planned; schedule **[Pending decision]** |
-| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support/RMA, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and the controlled schematic and Altium PCB design package available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
+| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support channel, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and the controlled schematic and Altium PCB design package available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
 
 ## Firmware and tools
 

@@ -85,7 +85,7 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [ ] Tested Arduino, STM32, and Raspberry Pi quickstarts, sample payload decoders, and matching test vectors available.
 - [ ] SDK release baseline, compatibility, known limitations, and release notes available in the [changelog](../CHANGELOG.md).
 - [ ] Orderable part numbers, kit contents, pricing, lead times, and confirmed evaluation-kit dates available in [ordering and support](docs/11_Ordering_and_Support.md).
-- [ ] Warranty, RMA, support, lifecycle, and product-change notification terms available before sales.
+- [ ] Sales terms (sold as-is, no hardware warranty), support, lifecycle, and product-change notification terms available before sales.
 - [ ] Product/service status page and approved service-level terms available.
 - [ ] Required validation, approvals, and production readiness completed; customer sales availability confirmed.
 

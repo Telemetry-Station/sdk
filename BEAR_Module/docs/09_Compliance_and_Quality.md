@@ -2,18 +2,18 @@
 
 Document ID: BEAR-CQ-9704 | Revision: P1 | Status: Preliminary
 
-Customers integrating a radio module need to know which approvals exist, what is inherited from the modem, and what is left to them. This document lays out the plan. Certificates are published here as they are issued.
+Customers integrating a radio module need to know which approvals exist, what is inherited from the modem, and what is left to them. This document lays out the plan. Listed regions are markets under assessment, not committed approvals. Certificates are published here as they are issued.
 
 ## Certification plan
 
 | Area | Scope | Standards (target) | Status |
 |---|---|---|---|
-| Iridium approval | Network access for the module and its antenna configurations | Iridium requirements for integrated devices | Planned |
-| United States | Radio and EMC | FCC 47 CFR Part 15, applicable Part 25 requirements | Planned |
-| Canada | Radio and EMC | ISED RSS standards, ICES-003 | Planned |
-| European Union | Radio and EMC, safety | RED 2014/53/EU with EN 301 441, EN 301 489, EN 62368-1 | Planned |
-| United Kingdom | Radio and EMC | UKCA | Planned |
-| Australia and New Zealand | EMC | RCM | Planned |
+| Iridium approval | Network access for the module and its antenna configurations | Iridium requirements for integrated devices | Planned at G4; scope **[Pending decision]** |
+| United States | Radio and EMC | FCC 47 CFR Part 15, applicable Part 25 requirements | Under assessment; scope **[Pending decision]** |
+| Canada | Radio and EMC | ISED RSS standards, ICES-003 | Under assessment; scope **[Pending decision]** |
+| European Union | Radio and EMC, safety | RED 2014/53/EU with EN 301 441, EN 301 489, EN 62368-1 | Under assessment; scope **[Pending decision]** |
+| United Kingdom | Radio and EMC | UKCA | Under assessment; scope **[Pending decision]** |
+| Australia and New Zealand | EMC | RCM | Under assessment; scope **[Pending decision]** |
 | Other regions | Scope assessed on demand | Applicable local radio and EMC requirements **[Pending decision]** | Scope **[Pending decision]** |
 
 The exact standards list and test scope is confirmed with the accredited test laboratory at the certification gate (G4). The modem's own approvals reduce the module-level scope. Details are published with the certificates.
@@ -48,7 +48,7 @@ The exact standards list and test scope is confirmed with the accredited test la
 | Testing | Every unit passes an automated functional test, including a power-sequencing check and a UART loopback to the modem |
 | Traceability | Serial number, lot and date code, linked to the modem IMEI and test results |
 | Configuration control | Hardware revision letters. Changes recorded in the revision history. See [11](11_Ordering_and_Support.md) |
-| Non-conformance | Defined process for returns, failure analysis and corrective action |
+| Non-conformance | Internal process for failure analysis and corrective action |
 
 ## Security and data integrity
 
@@ -65,5 +65,5 @@ The exact standards list and test scope is confirmed with the accredited test la
 | Item | Status |
 |---|---|
 | Export classification (ECCN, HS code) | Classification to be determined and published with ordering information **[Pending decision]** |
-| Warranty | Terms and duration **[Pending decision]**; publish before evaluation-kit orders open |
+| Warranty | None. Modules are sold as-is under the [Telemetry Station Terms](https://telemetrystation.com/terms#hardware-warranty) |
 | Hardware design license | Published with the design files |

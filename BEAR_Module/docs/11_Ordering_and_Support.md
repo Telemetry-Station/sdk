@@ -44,7 +44,7 @@ Module hardware and airtime are separate. Activate the IMEI at telemetrystation.
 | Firmware and SDK issues    | GitHub issues on this repository                                             |
 | Security reports           | [Security policy](../../SECURITY.md)                                         |
 | Hardware and sales         | [telemetrystation.com/contact](https://telemetrystation.com/contact)         |
-| Returns and warranty (RMA) | Process and warranty terms **[Pending decision]**; publish before sales open |
+| Returns and warranty | No hardware warranty; sales are final once a module ships. See the [Telemetry Station Terms](https://telemetrystation.com/terms#hardware-warranty) |
 
 ## Service status and SLA
 
