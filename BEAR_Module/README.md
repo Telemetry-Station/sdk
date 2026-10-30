@@ -60,6 +60,7 @@ BEAR_Module/
 ├── hardware/                      Design-file index and templates
 │   ├── interfaces/                Machine-readable signal list
 │   ├── bom/                       Bill of materials template
+│   ├── design_inputs/             CAD-neutral initial topology and layout inputs
 │   ├── schematics/                Schematic package (block level now)
 │   ├── pcb/                       Layout rules and stack-up
 │   ├── mechanical/                Outline and 3D model

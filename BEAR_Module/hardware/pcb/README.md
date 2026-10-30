@@ -2,6 +2,8 @@
 
 Layout guidance for the BEAR Module 9704. Gerbers and fabrication files are published at Rev A.
 
+The [initial design inputs](../design_inputs/README.md) record preliminary placement zones and layout constraints. They are not a board outline, stack-up definition, routed layout, or fabrication package.
+
 | Topic | Guidance |
 |---|---|
 | Stack-up | Continuous ground reference under RF and serial routing; layer count and controlled-impedance details **[Pending decision]** |

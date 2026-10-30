@@ -2,6 +2,8 @@
 
 Abstract, block-level description of the BEAR Module 9704 circuit. Full controlled schematics and the native Altium PCB design package are planned for publication before product launch; component values will be released with the appropriate design revision.
 
+For a CAD-neutral starting point, see the [initial design inputs](../design_inputs/README.md). They capture functional connectivity without assigning unverified component values, modem pad numbers, or electrical limits.
+
 ```mermaid
 flowchart LR
   VIN --> PROT[Input protection] --> SEQ[Sequencing and enable]

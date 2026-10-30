@@ -1,0 +1,13 @@
+connection_id,source_block,destination_block,function,status,open_definition
+BC-01,Host supply connector,Input protection,Bring VIN and GND onto the module,Defined at functional level,Connector pinout and electrical limits
+BC-02,Input protection,Power path and inrush control,Pass protected input to power subsystem,In development,Protection topology and ratings
+BC-03,Power path and inrush control,Burst energy storage,Control charging and input current,In development,Current limit charge behavior and component sizing
+BC-04,Burst energy storage,Regulation,Buffer modem load transients,In development,Capacitance technology voltage ESR current and hold-up target
+BC-05,Power path and inrush control,Regulation,Supply regulated modem and interface rails,Defined at functional level,Rail voltages tolerances sequence and peak current
+BC-06,Regulation,Iridium 9704 modem,Power modem rails,Defined at functional level,Controlled modem rail requirements and pin mapping
+BC-07,Host connector,Sequencing and host interface,Receive ENABLE and expose BOOTED,Defined at functional level,Logic levels defaults pull states and power-off behavior
+BC-08,Sequencing and host interface,Iridium 9704 modem,Control modem startup and shutdown,Defined at functional level,Modem control pins timing and reset requirements
+BC-09,Host connector,Iridium 9704 modem,Carry bidirectional UART TXD and RXD,Defined at functional level,Pin mapping logic levels translation and protection
+BC-10,Iridium 9704 modem,Antenna interface,Route modem RF to selected antenna connection,Defined at functional level,Controlled RF reference design impedance matching connector and antenna
+BC-11,Iridium 9704 modem,Optional host interface signals,Provide TX_ACTIVE and reserved wake signals,Optional or reserved,Population electrical behavior and use case
+BC-12,Power subsystem,Test access,Expose supply and rail probes,Design intent,Safe probe points placement and manufacturing test requirements
