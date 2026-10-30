@@ -57,9 +57,7 @@ You can use the BEAR Module with other data services. The workflow above is the 
 
 ## Host and validation status
 
-The TI MSP430F169 is the SDK's first reference host and a current validation target. Development is also using existing embedded hardware to validate the modem interface and workflow before BEAR engineering units are available.
-
-The [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) provides an existing-hardware path to validate the 9704 workflow, including Telemetry Station activation and topic-ID configuration, while BEAR hardware is in development.
+The TI MSP430F169 is the SDK's first reference host and a current validation target. SDK validation on BEAR engineering units is planned at G2 (EVT); see the [roadmap](../ROADMAP.md).
 
 ## Commercial scale
 

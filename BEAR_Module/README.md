@@ -6,17 +6,18 @@ The BEAR Module family from Pacific Gyre, built under the Telemetry Station orga
 
 The first member of the family is the **BEAR Module 9704**, built around the Iridium 9704 modem. The MSP430F169 is its first SDK reference host, not a requirement for using the module. The host interface is intended to support customer products using STM32, MSP430, Nordic, Microchip, ESP32 and other microcontrollers, subject to each host's electrical compatibility and SDK port.
 
-Development is currently validating the design with existing embedded hardware while the BEAR hardware moves through its design gates. Production qualification is a release objective, not a claim about the current preliminary design.
+BEAR hardware is in detailed design. Validation on BEAR engineering units is planned at G2 (EVT). Production qualification is a release objective, not a claim about the current preliminary design.
 
-This folder is the public engineering blueprint for the family: what the product is, how it is built, how it connects to your design, and how it is verified and supported. Proposed values are marked **[Pending decision]** and are not specifications; they require design review and verification before release. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
+This folder contains product and integration documentation for the BEAR Module family, including interfaces, specifications, validation status, and support information. Proposed values are marked **[Pending decision]** and are not released specifications. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
 ## Status
+
+The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed product definitions and remaining release milestones. **Target sales availability is April 1, 2027**, subject to validation, approvals, and production readiness; this is not a confirmed release date.
 
 | Item                                                      | Status                                                                                                          |
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | Product definition and system architecture                | Defined                                                                                                         |
 | Host interface and power sequencing                       | Defined                                                                                                         |
-| Existing-hardware validation                              | In progress                                                                                                     |
 | Firmware (Telemetry Station SDK)                          | Alpha (version 0.2)                                                                                             |
 | Electrical specification and datasheet values             | Proposed targets under review; released with Rev A                                                              |
 | Schematics, layout, mechanical drawings                   | Release package planned before general availability                                                             |
@@ -30,7 +31,7 @@ Every document carries a status. **Defined** means the design decision is made. 
 
 | If you are a...                        | Read                                                                                                                                                                                             |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Decision maker, buyer, product manager | [Product brief](docs/01_Product_Brief.md), [Ordering and support](docs/11_Ordering_and_Support.md), [Roadmap](ROADMAP.md)                                                                        |
+| Decision maker, buyer, product manager | [Product brief](docs/01_Product_Brief.md), [Ordering and support](docs/11_Ordering_and_Support.md), [Roadmap](ROADMAP.md), [R&D checklist and release estimate](RD_CHECKLIST.md) |
 | Electrical engineer                    | [Datasheet](datasheet/BEAR-9704_Datasheet.md), [Hardware interface](docs/03_Hardware_Interface.md), [Power management](docs/04_Power_Management.md), [Antenna and RF](docs/05_Antenna_and_RF.md) |
 | Embedded firmware engineer             | [Firmware interface](docs/07_Firmware_Interface.md), [Integration guide](docs/06_Integration_Guide.md), [SDK](../Telemetry_Station_SDK)                                                          |
 | Quality, regulatory, procurement       | [Compliance and quality](docs/09_Compliance_and_Quality.md), [Requirements and verification](docs/10_Requirements_and_Verification.md)                                                           |
@@ -42,6 +43,7 @@ Every document carries a status. **Defined** means the design decision is made. 
 BEAR_Module/
 ├── README.md                      This page
 ├── ROADMAP.md                     Milestones from prototype to production
+├── RD_CHECKLIST.md                Product readiness and target availability
 ├── GLOSSARY.md                    Terms and abbreviations
 ├── datasheet/
 │   └── BEAR-9704_Datasheet.md     Preliminary datasheet

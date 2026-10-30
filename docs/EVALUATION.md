@@ -21,7 +21,6 @@ Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for
 | Firmware driver              | Alpha. Complete start-up, send, receive, IMEI and shutdown flow, with a computer-based test suite                          | Validation on BEAR Module 9704 engineering units, then a 1.0 API freeze                                                |
 | Host MCU                     | MSP430F169 is the first SDK reference host                                                                                 | Compatibility is intended for STM32, MSP430, Nordic, Microchip, ESP32 and other MCUs; ports are validated individually |
 | Hardware module              | Interfaces and architecture defined                                                                                        | Specifications published at Rev A, then engineering builds and validation                                              |
-| Existing-hardware validation | In progress using available embedded hardware and the [Iridium Development Kit](../Iridium_Development_Kit_9704/README.md) | BEAR engineering-unit validation at G2                                                                                 |
 | Regulatory approvals         | Planned for each target market                                                                                             | Certification testing, with certificates published as issued                                                           |
 | Production supply            | Roadmap                                                                                                                    | Production readiness (see the [roadmap](../BEAR_Module/ROADMAP.md))                                                    |
 | Service terms and SLA        | **[Pending decision]**                                                                                                     | Public status page, service terms and SLA before general availability                                                  |
@@ -41,7 +40,7 @@ The Telemetry Station organization at Pacific Gyre. The repository is public, so
 - **Service:** Telemetry Station is the path we optimise for, including message design, sizing and activation. The driver does not require it.
 - **Message format:** The Payload Optimizer generates plain C encode and decode code that you own and can read.
 
-Data delivery and export options are **[Pending decision]**; publish supported formats, retention and export behavior before service launch.
+Data delivery and export options are **[Pending decision]**. Supported formats, retention, and export behavior will be documented before service launch.
 
 ### Does it work anywhere?
 
@@ -78,7 +77,7 @@ Your firmware is open and your payload code is yours, so your application stays 
 
 | Topic                      | Guidance                                                                                                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Hardware availability      | Validate the 9704 workflow now with the repository's [development kit](../Iridium_Development_Kit_9704/README.md); BEAR evaluation-kit dates will be published once build and supply readiness are confirmed |
+| Hardware availability      | Use the simulated SDK demo for software evaluation; BEAR evaluation-kit dates will be published once build and supply readiness are confirmed |
 | API changes before 1.0     | Pin a version and read the [changelog](../CHANGELOG.md) before upgrading                                                                                                                                     |
 | Timing on your target      | Budget bench time for your own electrical and timing measurements, as with any new peripheral                                                                                                                |
 | Duplicate or lost messages | Put a sequence number in each payload. The driver never retries on its own                                                                                                                                   |
@@ -87,8 +86,8 @@ Your firmware is open and your payload code is yours, so your application stays 
 
 1. **Day 1.** Run the [simulated demo](../Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware). Read [Design notes](../Telemetry_Station_SDK/docs/DESIGN.md).
 2. **Week 1.** Design your real payload in the Payload Optimizer and size your plan in the calculator. Check the monthly cost against your budget.
-3. **When existing hardware is available.** Send test messages with the [Arduino development kit](../Iridium_Development_Kit_9704/README.md), outdoors.
-4. **Then.** Port to your microcontroller, and plan an engineering-sample evaluation when BEAR Module units are released.
+3. **Prepare your firmware.** Port the SDK to your microcontroller and test application behavior against the simulated modem.
+4. **When BEAR engineering samples are available.** Verify electrical integration and send test messages outdoors with a clear sky view.
 
 ## Questions to ask us
 

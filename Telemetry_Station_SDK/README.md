@@ -6,6 +6,8 @@ Firmware reference in C99 for sending messages over Iridium with the **BEAR Modu
 
 **New here?** Read [Getting started](docs/GETTING_STARTED.md). It explains the terms and gets you to a working demo with no hardware. Firmware reviewers: see the [Design notes](docs/DESIGN.md).
 
+For BEAR hardware status, SDK hardware validation, and target availability, see the [BEAR Module R&D and release checklist](../BEAR_Module/RD_CHECKLIST.md).
+
 ## What it does
 
 - Starts the modem and gets it ready to send.

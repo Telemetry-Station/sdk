@@ -2,6 +2,8 @@
 
 Index of design deliverables for the BEAR Module 9704. Files are published here as each is released.
 
+The [R&D and release checklist](../RD_CHECKLIST.md) summarizes hardware validation, certification, production readiness, and target availability. Published templates and guidance are not completed production deliverables.
+
 | Folder | Contents | Status |
 |---|---|---|
 | [`interfaces/`](interfaces/bear-9704_signals.csv) | Machine-readable signal list | Published (preliminary) |

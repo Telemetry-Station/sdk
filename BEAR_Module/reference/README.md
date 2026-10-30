@@ -5,7 +5,6 @@ External documents and standards used alongside the BEAR Module 9704.
 | Resource | Link |
 |---|---|
 | Telemetry Station SDK | [`../../Telemetry_Station_SDK`](../../Telemetry_Station_SDK) |
-| Iridium Development Kit 9704 (Arduino) | [`../../Iridium_Development_Kit_9704`](../../Iridium_Development_Kit_9704) |
 | Payload Optimizer | https://telemetrystation.com/payload-optimizer |
 | Iridium 9704 technical documentation | Obtained from Iridium under its applicable access and licensing terms |
 

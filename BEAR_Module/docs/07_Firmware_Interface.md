@@ -98,6 +98,5 @@ MCU compatibility depends on meeting the module's released electrical/timing lim
 | Item | Status |
 |---|---|
 | Driver against a simulated modem | Passing in CI, with strict warnings and sanitizers |
-| Existing-hardware modem and workflow validation | In progress; see the [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) |
 | Driver against BEAR Module EVT hardware | Planned at G2; schedule **[Pending decision]** |
 | MSP430F169 port on target | Validation target; BEAR EVT validation is at G2 |
