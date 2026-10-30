@@ -6,6 +6,7 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ### Changed
 - Separated the third-party Iridium 9704 LaunchPad messaging example from BEAR Module documentation, qualification, and roadmap; removed BEAR branding from the example's serial help.
+- Aligned the evaluation guide and compliance plan with the R&D and release checklist: approval scope per market is pending, modules are sold as-is without a hardware warranty, and the tentative April 1, 2027 sales target is stated.
 
 ### Added
 - Fault-injection tests (`tests/test_faults.c`) and a coverage gate (`tests/coverage.sh`, `TS_COVERAGE` option): 100% line coverage of `src/` with and without MT.
@@ -32,4 +33,4 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## 0.1.0
 
-- First release of the driver, the MSP430F169 reference port, the Arduino development kit and the BEAR Module 9704 documentation set.
+- First release of the driver, the MSP430F169 reference port, an Arduino messaging example for third-party Iridium 9704 LaunchPad hardware, and the BEAR Module 9704 documentation set.

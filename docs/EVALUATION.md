@@ -67,7 +67,7 @@ That is the design goal. Every module is intended to carry a serial number and I
 
 ### Is it certified?
 
-Certification is planned and covers Iridium approval, FCC, ISED, CE (RED), UKCA and RCM, plus RoHS and REACH. Certificates are published as they are issued, and the [roadmap](../BEAR_Module/ROADMAP.md) shows the schedule. Plan your product launch after the approvals for your markets.
+Not yet. Iridium and regulatory approvals are planned at gate G4. The markets under assessment are listed in [Compliance and quality](../BEAR_Module/docs/09_Compliance_and_Quality.md); the applicable standards and approval scope for each market and configuration are **[Pending decision]** and are confirmed with the accredited test laboratory. RoHS and REACH are design requirements. Certificates are published as they are issued, and the [R&D and release checklist](../BEAR_Module/RD_CHECKLIST.md) shows current status. Plan your product launch after the approvals for your markets.
 
 ### What if my needs change?
 
@@ -77,7 +77,7 @@ Your firmware is open and your payload code is yours, so your application stays 
 
 | Topic                      | Guidance                                                                                                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Hardware availability      | Use the simulated SDK demo for software evaluation; BEAR evaluation-kit dates will be published once build and supply readiness are confirmed |
+| Hardware availability      | Use the simulated SDK demo for software evaluation; BEAR evaluation-kit dates will be published once build and supply readiness are confirmed. Target sales availability is April 1, 2027, a tentative date that is not confirmed; see the [R&D and release checklist](../BEAR_Module/RD_CHECKLIST.md) |
 | API changes before 1.0     | Pin a version and read the [changelog](../CHANGELOG.md) before upgrading                                                                                                                                     |
 | Timing on your target      | Budget bench time for your own electrical and timing measurements, as with any new peripheral                                                                                                                |
 | Duplicate or lost messages | Put a sequence number in each payload. The driver never retries on its own                                                                                                                                   |
