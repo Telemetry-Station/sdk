@@ -1,8 +1,8 @@
 # Iridium Development Kit 9704
 
-An Arduino sketch for sending test messages to [Telemetry Station](https://telemetrystation.com) from the Iridium 9704 LaunchPad, using the official Iridium 9704 LaunchPad library, which you install separately under Iridium's own license (it is not included here). Use it to try the whole workflow before moving to your own hardware with the [Telemetry Station SDK](../Telemetry_Station_SDK) and a BEAR Module 9704.
+An independent Arduino example for users who already own an Iridium 9704 LaunchPad and want to send messages to [Telemetry Station](https://telemetrystation.com). It uses the official Iridium 9704 LaunchPad library, installed separately under Iridium's own license (it is not included here).
 
-New to Iridium or these terms (IMEI, topic ID, payload)? Read [Getting started](../Telemetry_Station_SDK/docs/GETTING_STARTED.md) first.
+The development kit is third-party hardware, not a Pacific Gyre or Telemetry Station product. This folder contains example software only; it does not imply affiliation with or endorsement by the hardware manufacturer. Refer to the manufacturer for hardware documentation and support.
 
 > **Note:** the sketch sends **demo** coordinates and temperature, not real readings. Sending messages may use credits. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
@@ -48,7 +48,7 @@ schema/                Decoder schema for the sample payload
 tests/                 Tests that run on a computer
 ```
 
-The setting names (`TS_TOPIC_ID`, `TS_MAX_PAYLOAD`), `ts_activation` and `app_payload` match the SDK, so your payload mapping carries over to your own microcontroller.
+The example uses `TS_TOPIC_ID` for the Telemetry Station topic, `TS_MAX_PAYLOAD` for the message size, and `app_payload` to connect application readings to the encoder.
 
 ## Using your own payload
 
@@ -71,4 +71,4 @@ sh tests/run_tests.sh      # payload golden vector and logic tests
 sh tests/compile_adapter.sh   # Arduino code compiles against a stub library
 ```
 
-The tests check the logic and that the Arduino code compiles against a stub of Iridium's library. Validation on the Iridium 9704 LaunchPad is next on the [roadmap](../BEAR_Module/ROADMAP.md).
+The tests check the logic and that the Arduino code compiles against a stub of Iridium's library. They do not verify operation on physical hardware.

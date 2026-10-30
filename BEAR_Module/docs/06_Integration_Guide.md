@@ -43,8 +43,6 @@ These pins match the SDK reference port ([`ports/msp430f169`](../../Telemetry_St
 
 The F169 reference port uses an external 8 MHz crystal on XT2 for the main clock. The internal oscillator is not accurate enough for 230400 baud.
 
-For modem and workflow validation on existing hardware before BEAR engineering units are available, see the repository's [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md).
-
 ## Bring-up checklist
 
 Work through these in order. Stop at the first step that fails.

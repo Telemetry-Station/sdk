@@ -4,6 +4,9 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## Unreleased
 
+### Changed
+- Separated the third-party Iridium 9704 LaunchPad messaging example from BEAR Module documentation, qualification, and roadmap; removed BEAR branding from the example's serial help.
+
 ### Added
 - Fault-injection tests (`tests/test_faults.c`) and a coverage gate (`tests/coverage.sh`, `TS_COVERAGE` option): 100% line coverage of `src/` with and without MT.
 - Host build of the MSP430F169 port and example against a stub `msp430.h`, and editor include paths in `.vscode/c_cpp_properties.json`.

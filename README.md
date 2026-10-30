@@ -24,7 +24,7 @@ It runs the real driver against a simulated modem and prints one message's whole
 | I want to...                                      | Go to                                                                                                        |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Understand the concepts, then try it              | [Getting started](Telemetry_Station_SDK/docs/GETTING_STARTED.md)                                             |
-| Try it on real Iridium hardware today             | [Iridium Development Kit](Iridium_Development_Kit_9704/README.md)                                            |
+| Send to Telemetry Station from an Iridium 9704 LaunchPad I already own | [Independent Arduino example](Iridium_Development_Kit_9704/README.md) |
 | Add satellite messaging to my own microcontroller | [SDK](Telemetry_Station_SDK/README.md) and [Porting](Telemetry_Station_SDK/docs/PORTING.md)                  |
 | Review the firmware design                        | [Design notes](Telemetry_Station_SDK/docs/DESIGN.md)                                                         |
 | Understand the hardware                           | [BEAR Module 9704 docs](BEAR_Module/README.md) and [datasheet](BEAR_Module/datasheet/BEAR-9704_Datasheet.md) |
@@ -60,15 +60,16 @@ A BEAR Module contains:
 
 ## Status and roadmap
 
+The [BEAR Module R&D and release checklist](BEAR_Module/RD_CHECKLIST.md) summarizes current product status and remaining release milestones. **Target sales availability is April 1, 2027**, subject to validation, approvals, and production readiness; this is not a confirmed release date.
+
 | Part                                                 | Status                                          | Next                                                                                                                                       |
 | ---------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | SDK driver (start-up, send, receive, shutdown, IMEI) | Alpha, version 0.2                              | Validation on BEAR Module 9704 hardware, then a 1.0 API freeze                                                                             |
-| MSP430F169 port and example                          | First reference host, not a product requirement | Validation on existing embedded hardware; BEAR module EVT validation at G2                                                                 |
-| Arduino development kit                              | Available                                       | Existing-hardware validation in progress                                                                                                   |
-| Arduino, STM32 and Raspberry Pi quickstarts          | Planned                                         | Publish tested setup and integration instructions per platform                                                                             |
-| Sample decoders                                      | Planned                                         | Publish runnable decoder examples with matching test vectors                                                                               |
-| Public status page and SLA                           | Planned                                         | Publish status URL, service scope and approved service-level terms before general availability                                             |
-| Evaluation-kit availability                          | Planned                                         | Publish firm dates after hardware, validation and supply readiness are confirmed                                                           |
+| MSP430F169 port and example                          | First reference host, not a product requirement | SDK validation on BEAR engineering units at G2                                                                 |
+| Arduino, STM32 and Raspberry Pi quickstarts          | Planned                                         | Tested setup and integration instructions per platform                                                                             |
+| Sample decoders                                      | Planned                                         | Runnable decoder examples with matching test vectors                                                                               |
+| Public status page and SLA                           | Planned                                         | Status URL, service scope and approved service-level terms available before general availability                                             |
+| Evaluation-kit availability                          | Planned                                         | Confirmed dates available after hardware, validation and supply readiness are established                                                           |
 | BEAR Module 9704 hardware                            | In development                                  | Pinout, electrical limits and availability details **[Pending decision]** for the Rev A release. See the [roadmap](BEAR_Module/ROADMAP.md) |
 | Certification                                        | Planned                                         | See [Compliance and quality](BEAR_Module/docs/09_Compliance_and_Quality.md)                                                                |
 
@@ -80,10 +81,10 @@ The SDK follows [semantic versioning](https://semver.org). While it is below 1.0
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`Telemetry_Station_SDK/`](Telemetry_Station_SDK/README.md)               | Portable C99 firmware for any microcontroller. Includes a port for the TI MSP430F169, the first test target, a template for your own port, and a computer-based test suite. |
 | [`BEAR_Module/`](BEAR_Module/README.md)                                   | The hardware blueprint for the BEAR Module 9704: datasheet, architecture, interfaces, power, RF, compliance, roadmap.                                                       |
-| [`Iridium_Development_Kit_9704/`](Iridium_Development_Kit_9704/README.md) | An Arduino sketch to try the workflow on existing Iridium 9704 hardware and send test messages.                                                                             |
+| [`Iridium_Development_Kit_9704/`](Iridium_Development_Kit_9704/README.md) | Separate Arduino example for owners of third-party Iridium 9704 LaunchPad hardware to send messages to Telemetry Station. |
 | [`docs/`](docs/EVALUATION.md)                                             | Guidance for decision makers evaluating the platform.                                                                                                                       |
 
-Both firmware projects use the same setting names (`TS_TOPIC_ID`, `TS_MAX_PAYLOAD`), the same activation helper, and the same `app_payload` file where you connect your encoder. Code you try in the kit carries over to the SDK.
+The Iridium Development Kit is third-party hardware, not a Pacific Gyre or Telemetry Station product. The Arduino example in this repository is separate from the BEAR Module product, development roadmap, and qualification. It does not require a BEAR Module. Hardware setup and support remain with the hardware manufacturer; the example documents sending messages to Telemetry Station and does not imply affiliation or endorsement.
 
 ## Run all the tests
 
@@ -117,7 +118,7 @@ Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for
 
 This repository contains no third-party source code. It works with software you install yourself, under its own license:
 
-- **Iridium 9704 development-board library** (used by the Arduino kit): installed from Iridium's package. See its license and setup instructions in Iridium's documentation.
+- **Iridium 9704 development-board library** (used by the separate Arduino example): installed from Iridium's package. See its license and setup instructions in Iridium's documentation.
 - **MSP430 compiler and `msp430.h` device headers** (used by the MSP430F169 port): supplied by your toolchain, for example TI's Code Composer Studio or the MSP430 GCC package, under that toolchain's license.
 
 Iridium and Iridium Certus are trademarks of Iridium Communications Inc. LaunchPad, MSP430 and Code Composer Studio are trademarks of Texas Instruments Incorporated. All other names belong to their owners. They are used here only to describe compatibility, and this project is not affiliated with or endorsed by them. BEAR Module and Telemetry Station are names of the Telemetry Station organization at Pacific Gyre.

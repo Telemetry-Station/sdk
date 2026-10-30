@@ -60,7 +60,6 @@ That is the whole life of one message: start, ready, IMEI, send, delivered, shut
 | You have | Do this |
 |---|---|
 | Nothing yet, just evaluating | Stop at step 2, then read [Design notes](DESIGN.md) |
-| An Arduino and existing Iridium 9704 hardware | Use the [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) to send test messages today |
 | A TI MSP430F169 and a BEAR Module | Follow step 4 with `ports/msp430f169`. Module availability: see the [roadmap](../../BEAR_Module/ROADMAP.md) |
 | Another microcontroller | Follow [Porting](PORTING.md). You write seven small functions, starting from `ports/template` |
 | A computer and a modem on a USB serial adapter | Use `ports/posix` and the `ts_posix_modem` program |
@@ -105,7 +104,7 @@ Print names instead of numbers while debugging: add `src/ts_names.c` and use `ts
 
 **Do I have to use Telemetry Station?** No. The driver talks to the modem and needs no account. Telemetry Station is the path we build the hardware and data service around.
 
-**Can I buy the hardware today?** The BEAR Module 9704 is in development. See the [roadmap](../../BEAR_Module/ROADMAP.md). You can use the [Iridium Development Kit](../../Iridium_Development_Kit_9704/README.md) to validate the workflow on existing hardware.
+**Can I buy the hardware today?** The BEAR Module 9704 is in development. See the [roadmap](../../BEAR_Module/ROADMAP.md) for product status and target availability.
 
 **Is it ready for production?** It is alpha, version 0.2, and the hardware is in development. Use it now to evaluate and prototype, and see [Status and roadmap](../../README.md#status-and-roadmap) for what comes next.
 

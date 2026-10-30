@@ -3,7 +3,7 @@
  * Uses MSB-first bit packing, two's-complement, offset-scaled decimals,
  * length prefixes, and zero final padding; NO modem framing or CRC here.
  * Schema: ts-payload-v1-97a8f3e1 (sbd); MAX = 248 bits / 31 bytes.
- * Generated codec is OPTIONAL; the BEAR SDK also accepts raw bytes.
+ * Generated codec is OPTIONAL; applications may also supply raw payload bytes.
  */
 #ifndef TELEMETRY_PAYLOAD_H
 #define TELEMETRY_PAYLOAD_H
