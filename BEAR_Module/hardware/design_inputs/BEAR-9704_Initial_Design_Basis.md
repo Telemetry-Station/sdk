@@ -32,27 +32,27 @@ The signal names and functions below come from the BEAR hardware interface defin
 | Signal group | Signals | Design input |
 |---|---|---|
 | Supply | VIN, GND | Host supply enters through input protection and a controlled power path. Input range and transient profile are open. |
-| Host control | ENABLE, BOOTED | Preserve the documented start/stop handshake. Determine polarity, thresholds, default states, and power-off behavior from controlled modem/interface requirements. |
-| UART | TXD, RXD | Preserve the documented 230400 baud, 8N1 interface. Confirm modem I/O levels, timing, reset behavior, and whether translation is required. |
+| Host control | ENABLE, BOOTED | Documented start/stop handshake; electrical thresholds, default states, and power-off behavior remain open. |
+| UART | TXD, RXD | Documented 230400 baud, 8N1 interface; modem I/O levels, timing, reset behavior, and level translation remain open. |
 | Optional host signals | TX_ACTIVE, WAKE_IN, WAKE_OUT | Reserved in the interface definition; population and electrical implementation are open. |
-| RF | ANT | Use the controlled modem RF reference design and antenna requirements. Impedance, matching, connector, keep-out, and approval scope require confirmation. |
+| RF | ANT | RF implementation depends on controlled modem and antenna requirements. Impedance, matching, connector, keep-out, and approval scope remain open. |
 
 See the [hardware interface](../../docs/03_Hardware_Interface.md), [power management](../../docs/04_Power_Management.md), and [antenna and RF](../../docs/05_Antenna_and_RF.md) documents for current product-level intent.
 
 ## Preliminary PCB partitioning
 
-These are placement and routing principles:
+The preliminary layout concept includes:
 
-1. Reserve distinct regions for modem/package, power conversion and energy storage, host interface, and RF launch.
-2. Keep the modem supply loop and energy-storage path short and low impedance; final copper sizing requires the controlled peak-current and thermal requirements.
-3. Keep the RF route short, with a continuous reference plane and geometry set by the approved stack-up and impedance calculation. Do not select trace width from a generic rule of thumb.
-4. Keep switching power nodes and fast digital edges away from the RF feed. Confirm the final separation and return-path strategy during layout review.
-5. Provide accessible probing for VIN, modem rails, ENABLE, BOOTED, and UART. Add RF test access only if the RF design and production test plan call for it.
-6. Do not define dimensions, layer count, materials, controlled impedance, connector footprints, or manufacturing tolerances until mechanical, RF, and supplier constraints are approved.
+1. Separate regions for modem/package, power conversion and energy storage, host interface, and RF launch.
+2. Short, low-impedance modem supply and energy-storage paths; copper sizing depends on peak-current and thermal requirements.
+3. A short RF route with a continuous reference plane; routing geometry depends on the final stack-up and impedance requirements.
+4. Separation of switching power nodes and fast digital edges from the RF feed.
+5. Test access for VIN, modem rails, ENABLE, BOOTED, and UART; RF test access remains subject to the selected configuration.
+6. Dimensions, layer count, materials, connector footprints, and manufacturing tolerances remain **[Pending decision]**.
 
 ## Inputs [Pending decision]
 
-| Input | Current state | Needed to close |
+| Input | Current state | Specification basis |
 |---|---|---|
 | Controlled modem hardware guide and package drawing | Open | Iridium or authorized module-vendor document and revision |
 | Modem rails, tolerances, ramp, peak/average current, and sequencing | Open | Controlled requirements and operating profiles |
@@ -65,10 +65,10 @@ These are placement and routing principles:
 
 ## Candidate external reference
 
-The [community Iridium 9704 KiCad library](https://github.com/ndoo/iridium-9704-kicad-lib) states that its generated symbol/footprint represents an 88-pad LGA measuring 31.5 mm × 42.0 mm. This was used for investigation.
+The [community Iridium 9704 KiCad library](https://github.com/ndoo/iridium-9704-kicad-lib) describes an 88-pad LGA measuring 31.5 mm × 42.0 mm. This is a candidate reference, not a verified BEAR footprint.
 
-We still need to verify pad geometry, numbering, courtyard, keep-outs, and 3D model with the controlled package drawing before use. No third-party library files have been copied into this repository.
+Pad geometry, numbering, courtyard, keep-outs, and the 3D model have not yet been verified against the controlled package drawing. No third-party library files have been copied into this repository.
 
-## Entry criteria for CAD conversion
+## Design package availability
 
-Start component-level schematic capture only after the controlled modem package/electrical/RF references and the module interface decisions are available. Start PCB placement after the board outline, connector locations, stack-up, RF constraints, and power-stage requirements are approved. Run schematic review, ERC/DRC, power and thermal analysis, RF review, and prototype verification before any fabrication release.
+Component-level schematics, routed PCB files, and fabrication outputs are not yet available. Their release depends on finalized electrical, mechanical, and RF specifications and hardware verification. See the [hardware index](../README.md) for deliverable status.

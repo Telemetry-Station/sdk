@@ -37,7 +37,7 @@ void onReceiveStatus(int topic, int messageId, int maxLength,
 
 void printHelp() {
   Serial.println();
-  Serial.println("BEAR Module 9704 kit | Telemetry Station");
+  Serial.println("Telemetry Station messaging example | Iridium 9704 LaunchPad");
   Serial.println("  s        send ONE demo message (or press the USER button)");
   Serial.println("  i        how to find your modem IMEI and activate");
   Serial.println("  i <IMEI> show your activation steps for that IMEI");

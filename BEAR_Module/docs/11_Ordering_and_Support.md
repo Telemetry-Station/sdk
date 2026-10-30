@@ -61,4 +61,4 @@ The public launch package is planned to include:
 - Repository changelog (already available at [`../../CHANGELOG.md`](../../CHANGELOG.md)).
 - Firm evaluation-kit availability dates, published once build, validation and supply are confirmed.
 
-Publication timing and the exact scope of each item **[Pending decision]** are tracked in the [roadmap](../ROADMAP.md).
+Availability and scope updates for these resources are listed in the [roadmap](../ROADMAP.md) and [R&D and release checklist](../RD_CHECKLIST.md). Target sales availability is April 1, 2027, subject to validation, approvals, and production readiness; this is not a confirmed release date.
