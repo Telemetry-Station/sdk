@@ -154,3 +154,13 @@ The code follows the usual embedded rules (no heap, no recursion, bounded loops,
 - Receiving is available. Its field validation follows sending on the roadmap.
 - UART settings are fixed by the module (230400, 8N1).
 - Nothing is persisted. After power loss, you start again and your application decides what to resend.
+
+### 2026-11-03 engineering revision
+
+The [engineering baseline](ENGINEERING.md) supersedes earlier examples where they
+show a placeholder payload, imply that every FAULT is powered down, assume
+unbounded clock/console waits, or imply a target build was not performed.
+`TS_FAULT_HOLD` needs continued polling and reviewed hardware recovery; restart
+also checks BOOTED. `ts_f169_init()` returns success/failure. Console is disabled
+by default and best-effort when enabled. Follow the new order/build and hardware
+validation procedures before adapting this bench example to a product.
