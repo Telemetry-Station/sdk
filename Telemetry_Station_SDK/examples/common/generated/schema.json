@@ -1,0 +1,35 @@
+{
+  "network": "certus",
+  "fields": [
+    {
+      "id": "sequence",
+      "name": "sequence",
+      "label": "Sequence",
+      "dataType": "unsigned",
+      "exampleValue": "4660",
+      "size": 16,
+      "sizeUnit": "bits",
+      "decimalPlaces": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "maximumBytes": 0
+    },
+    {
+      "id": "temperature_tenths_c",
+      "name": "temperature_tenths_c",
+      "label": "Temperature (0.1 C)",
+      "dataType": "signed",
+      "exampleValue": "-123",
+      "size": 16,
+      "sizeUnit": "bits",
+      "decimalPlaces": 0,
+      "minimum": -32768,
+      "maximum": 32767,
+      "maximumBytes": 0
+    }
+  ],
+  "schemaId": "ts-payload-v1-5a82b543",
+  "maximumBytes": 4,
+  "exampleHex": "1234ff85",
+  "exampleBits": 32
+}
