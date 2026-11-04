@@ -38,3 +38,13 @@ Hardware details are in the [BEAR Module documentation](../../BEAR_Module/README
 7. Before deployment, add a hardware watchdog kicked once per main-loop pass, and decide what your product does after `TS_FAULT`. See [Design notes](DESIGN.md#watchdog).
 
 Run the host tests (`ctest`) with your compiler's warnings enabled to confirm the portable code builds cleanly. They do not test your port.
+
+### 2026-11-03 engineering revision
+
+The [engineering baseline](ENGINEERING.md) supersedes earlier examples where they
+show a placeholder payload, imply that every FAULT is powered down, assume
+unbounded clock/console waits, or imply a target build was not performed.
+`TS_FAULT_HOLD` needs continued polling and reviewed hardware recovery; restart
+also checks BOOTED. `ts_f169_init()` returns success/failure. Console is disabled
+by default and best-effort when enabled. Follow the new order/build and hardware
+validation procedures before adapting this bench example to a product.
