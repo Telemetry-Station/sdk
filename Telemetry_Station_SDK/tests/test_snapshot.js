@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const {capture}=require('./hardware/ccs_snapshot');
+const reads=[];const session={target:{isHalted:()=>true},memory:{readOne:(a,w)=>{reads.push([Number(a),w]);return 0;}}};
+const id={board_serial:'test',board_revision:'test',phase:'off',image_sha256:'a'.repeat(64),pinmap_sha256:'b'.repeat(64)};
+const result=capture(session,id);assert.equal(Object.keys(result.registers).length,24);
+assert.deepEqual(reads.slice(0,4),[[0x20,8],[0x21,8],[0x22,8],[0x26,8]]);
+assert.deepEqual(reads.slice(8,12),[[0x18,8],[0x19,8],[0x1a,8],[0x1b,8]]);
+assert.throws(()=>capture(session,{}));session.target.isHalted=()=>false;assert.throws(()=>capture(session,id));
+session.target.isHalted=()=>true;session.memory.readOne=()=>256;assert.throws(()=>capture(session,id));
+console.log('PASS snapshot mock; hardware NOT RUN');
