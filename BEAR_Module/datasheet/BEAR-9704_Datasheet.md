@@ -1,3 +1,5 @@
+<p align="right"><img src="../assets/TelemetryStation.svg" width="112" alt="Telemetry Station" /></p>
+
 # BEAR Module 9704 Datasheet
 
 Document ID: BEAR-DS-9704 | Revision: P1 | Status: Preliminary

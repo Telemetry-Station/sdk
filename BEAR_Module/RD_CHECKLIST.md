@@ -1,8 +1,10 @@
+<p align="left"><img src="assets/TelemetryStation.svg" width="112" alt="Telemetry Station" /></p>
+
 # BEAR Module 9704 R&D and Release Checklist
 
-Document ID: BEAR-RD-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-RD-9704 | Revision: P2 | Status: Preliminary
 
-Updated: 2026-10-29 | Current stage: **G1 - Design**
+Updated: 2026-11-03 | Current stage: **G1 - Design**
 
 ## Availability
 
@@ -93,4 +95,16 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 
 | Date | Revision | Summary |
 |---|---|---|
+| 2026-11-03 | P2 | Progress update: design in progress, SDK bench checkout available; no production gate advanced. |
 | 2026-10-29 | P1 | Initial product-readiness checklist. Current status: design in progress. Tentative sales target: April 1, 2027. |
+
+## Progress update — 2026-11-03
+
+G1 (design) remains **in progress**. Schematic capture and PCB layout have started
+and are in review; no fabrication-ready design exists yet, and no later gate has
+been advanced.
+
+The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line
+and branch test coverage and a flash-and-go MSP430F169 checkout that reports each
+step on the serial console. Validation on BEAR hardware is **NOT YET RUN**.
+The April 1, 2027 availability target remains tentative.
