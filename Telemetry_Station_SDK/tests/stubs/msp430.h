@@ -24,7 +24,10 @@
 
 TS_STUB_REG8(P1IN);  TS_STUB_REG8(P1OUT); TS_STUB_REG8(P1DIR);
 TS_STUB_REG8(P3SEL); TS_STUB_REG8(P3DIR);
-TS_STUB_REG8(IE2);   TS_STUB_REG8(IFG1);
+TS_STUB_REG8(IE1);   TS_STUB_REG8(IE2);
+/* IFG1 is an accessor so a host model can hold OSCFault (a dead XT2). */
+volatile unsigned char *ts_stub_ifg1(void);
+#define IFG1 (*ts_stub_ifg1())
 TS_STUB_REG8(ME1);   TS_STUB_REG8(ME2);
 TS_STUB_REG8(BCSCTL1); TS_STUB_REG8(BCSCTL2);
 TS_STUB_REG8(U0CTL); TS_STUB_REG8(U0TCTL); TS_STUB_REG8(U0BR0);
@@ -47,6 +50,8 @@ TS_STUB_REG16(TACCTL0); TS_STUB_REG16(TACCR0);
 #define SSEL1 0x20u
 #define OFIFG 0x02u
 #define UTXIFG0 0x80u
+#define UTXIE0 0x80u
+#define TXEPT 0x01u
 #define UTXE0 0x80u
 #define URXE1 0x10u
 #define UTXE1 0x20u
@@ -69,6 +74,7 @@ TS_STUB_REG16(TACCTL0); TS_STUB_REG16(TACCR0);
 #define TIMERA0_VECTOR 12
 #define USART1RX_VECTOR 6
 #define USART1TX_VECTOR 4
+#define USART0TX_VECTOR 8
 
 unsigned int __get_SR_register(void);
 void __enable_interrupt(void);

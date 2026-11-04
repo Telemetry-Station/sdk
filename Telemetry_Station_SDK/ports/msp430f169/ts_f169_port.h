@@ -49,7 +49,7 @@
 
 /* Configures clocks, the 1 ms timer and the power pins. Call once at start,
  * then enable interrupts. */
-void ts_f169_init(void);
+bool ts_f169_init(void); /* false: XT2 failed; leave interface inactive. */
 
 ts_platform_t ts_f169_platform(void);
 
