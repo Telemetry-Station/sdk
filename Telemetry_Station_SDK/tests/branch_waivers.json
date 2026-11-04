@@ -1,0 +1,18 @@
+{
+  "src/ts_bear9704.c": {
+    "261": "on_frame runs only from read_serial after boot, and read_serial stops on POWERING_DOWN/FAULT_HOLD, so the state is never OFF or BOOTING here and 'state >= TS_API_QUERY' cannot be false."
+  },
+  "src/ts_mo.c": {
+    "76": "ts_config.h rejects any TS_LINE_CAP smaller than 4*((TS_MAX_PAYLOAD+4)/3)+160, which bounds the longest segment command (about 141 fixed chars plus base64 of payload+CRC), so ts_cmd_end cannot overflow.",
+    "103": "mo_pending is set only together with TS_MO_START and cleared by every path that leaves TS_MO_START/TS_MO_ACTIVE, so with mo_pending true the state is always one of those two."
+  },
+  "src/ts_setup.c": {
+    "46": "ts_json_version/first_version cap each part at 255, so the PUT apiVersion command is under 100 chars and cannot overflow the minimum 256-byte TS_LINE_CAP."
+  },
+  "examples/common/bear_checkout.c": {
+    "309": "ts_bear_send only returns ARGUMENT/CAPACITY (topic and payload validated in enter_send) or IO (TX still busy, impossible in READY with no query in flight); NOT_READY is the only reachable failure."
+  },
+  "examples/msp430f169/main.c": {
+    "67": "The generated codec encodes any uint16 sequence and int16 temperature in 4 bytes; the order validator requires payload_max >= 4, so encoding into TS_MAX_PAYLOAD cannot fail."
+  }
+}
