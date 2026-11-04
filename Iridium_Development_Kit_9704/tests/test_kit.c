@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: MIT */
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -81,10 +82,38 @@ static void test_payload(void)
 static void test_activation(void)
 {
     char text[300];
+    char expected[300];
+    const unsigned payloads[] = {0, 21, UINT_MAX};
+    size_t i, cap, length;
     assert(ts_imei_is_valid("300000000000001"));
     assert(!ts_imei_is_valid("12345"));
     assert(ts_activation_text("300000000000001", 21, text, sizeof text) > 0);
     assert(strstr(text, "payloadBytes=21") && strstr(text, TS_ACTIVATE_URL));
+    for (i = 0; i < sizeof payloads / sizeof payloads[0]; ++i) {
+        if (payloads[i]) {
+            snprintf(expected, sizeof expected,
+                     "Modem IMEI: 300000000000001\r\n"
+                     "1. Size your plan: %s?payloadBytes=%u\r\n"
+                     "2. Activate: %s\r\n",
+                     TS_CALCULATOR_URL, payloads[i], TS_ACTIVATE_URL);
+        } else {
+            snprintf(expected, sizeof expected,
+                     "Modem IMEI: 300000000000001\r\n"
+                     "1. Get payload code and bytes per message: %s\r\n"
+                     "2. Size your plan: %s\r\n"
+                     "3. Activate: %s\r\n",
+                     TS_OPTIMIZER_URL, TS_CALCULATOR_URL, TS_ACTIVATE_URL);
+        }
+        length = strlen(expected);
+        assert(ts_activation_text("300000000000001", payloads[i], text, sizeof text) == length);
+        assert(!strcmp(text, expected));
+        for (cap = 1; cap <= length; ++cap) {
+            assert(ts_activation_text("300000000000001", payloads[i], text, cap) == 0);
+            assert(text[0] == '\0');
+        }
+        assert(ts_activation_text("300000000000001", payloads[i], text, length + 1u) == length);
+        assert(!strcmp(text, expected));
+    }
 }
 
 int main(void)

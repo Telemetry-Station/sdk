@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: MIT */
 #include "ts_activation.h"
 
-#include <stdio.h>
 
 bool ts_imei_is_valid(const char *imei)
 {
@@ -13,29 +12,35 @@ bool ts_imei_is_valid(const char *imei)
     return imei[15] == '\0';
 }
 
+/* Bounded append avoids pulling printf into a 2 KiB RAM target. */
+static bool append(char *out, size_t capacity, size_t *used, const char *s)
+{
+    while (*s) {
+        if (*used + 1u >= capacity) return false;
+        out[(*used)++] = *s++;
+    }
+    out[*used] = '\0';
+    return true;
+}
 size_t ts_activation_text(const char *imei, unsigned payload_bytes,
                           char *out, size_t capacity)
 {
-    int n;
+    size_t n=0;
+    char digits[3u * sizeof(unsigned) + 1u];
+    size_t d=sizeof(digits)-1u;
     if (!out || !capacity || !ts_imei_is_valid(imei)) return 0;
-
+    out[0]='\0'; digits[d]='\0';
+#define ADD(text) do { if (!append(out,capacity,&n,(text))) { out[0]='\0'; return 0; } } while (0)
+    ADD("Modem IMEI: "); ADD(imei); ADD("\r\n");
     if (payload_bytes) {
-        n = snprintf(out, capacity,
-                     "Modem IMEI: %s\r\n"
-                     "1. Size your plan: %s?payloadBytes=%u\r\n"
-                     "2. Activate: %s\r\n",
-                     imei, TS_CALCULATOR_URL, payload_bytes, TS_ACTIVATE_URL);
+        do { digits[--d]=(char)('0'+payload_bytes%10u); payload_bytes/=10u; } while(payload_bytes);
+        ADD("1. Size your plan: "); ADD(TS_CALCULATOR_URL); ADD("?payloadBytes="); ADD(digits+d);
+        ADD("\r\n2. Activate: "); ADD(TS_ACTIVATE_URL); ADD("\r\n");
     } else {
-        n = snprintf(out, capacity,
-                     "Modem IMEI: %s\r\n"
-                     "1. Get payload code and bytes per message: %s\r\n"
-                     "2. Size your plan: %s\r\n"
-                     "3. Activate: %s\r\n",
-                     imei, TS_OPTIMIZER_URL, TS_CALCULATOR_URL, TS_ACTIVATE_URL);
+        ADD("1. Get payload code and bytes per message: "); ADD(TS_OPTIMIZER_URL);
+        ADD("\r\n2. Size your plan: "); ADD(TS_CALCULATOR_URL);
+        ADD("\r\n3. Activate: "); ADD(TS_ACTIVATE_URL); ADD("\r\n");
     }
-    if (n < 0 || (size_t)n >= capacity) {
-        out[0] = '\0';
-        return 0;
-    }
-    return (size_t)n;
+#undef ADD
+    return n;
 }
