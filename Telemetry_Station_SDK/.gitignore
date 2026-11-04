@@ -12,6 +12,7 @@
 **/*.o
 **/*.d
 **/*.dSYM/
+__pycache__/
 .DS_Store
 Thumbs.db
 .vscode/
