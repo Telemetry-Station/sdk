@@ -69,7 +69,13 @@ static void on_segment_request(ts_bear9704_t *ctx, const ts_jspr_frame_t *f)
     ts_cmd_str(&cmd, ",\"data\":\"");
     ts_cmd_base64(&cmd, ctx->mo + start, (size_t)size);
     ts_cmd_str(&cmd, "\"}\r");
-    if (!ts_cmd_end(ctx, &cmd)) ts_mo_abort(ctx, TS_ERR_CAPACITY);
+    {
+        /* The transfer deadline set on acceptance covers network delivery,
+         * which takes far longer than one command; keep it. */
+        uint32_t deadline = ctx->deadline;
+        if (!ts_cmd_end(ctx, &cmd)) ts_mo_abort(ctx, TS_ERR_CAPACITY);
+        else ctx->deadline = deadline;
+    }
 }
 
 static void on_final_status(ts_bear9704_t *ctx, const ts_jspr_frame_t *f)

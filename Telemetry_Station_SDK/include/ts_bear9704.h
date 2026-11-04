@@ -50,7 +50,8 @@ typedef enum {
     TS_MO_ACTIVE,
     TS_SHUTDOWN_WAIT,
     TS_POWERING_DOWN, /* Waiting for the module's booted signal to fall. */
-    TS_FAULT
+    TS_FAULT,
+    TS_FAULT_HOLD /* UART isolated; ENABLE held until BOOTED rises. */
 } ts_state_t;
 
 /* Events reported to the callback given to ts_bear_init(). */
@@ -143,8 +144,9 @@ void ts_bear_poll(ts_bear9704_t *ctx);
 
 bool ts_bear_is_ready(const ts_bear9704_t *ctx);
 
-/* The current state. TS_OFF and TS_FAULT mean the module is powered down and
- * it is safe to call ts_bear_start() again. */
+/* Restart from OFF/FAULT also requires BOOTED low. FAULT_HOLD forbids
+ * restart: keep polling for a late BOOTED rise, or use a separately reviewed
+ * hardware recovery procedure. No state alone proves the supply is off. */
 ts_state_t ts_bear_state(const ts_bear9704_t *ctx);
 
 /* Queues one message. The topic must be TS_MIN_TOPIC_ID or higher. The result of the

@@ -61,7 +61,16 @@ void ts_fail(ts_bear9704_t *ctx, ts_result_t reason)
     ctx->mo_pending = false;
     ctx->mt_pending = false;
     ctx->query = TS_QUERY_NONE;
-    power_off(ctx, TS_FAULT);
+    /* Never negate ENABLE while BOOTED is low: a late boot must first
+     * complete. A stuck-low signal requires a controlled hardware recovery. */
+    if (!ctx->port.boot_ready(ctx->port.user)) {
+        ctx->port.uart_enable(ctx->port.user, false);
+        ctx->tx_len = ctx->tx_pos = ctx->rx_len = 0;
+        ctx->rx_discard = false;
+        ctx->state = TS_FAULT_HOLD;
+    } else {
+        power_off(ctx, TS_FAULT);
+    }
     if (was_sending) ts_emit(ctx, TS_EVENT_MO_FAILED, reason);
     ts_emit(ctx, TS_EVENT_ERROR, reason);
 }
@@ -97,6 +106,7 @@ ts_result_t ts_bear_start(ts_bear9704_t *ctx)
 {
     if (!ctx) return TS_ERR_ARGUMENT;
     if (ctx->state != TS_OFF && ctx->state != TS_FAULT) return TS_ERR_BUSY;
+    if (ctx->port.boot_ready(ctx->port.user)) return TS_ERR_BUSY;
     ctx->mo_pending = ctx->mt_pending = ctx->mt_available = false;
     ctx->rx_len = ctx->tx_len = ctx->tx_pos = 0;
     ctx->rx_discard = false;
@@ -289,7 +299,8 @@ static bool read_serial(ts_bear9704_t *ctx)
         }
         if (byte == '\r') {
             on_line(ctx);
-            if (ctx->state == TS_POWERING_DOWN) return false;
+            if (ctx->state == TS_POWERING_DOWN || ctx->state == TS_FAULT_HOLD)
+                return false;
         } else if (ctx->rx_len + 1u < sizeof(ctx->rx)) {
             ctx->rx[ctx->rx_len++] = (char)byte;
         } else {
@@ -359,11 +370,19 @@ static void check_timeouts(ts_bear9704_t *ctx)
 void ts_bear_poll(ts_bear9704_t *ctx)
 {
     if (!ctx || ctx->state == TS_OFF || ctx->state == TS_FAULT) return;
+    if (ctx->state == TS_FAULT_HOLD) {
+        if (ctx->port.boot_ready(ctx->port.user)) power_off(ctx, TS_FAULT);
+        return;
+    }
     if (ctx->state == TS_POWERING_DOWN) {
         wait_for_power_down(ctx);
         return;
     }
     if (ctx->state == TS_BOOTING && !wait_for_boot(ctx)) return;
+    if (!ctx->port.boot_ready(ctx->port.user)) {
+        ts_fail(ctx, TS_ERR_IO);
+        return;
+    }
     if (!write_serial(ctx) || !read_serial(ctx)) return;
     check_timeouts(ctx);
 }

@@ -122,6 +122,11 @@ static void test_startup_and_imei(void)
     sim_modem_t m;
     start_ready(&b, &m);
     assert(ts_bear_is_ready(&b));
+#if !TS_QUERY_IMEI_ON_READY
+    assert(!sim_saw(&m, TS_EVENT_IMEI) && ts_bear_imei(&b) == NULL);
+    assert(ts_bear_request_imei(&b) == TS_OK);
+    sim_run(&b, &m, 50);
+#endif
     assert(sim_saw(&m, TS_EVENT_READY) && sim_saw(&m, TS_EVENT_IMEI));
     assert(ts_bear_imei(&b) && !strcmp(ts_bear_imei(&b), IMEI));
 
@@ -141,6 +146,9 @@ static void test_boot_timeout_and_recovery(void)
     assert(ts_bear_start(&b) == TS_OK);
     sim_run(&b, &m, (int)TS_BOOT_TIMEOUT_MS + 100);
     assert(!ts_bear_is_ready(&b) && sim_saw(&m, TS_EVENT_ERROR));
+    assert(ts_bear_state(&b) == TS_FAULT_HOLD);
+    assert(ts_bear_start(&b) == TS_ERR_BUSY);
+    m.booted = true; /* Late boot permits an orderly ENABLE deassertion. */
     sim_run(&b, &m, 5); /* Let the power-down handshake finish. */
     assert(ts_bear_start(&b) == TS_OK); /* Starting again recovers. */
     m.booted = true;
