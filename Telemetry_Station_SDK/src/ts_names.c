@@ -19,6 +19,7 @@ const char *ts_state_name(ts_state_t state)
     case TS_MO_ACTIVE:      return "TS_MO_ACTIVE";
     case TS_SHUTDOWN_WAIT:  return "TS_SHUTDOWN_WAIT";
     case TS_POWERING_DOWN:  return "TS_POWERING_DOWN";
+    case TS_FAULT_HOLD:     return "TS_FAULT_HOLD";
     case TS_FAULT:          return "TS_FAULT";
     }
     return "TS_STATE_UNKNOWN";
