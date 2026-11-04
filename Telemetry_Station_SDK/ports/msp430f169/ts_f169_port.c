@@ -9,7 +9,7 @@
 
 #define RING_MASK (TS_F169_RING_SIZE - 1u)
 
-#if (TS_F169_RING_SIZE & RING_MASK) || TS_F169_RING_SIZE > 256u
+#if TS_F169_RING_SIZE < 2u || (TS_F169_RING_SIZE & RING_MASK) || TS_F169_RING_SIZE > 256u
 #error TS_F169_RING_SIZE must be a power of two no larger than 256
 #endif
 
@@ -22,9 +22,10 @@ static volatile uint8_t rx_overflow;
 static volatile uint8_t tx_ring[TS_F169_RING_SIZE];
 static volatile uint8_t tx_head, tx_tail;
 
-void ts_f169_init(void)
+bool ts_f169_init(void)
 {
     volatile unsigned int i;
+    unsigned int attempts = 4096u;
 
 #if TS_F169_WATCHDOG
     WDTCTL = WDT_ARST_1000; /* Reset if not kicked for ~1 s (ACLK). */
@@ -32,12 +33,22 @@ void ts_f169_init(void)
     WDTCTL = WDTPW | WDTHOLD;
 #endif
 
+    /* Establish the inactive interface before waiting for any crystal. */
+    TS_F169_ENABLE_OUT &= (unsigned char)~TS_F169_ENABLE_BIT;
+    TS_F169_ENABLE_DIR |= TS_F169_ENABLE_BIT;
+    TS_F169_BOOTED_DIR &= (unsigned char)~TS_F169_BOOTED_BIT;
+    P3SEL &= (unsigned char)~(BIT6 | BIT7);
+    P3DIR &= (unsigned char)~(BIT6 | BIT7);
+    IE2 &= (unsigned char)~(URXIE1 | UTXIE1);
+    U1CTL |= SWRST;
+
     /* MCLK and SMCLK from the 8 MHz XT2 crystal. */
     BCSCTL1 &= (uint8_t)~XT2OFF;
     do {
         IFG1 &= (uint8_t)~OFIFG;
         for (i = 0xFF; i; --i) { }
-    } while (IFG1 & OFIFG);
+    } while ((IFG1 & OFIFG) && --attempts);
+    if (IFG1 & OFIFG) return false; /* No UART/timer on an unverified clock. */
     BCSCTL2 = SELM_2 | SELS;
 
     /* Timer_A: 8 MHz / 8 = 1 MHz, so 1000 counts = 1 ms. */
@@ -49,6 +60,7 @@ void ts_f169_init(void)
     TS_F169_ENABLE_OUT &= (unsigned char)~TS_F169_ENABLE_BIT;
     TS_F169_ENABLE_DIR |= TS_F169_ENABLE_BIT;
     TS_F169_BOOTED_DIR &= (unsigned char)~TS_F169_BOOTED_BIT;
+    return true;
 }
 
 void ts_f169_watchdog_kick(void)
