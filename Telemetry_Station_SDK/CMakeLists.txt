@@ -138,6 +138,56 @@ if(NOT CMAKE_CROSSCOMPILING)
     add_test(NAME gnss COMMAND test_gnss)
 endif()
 
+# Bench checkout: drives one modem cycle and prints a PASS/CHECK report.
+add_library(ts_bear_checkout STATIC examples/common/bear_checkout.c)
+target_include_directories(ts_bear_checkout PUBLIC examples/common include)
+target_link_libraries(ts_bear_checkout PUBLIC telemetry_station_sdk)
+if(NOT MSVC)
+    target_compile_options(ts_bear_checkout PRIVATE
+        -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wstrict-prototypes
+        -Wmissing-prototypes -Wcast-qual -Wundef)
+    if(TS_WERROR)
+        target_compile_options(ts_bear_checkout PRIVATE -Werror)
+    endif()
+endif()
+if(NOT CMAKE_CROSSCOMPILING)
+    add_executable(test_checkout tests/test_checkout.c)
+    target_link_libraries(test_checkout ts_bear_checkout ts_sim_modem)
+    target_include_directories(test_checkout PRIVATE src)
+    add_test(NAME checkout COMMAND test_checkout)
+
+    # Runs the MSP430F169 port, console and example firmware on the host
+    # against the register stub and a board model, calling the interrupt
+    # handlers directly. Once without a topic (activation) and once with one.
+    # <topic>_<console>: first flash with/without a topic, and a headless build.
+    foreach(variant 0_1 1234_1 1234_0)
+        string(REPLACE "_" ";" parts ${variant})
+        list(GET parts 0 topic)
+        list(GET parts 1 console)
+        set(name test_f169_firmware_${topic})
+        if(NOT console)
+            set(name test_f169_firmware_headless)
+        endif()
+        add_executable(${name} tests/test_f169_port.c
+            ports/msp430f169/ts_f169_port.c ports/msp430f169/ts_f169_console.c)
+        target_include_directories(${name} PRIVATE tests/stubs ports/msp430f169)
+        target_compile_definitions(${name} PRIVATE
+            TS_ENABLE_CONSOLE=${console} TS_TOPIC_ID=${topic}u)
+        target_link_libraries(${name} ts_bear_checkout ts_example_payload ts_sim_modem)
+        string(REPLACE "test_" "" test_name ${name})
+        add_test(NAME ${test_name} COMMAND ${name})
+        list(APPEND TS_F169_TESTS ${name})
+    endforeach()
+endif()
+
+if(NOT CMAKE_CROSSCOMPILING)
+    add_executable(test_lifecycle tests/test_lifecycle.c)
+    target_link_libraries(test_lifecycle ts_example_payload ts_sim_modem)
+    foreach(case delayed_boot incomplete_reply interrupted_command unknown_delivery shutdown_order power_cycles payload_topic decoder_vector invalid_supply unexpected_reset restart_booted_high boot_timeout_sequence)
+        add_test(NAME lifecycle_${case} COMMAND test_lifecycle ${case})
+    endforeach()
+endif()
+
 # Assertions are the test oracle even when callers choose a Release build.
 foreach(test_target test_sdk test_faults test_branches test_payload test_gnss test_lifecycle test_checkout ${TS_F169_TESTS})
     if(TARGET ${test_target})
