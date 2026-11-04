@@ -78,7 +78,8 @@ static const char *member(const char *json, const char *key)
         p = ws(end);
         if (*p != ':') return NULL;
         value = ws(p + 1);
-        if (start <= end - 1 && (size_t)((end - 1) - start) == target_len &&
+        /* skip_string returns one past the closing quote, so end - 1 >= start. */
+        if ((size_t)((end - 1) - start) == target_len &&
             memcmp(start, key, target_len) == 0) return value;
         p = skip_value(value);
         if (!p) return NULL;

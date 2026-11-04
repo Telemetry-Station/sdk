@@ -6,7 +6,9 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
+option(TS_ENABLE_GNSS "Build optional bounded UBX NAV-PVT receiver" OFF)
 option(TS_ENABLE_MT "Support receiving messages" ON)
+option(TS_QUERY_IMEI_ON_READY "Request the IMEI as soon as the modem is ready" ON)
 set(TS_MAX_PAYLOAD 64 CACHE STRING "Largest payload in bytes")
 set(TS_LINE_CAP 256 CACHE STRING "Modem line buffer size")
 option(TS_WERROR "Treat compiler warnings as errors" OFF)
@@ -26,7 +28,7 @@ endif()
 add_library(telemetry_station_sdk STATIC
     src/ts_bear9704.c src/ts_cmd.c src/ts_setup.c src/ts_mo.c src/ts_mt.c
     src/ts_jspr.c src/ts_crc.c src/ts_base64.c src/ts_activation.c
-    src/ts_names.c)
+    src/ts_names.c src/ts_gnss.c)
 target_include_directories(telemetry_station_sdk PUBLIC include PRIVATE src)
 
 if(TS_ENABLE_MT)
@@ -35,7 +37,9 @@ else()
     set(TS_MT_VALUE 0)
 endif()
 target_compile_definitions(telemetry_station_sdk PUBLIC
+    TS_ENABLE_GNSS=$<BOOL:${TS_ENABLE_GNSS}>
     TS_ENABLE_MT=${TS_MT_VALUE}
+    TS_QUERY_IMEI_ON_READY=$<BOOL:${TS_QUERY_IMEI_ON_READY}>
     TS_MAX_PAYLOAD=${TS_MAX_PAYLOAD}
     TS_LINE_CAP=${TS_LINE_CAP})
 
@@ -88,6 +92,20 @@ if(NOT CMAKE_CROSSCOMPILING)
     target_include_directories(test_faults PRIVATE src)
     add_test(NAME faults COMMAND test_faults)
 
+    # Drives every branch of src/ (see tests/branch_waivers.json for the rest).
+    add_executable(test_branches tests/test_branches.c)
+    target_link_libraries(test_branches ts_sim_modem telemetry_station_sdk)
+    target_include_directories(test_branches PRIVATE src)
+    if(NOT MSVC)
+        target_compile_options(test_branches PRIVATE
+            -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wstrict-prototypes
+            -Wmissing-prototypes -Wcast-qual -Wundef)
+        if(TS_WERROR)
+            target_compile_options(test_branches PRIVATE -Werror)
+        endif()
+    endif()
+    add_test(NAME branches COMMAND test_branches)
+
     # No-surprises check: the driver core must not use stdio formatting or
     # dynamic memory. (ts_activation.c formats text for a console and is exempt.)
     if(UNIX)
@@ -107,3 +125,20 @@ if(NOT CMAKE_CROSSCOMPILING)
         target_link_libraries(ts_posix_modem telemetry_station_sdk)
     endif()
 endif()
+
+if(NOT CMAKE_CROSSCOMPILING)
+    add_executable(test_gnss tests/test_gnss.c)
+    target_link_libraries(test_gnss telemetry_station_sdk)
+    add_test(NAME gnss COMMAND test_gnss)
+endif()
+
+# Assertions are the test oracle even when callers choose a Release build.
+foreach(test_target test_sdk test_faults test_branches test_payload test_gnss test_lifecycle test_checkout ${TS_F169_TESTS})
+    if(TARGET ${test_target})
+        if(MSVC)
+            target_compile_options(${test_target} PRIVATE /UNDEBUG)
+        else()
+            target_compile_options(${test_target} PRIVATE -UNDEBUG)
+        endif()
+    endif()
+endforeach()

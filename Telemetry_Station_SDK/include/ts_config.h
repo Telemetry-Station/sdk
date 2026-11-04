@@ -2,6 +2,16 @@
 #ifndef TS_CONFIG_H
 #define TS_CONFIG_H
 
+#ifdef TS_ORDER_HEADER
+#include TS_ORDER_HEADER
+#endif
+#ifndef TS_ENABLE_CONSOLE
+#define TS_ENABLE_CONSOLE 0
+#endif
+#ifndef TS_ENABLE_GNSS
+#define TS_ENABLE_GNSS 0
+#endif
+
 /*
  * Compile-time configuration. Override any value with -DNAME=value or by
  * defining it before including this header.
@@ -58,6 +68,11 @@
 #define TS_POLL_BYTE_BUDGET 64u
 #endif
 
+#if (TS_ENABLE_MT != 0 && TS_ENABLE_MT != 1) || \
+    (TS_ENABLE_CONSOLE != 0 && TS_ENABLE_CONSOLE != 1) || \
+    (TS_ENABLE_GNSS != 0 && TS_ENABLE_GNSS != 1)
+#error Feature flags must be 0 or 1
+#endif
 #if TS_MAX_PAYLOAD < 1 || TS_MAX_PAYLOAD > 1024
 #error TS_MAX_PAYLOAD must be between 1 and 1024
 #endif
