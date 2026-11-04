@@ -935,6 +935,34 @@ static ts_gnss_status_t acquire(ts_gnss_t *g)
     return g->status;
 }
 
+static void test_gnss_header_resynchronization(void)
+{
+    ts_gnss_t g;
+    unsigned i, overlap, poll, calls;
+
+    for (i = 0; i < 6; ++i) {
+        for (overlap = 0; overlap < 2; ++overlap) {
+            if (i == 0 && overlap) continue; /* 0xb5 is a valid first byte. */
+            nav_pvt(3, 1, 1, 2);
+            gnss_bytes[i] = overlap ? 0xb5 : 0xff;
+            gnss_len = i + 1;
+            calls = gnss_power_calls;
+            assert(acquire(&g) == TS_GNSS_ACQUIRING);
+            assert(gnss_pos == gnss_len && g.used == overlap);
+            assert(gnss_power_calls == calls + 1);
+            if (overlap) assert(g.frame[0] == 0xb5);
+
+            /* Recover without restarting acquisition, retaining an overlapping sync byte. */
+            nav_pvt(3, 1, 1, 2);
+            gnss_pos = overlap;
+            for (poll = 0; poll < 4; ++poll) ts_gnss_poll(&g, 2);
+            assert(g.status == TS_GNSS_FIX);
+            assert(g.fix.longitude_e7 == 1 && g.fix.latitude_e7 == 2);
+            assert(gnss_power_calls == calls + 2);
+        }
+    }
+}
+
 static void test_gnss_frame_permutations(void)
 {
     ts_gnss_t g;
@@ -1010,6 +1038,7 @@ int main(void)
 #endif
     test_gnss_arguments();
 #if TS_ENABLE_GNSS
+    test_gnss_header_resynchronization();
     test_gnss_frame_permutations();
 #endif
     puts("test_branches: all passed");
