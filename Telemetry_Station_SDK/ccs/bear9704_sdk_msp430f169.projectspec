@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<projectSpec>
+  <project name="bear9704_sdk_msp430f169" device="MSP430F169" toolChain="TI" configurations="Debug" launchWizard="False" compilerBuildOptions="--c99 --opt_level=2 --symdebug:dwarf --define=TS_TOPIC_ID=0 --define=TS_MAX_PAYLOAD=64 --define=TS_LINE_CAP=256 --define=TS_ENABLE_MT=1 --define=TS_ENABLE_CONSOLE=1 --include_path=&quot;${PROJECT_ROOT}/include&quot; --include_path=&quot;${PROJECT_ROOT}/ports/msp430f169&quot; --include_path=&quot;${PROJECT_ROOT}/examples/common&quot;" linkerBuildOptions="--heap_size=0 --stack_size=512" description="MSP430F169 BEAR reference host; flash and open USART0 at 115200 for the PASS/FAIL checkout">
+    <file action="copy" path="../examples/common/app_payload.c" targetDirectory="examples/common" />
+    <file action="copy" path="../examples/common/app_payload.h" targetDirectory="examples/common" />
+    <file action="copy" path="../examples/common/bear_checkout.c" targetDirectory="examples/common" />
+    <file action="copy" path="../examples/common/bear_checkout.h" targetDirectory="examples/common" />
+    <file action="copy" path="../examples/common/generated/telemetry_payload.c" targetDirectory="examples/common/generated" />
+    <file action="copy" path="../examples/common/generated/telemetry_payload.h" targetDirectory="examples/common/generated" />
+    <file action="copy" path="../examples/msp430f169/main.c" targetDirectory="examples/msp430f169" />
+    <file action="copy" path="../include/ts_activation.h" targetDirectory="include" />
+    <file action="copy" path="../include/ts_bear9704.h" targetDirectory="include" />
+    <file action="copy" path="../include/ts_config.h" targetDirectory="include" />
+    <file action="copy" path="../include/ts_gnss.h" targetDirectory="include" />
+    <file action="copy" path="../include/ts_platform.h" targetDirectory="include" />
+    <file action="copy" path="../include/ts_version.h" targetDirectory="include" />
+    <file action="copy" path="../ports/msp430f169/ts_f169_console.c" targetDirectory="ports/msp430f169" />
+    <file action="copy" path="../ports/msp430f169/ts_f169_console.h" targetDirectory="ports/msp430f169" />
+    <file action="copy" path="../ports/msp430f169/ts_f169_port.c" targetDirectory="ports/msp430f169" />
+    <file action="copy" path="../ports/msp430f169/ts_f169_port.h" targetDirectory="ports/msp430f169" />
+    <file action="copy" path="../src/ts_activation.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_base64.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_bear9704.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_cmd.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_crc.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_gnss.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_internal.h" targetDirectory="src" />
+    <file action="copy" path="../src/ts_jspr.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_mo.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_mt.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_names.c" targetDirectory="src" />
+    <file action="copy" path="../src/ts_setup.c" targetDirectory="src" />
+  </project>
+</projectSpec>

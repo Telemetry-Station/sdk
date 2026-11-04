@@ -1,0 +1,12 @@
+{
+  "order_id": "bench",
+  "topic_id": 0,
+  "receive_mt": true,
+  "gnss": false,
+  "console": true,
+  "watchdog": false,
+  "payload_max": 64,
+  "line_capacity": 256,
+  "report_interval_ms": 600000,
+  "schema_id": "ts-payload-v1-5a82b543"
+}

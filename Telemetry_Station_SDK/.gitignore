@@ -27,3 +27,6 @@ Thumbs.db
 *.log
 /secrets/
 /private-board-config/
+
+# Locally generated test and build evidence (regenerate with tests/coverage.py and tests/run_matrix.py)
+/docs/evidence/
