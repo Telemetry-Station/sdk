@@ -96,6 +96,12 @@ Add `-DTS_QUERY_IMEI_ON_READY=OFF` to have the application request the IMEI inst
 
 `python3 tests/coverage.py` runs the suite with coverage and fails unless every line and branch of `src/`, the checkout and the F169 port and firmware is tested (unreachable branches are waived with a reason in `tests/branch_waivers.json`). `python3 tests/run_matrix.py` runs every feature combination under sanitizers. The build also compiles the MSP430F169 port and example against a host stand-in for `msp430.h` (`tests/stubs/`), so register and type errors show up without the TI toolchain. The stand-in is for syntax checking only and is not for real targets.
 
+Activation regressions compare the complete guide for unknown (zero), typical,
+and `UINT_MAX` payload sizes, including every undersized buffer and an exact fit
+with its terminator. GNSS regressions reject malformed bytes at each of the six
+UBX header positions and recover a valid fix, including when a rejected byte is
+the start of an overlapping sync sequence.
+
 ## Things to know before you deploy
 
 - A message reported as **queued** is not **delivered**. Wait for `TS_EVENT_MO_DELIVERED`.

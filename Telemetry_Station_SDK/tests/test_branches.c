@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 #undef NDEBUG /* Tests must check in every build type. */
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -82,8 +83,9 @@ static bool parse(const char *text, ts_jspr_frame_t *f)
 
 static void test_activation_text(void)
 {
-    char out[400];
-    size_t full, cap;
+    char out[400], expected[400];
+    const unsigned payloads[] = {0u, 120u, UINT_MAX};
+    size_t full, cap, i;
     const char *imei = SIM_IMEI;
 
     /* Null output, zero capacity, invalid IMEI. */
@@ -92,23 +94,35 @@ static void test_activation_text(void)
     assert(ts_activation_text("12345", 0, out, sizeof out) == 0);
     assert(ts_activation_text(NULL, 0, out, sizeof out) == 0);
 
-    /* Known payload size: every truncation point fails cleanly. */
-    full = ts_activation_text(imei, 120, out, sizeof out);
-    assert(full == strlen(out) && strstr(out, "?payloadBytes=120\r\n"));
-    for (cap = 1; cap <= full; ++cap) {
+    for (i = 0; i < sizeof payloads / sizeof payloads[0]; ++i) {
+        int n;
+        if (payloads[i]) {
+            n = snprintf(expected, sizeof expected,
+                         "Modem IMEI: %s\r\n"
+                         "1. Size your plan: " TS_CALCULATOR_URL "?payloadBytes=%u\r\n"
+                         "2. Activate: " TS_ACTIVATE_URL "\r\n", imei, payloads[i]);
+        } else {
+            n = snprintf(expected, sizeof expected,
+                         "Modem IMEI: %s\r\n"
+                         "1. Get payload code and bytes per message: " TS_OPTIMIZER_URL "\r\n"
+                         "2. Size your plan: " TS_CALCULATOR_URL "\r\n"
+                         "3. Activate: " TS_ACTIVATE_URL "\r\n", imei);
+        }
+        assert(n > 0 && (size_t)n < sizeof expected);
+        full = (size_t)n;
+        assert(ts_activation_text(imei, payloads[i], out, sizeof out) == full);
+        assert(strcmp(out, expected) == 0);
         memset(out, 'x', sizeof out);
-        assert(ts_activation_text(imei, 120, out, cap) == 0 && out[0] == '\0');
-    }
-    assert(ts_activation_text(imei, 120, out, full + 1u) == full);
-
-    /* Unknown payload size (three-step guide): same at every truncation. */
-    full = ts_activation_text(imei, 0, out, sizeof out);
-    assert(full == strlen(out) && strstr(out, "3. Activate: " TS_ACTIVATE_URL));
-    for (cap = 1; cap <= full; ++cap) {
+        assert(ts_activation_text(imei, payloads[i], out, 0) == 0 && out[0] == 'x');
+        for (cap = 1; cap <= full; ++cap) {
+            memset(out, 'x', sizeof out);
+            assert(ts_activation_text(imei, payloads[i], out, cap) == 0 && out[0] == '\0');
+            assert(out[cap] == 'x');
+        }
         memset(out, 'x', sizeof out);
-        assert(ts_activation_text(imei, 0, out, cap) == 0 && out[0] == '\0');
+        assert(ts_activation_text(imei, payloads[i], out, full + 1u) == full);
+        assert(strcmp(out, expected) == 0 && out[full + 1u] == 'x');
     }
-    assert(ts_activation_text(imei, 0, out, full + 1u) == full);
 }
 
 /* ---- ts_base64.c ---- */
