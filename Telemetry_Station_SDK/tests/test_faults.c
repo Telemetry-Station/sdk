@@ -198,6 +198,10 @@ static void test_query_failures(void)
     begin(&b, &m);
     sim_override(&m, "GET hwInfo", "200 hwInfo {}\r");
     power_on(&b, &m);
+#if !TS_QUERY_IMEI_ON_READY
+    assert(ts_bear_request_imei(&b) == TS_OK);
+    sim_run(&b, &m, 50);
+#endif
     assert(ts_bear_is_ready(&b) && ts_bear_imei(&b) == NULL);
     assert(sim_saw(&m, TS_EVENT_ERROR));
 
@@ -415,6 +419,40 @@ static void test_send_ignores_other_messages_then_times_out(void)
     sim_run(&b, &m, (int)TS_MO_TIMEOUT_MS);
     assert(sim_saw(&m, TS_EVENT_MO_FAILED) && m.last_detail == TS_ERR_TIMEOUT);
     assert(ts_bear_is_ready(&b)); /* The modem is fine; the message is not. */
+}
+
+/* Iridium confirmation takes seconds to minutes after the last segment is
+ * written. Writing a segment must not shorten the transfer deadline to the
+ * command timeout, and the transfer must still end at TS_MO_TIMEOUT_MS. */
+static void test_slow_network_confirmation(void)
+{
+    ts_bear9704_t b;
+    sim_modem_t m;
+    uint32_t accepted;
+
+    ready(&b, &m);
+    sim_override(&m, "PUT messageOriginateSegment",
+        "200 messageOriginateSegment {\"topic_id\":1234,\"message_id\":9}\r");
+    send_one(&b, &m, 100);
+    assert(ts_bear_state(&b) == TS_MO_ACTIVE && sim_saw(&m, TS_EVENT_MO_ACCEPTED));
+    accepted = m.now - 100u;
+    sim_run(&b, &m, 90000); /* 90 s, far beyond TS_CMD_TIMEOUT_MS. */
+    assert(!sim_saw(&m, TS_EVENT_MO_FAILED) && ts_bear_state(&b) == TS_MO_ACTIVE);
+    sim_queue(&m, "299 messageOriginateStatus {\"topic_id\":1234,\"message_id\":9,"
+              "\"final_mo_status\":\"mo_ack_received\"}\r");
+    sim_run(&b, &m, 10);
+    assert(sim_saw(&m, TS_EVENT_MO_DELIVERED) && ts_bear_is_ready(&b));
+
+    /* No confirmation at all: fails once, about TS_MO_TIMEOUT_MS after acceptance. */
+    m.event_count = 0;
+    send_one(&b, &m, 100);
+    accepted = m.now - 100u;
+    while (!sim_saw(&m, TS_EVENT_MO_FAILED)) {
+        sim_run(&b, &m, 1);
+        assert(m.now - accepted <= TS_MO_TIMEOUT_MS + 100u);
+    }
+    assert(m.now - accepted >= TS_MO_TIMEOUT_MS - 100u);
+    assert(m.last_detail == TS_ERR_TIMEOUT && ts_bear_is_ready(&b));
 }
 
 static void test_segment_request_while_tx_busy(void)
@@ -653,7 +691,7 @@ static void test_names_cover_every_value(void)
     static const ts_state_t states[] = {
         TS_OFF, TS_BOOTING, TS_API_QUERY, TS_API_SELECT, TS_SIM_QUERY, TS_SIM_SET,
         TS_MODE_QUERY, TS_MODE_SET, TS_READY, TS_MO_START, TS_MO_ACTIVE,
-        TS_SHUTDOWN_WAIT, TS_POWERING_DOWN, TS_FAULT};
+        TS_SHUTDOWN_WAIT, TS_POWERING_DOWN, TS_FAULT, TS_FAULT_HOLD};
     static const ts_event_t events[] = {
         TS_EVENT_READY, TS_EVENT_MO_ACCEPTED, TS_EVENT_MO_DELIVERED, TS_EVENT_MO_FAILED,
         TS_EVENT_MT_RECEIVED, TS_EVENT_MT_DROPPED, TS_EVENT_SIGNAL, TS_EVENT_IMEI,
@@ -675,6 +713,7 @@ static void test_names_cover_every_value(void)
 
 int main(void)
 {
+    test_slow_network_confirmation();
     test_setup_chooses_api_version();
     test_setup_skips_steps_already_done();
     test_setup_failures();

@@ -5,7 +5,8 @@ static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv
 size_t ts_base64_encode(const uint8_t *in, size_t len, char *out, size_t cap)
 {
     size_t i = 0, o = 0;
-    if ((!in && len) || !out || cap < 1 || len > (cap / 4u) * 3u) return 0;
+    if (!in && len) return 0;
+    if (!out || cap < 1 || len > (cap / 4u) * 3u) return 0;
     while (i < len) {
         size_t rem = len - i;
         uint32_t n = (uint32_t)in[i++] << 16;
