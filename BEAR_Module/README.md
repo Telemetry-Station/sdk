@@ -1,3 +1,5 @@
+<p align="right"><img src="assets/TelemetryStation.svg" width="112" alt="Telemetry Station" /></p>
+
 # BEAR Module
 
 **Host-independent satellite connectivity for embedded systems.**
