@@ -92,7 +92,9 @@ ctest --test-dir build --output-on-failure
 
 Add `-DTS_ENABLE_MT=OFF` to test the send-only build. For the strictest check, add `-DTS_WERROR=ON -DTS_SANITIZE=ON` (warnings as errors, AddressSanitizer and UBSan).
 
-`sh tests/coverage.sh` runs the suite with coverage and fails if any file in `src/` has an untested line (use `-DTS_ENABLE_MT=OFF` for the send-only build). The build also compiles the MSP430F169 port and example against a host stand-in for `msp430.h` (`tests/stubs/`), so register and type errors show up without the TI toolchain. The stand-in is for syntax checking only and is not for real targets.
+Add `-DTS_QUERY_IMEI_ON_READY=OFF` to have the application request the IMEI instead of the driver.
+
+`python3 tests/coverage.py` runs the suite with coverage and fails unless every line and branch of `src/`, the checkout and the F169 port and firmware is tested (unreachable branches are waived with a reason in `tests/branch_waivers.json`). `python3 tests/run_matrix.py` runs every feature combination under sanitizers. The build also compiles the MSP430F169 port and example against a host stand-in for `msp430.h` (`tests/stubs/`), so register and type errors show up without the TI toolchain. The stand-in is for syntax checking only and is not for real targets.
 
 ## Things to know before you deploy
 
@@ -106,3 +108,13 @@ Add `-DTS_ENABLE_MT=OFF` to test the send-only build. For the strictest check, a
 ## License
 
 See [LICENSE](../LICENSE). Contributions: [CONTRIBUTING.md](../CONTRIBUTING.md). Security issues: [SECURITY.md](../SECURITY.md).
+
+## Engineering update — 2026-11-03 (uncommitted)
+
+See [Engineering baseline](docs/ENGINEERING.md) for validated feature orders,
+actual TI F169 builds, the generated Certus Payload Optimizer codec, optional
+LEA-M8S acquisition, lifecycle fixes, coverage and release-record checks.
+See [hardware validation](tests/hardware/README.md) for CCS capture and bench
+procedures. With a BEAR Module wired to an MSP430F169, flash the bench image and
+open USART0 at 115200 for a PASS/CHECK checkout of every step; see
+[Getting started](docs/GETTING_STARTED.md#4-check-a-bear-module-on-an-msp430f169-flash-and-go). These additions do not qualify BEAR hardware for production.
