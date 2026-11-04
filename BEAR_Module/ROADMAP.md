@@ -1,6 +1,8 @@
+<p align="right"><img src="assets/TelemetryStation.svg" width="112" alt="Telemetry Station" /></p>
+
 # Roadmap
 
-Document ID: BEAR-RM-001 | Revision: P1 | October 2026
+Document ID: BEAR-RM-001 | Revision: P2 | 2026-11-03
 
 BEAR Module products move through standard hardware development gates toward a host-independent, production-qualified satellite communications module. Each gate has defined exit criteria, so you can see exactly what a given status means. Dates are published with each gate as it is scheduled. Qualification is not complete while the product is in G1.
 
@@ -35,3 +37,14 @@ The MSP430F169 is the first reference host. SDK validation on BEAR engineering u
 ## The BEAR Module family
 
 The BEAR Module 9704 is the first product. Further family members will share the same host interface conventions, SDK and Telemetry Station workflow. They will be announced as they reach design gate G1.
+
+## Progress update — 2026-11-03
+
+G1 (design) remains **in progress**. Schematic capture and PCB layout have started
+and are in review; no fabrication-ready design exists yet, and no later gate has
+been advanced.
+
+The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line
+and branch test coverage and a flash-and-go MSP430F169 checkout that reports each
+step on the serial console. Validation on BEAR hardware is **NOT YET RUN**.
+The April 1, 2027 availability target remains tentative.
