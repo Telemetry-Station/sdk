@@ -666,6 +666,7 @@ static bool build_steps(bear_checkout_t *ck)
 
 static bool build_rows(bear_checkout_t *ck, uint32_t now)
 {
+#if TS_ENABLE_MT
     if (ck->mt_note) {
         put_stamp(ck, now);
         put_tag(ck, BC_PASS);
@@ -678,6 +679,7 @@ static bool build_rows(bear_checkout_t *ck, uint32_t now)
         ck->pending = PEND_MT;
         return true;
     }
+#endif
     if (ck->mt_dropped) {
         put_stamp(ck, now);
         put_tag(ck, BC_WARN);
@@ -752,7 +754,9 @@ static void commit(bear_checkout_t *ck, uint32_t now)
 {
     switch (ck->pending) {
     case PEND_ROW: ck->row++; ck->heartbeat_at = now; break;
+#if TS_ENABLE_MT
     case PEND_MT: ck->mt_note = false; break;
+#endif
     case PEND_DROP: ck->mt_dropped = 0; break;
     case PEND_HEARTBEAT: ck->heartbeat_at = now; break;
     default: ck->cursor++; break;

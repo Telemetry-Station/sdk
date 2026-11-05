@@ -33,6 +33,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mt: [ON, OFF]
     steps:

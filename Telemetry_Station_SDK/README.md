@@ -94,7 +94,7 @@ Add `-DTS_ENABLE_MT=OFF` to test the send-only build. For the strictest check, a
 
 Add `-DTS_QUERY_IMEI_ON_READY=OFF` to have the application request the IMEI instead of the driver.
 
-`python3 tests/coverage.py` runs the suite with coverage and fails unless every line and branch of `src/`, the checkout and the F169 port and firmware is tested (unreachable branches are waived with a reason in `tests/branch_waivers.json`). `python3 tests/run_matrix.py` runs every feature combination under sanitizers. The build also compiles the MSP430F169 port and example against a host stand-in for `msp430.h` (`tests/stubs/`), so register and type errors show up without the TI toolchain. The stand-in is for syntax checking only and is not for real targets.
+`python3 tests/coverage.py` runs the suite with coverage and fails unless every line and branch of `src/`, the checkout and the F169 port and firmware is tested (unreachable branches are waived with a reason in `tests/branch_waivers.json`). Run `sh tests/coverage.sh -DTS_ENABLE_MT=OFF` to check the send-only build too; CI checks both MT configurations independently, without cancelling one when the other fails. `python3 tests/run_matrix.py` runs every feature combination under sanitizers. The build also compiles the MSP430F169 port and example against a host stand-in for `msp430.h` (`tests/stubs/`), so register and type errors show up without the TI toolchain. The stand-in is for syntax checking only and is not for real targets.
 
 Activation regressions compare the complete guide for unknown (zero), typical,
 and `UINT_MAX` payload sizes, including every undersized buffer and an exact fit

@@ -1,6 +1,6 @@
 {
   "src/ts_bear9704.c": {
-    "261": "on_frame runs only from read_serial after boot, and read_serial stops on POWERING_DOWN/FAULT_HOLD, so the state is never OFF or BOOTING here and 'state >= TS_API_QUERY' cannot be false."
+    "263": "on_frame runs only from read_serial after boot, and read_serial stops on POWERING_DOWN/FAULT_HOLD, so the state is never OFF or BOOTING here and 'state >= TS_API_QUERY' cannot be false."
   },
   "src/ts_mo.c": {
     "76": "ts_config.h rejects any TS_LINE_CAP smaller than 4*((TS_MAX_PAYLOAD+4)/3)+160, which bounds the longest segment command (about 141 fixed chars plus base64 of payload+CRC), so ts_cmd_end cannot overflow.",
