@@ -121,8 +121,10 @@ ts_result_t ts_bear_shutdown(ts_bear9704_t *ctx)
 {
     if (!ctx) return TS_ERR_ARGUMENT;
     if (ctx->state == TS_OFF) return TS_OK;
-    if (ctx->state != TS_READY || ctx->query || ctx->mt_pending ||
-        ctx->mt_available) return TS_ERR_BUSY;
+    if (ctx->state != TS_READY || ctx->query) return TS_ERR_BUSY;
+#if TS_ENABLE_MT
+    if (ctx->mt_pending || ctx->mt_available) return TS_ERR_BUSY;
+#endif
     if (!ts_cmd(ctx, "PUT operationalState {\"state\":\"inactive\"}\r"))
         return TS_ERR_IO;
     ctx->state = TS_SHUTDOWN_WAIT;

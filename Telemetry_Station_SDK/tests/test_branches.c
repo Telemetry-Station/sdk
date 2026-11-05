@@ -273,6 +273,8 @@ static void test_json_string_values(void)
     assert(!ts_json_string("{\"a\":\"\x01\"}", "a", s, sizeof s));   /* control char */
     assert(!ts_json_string("{\"a\":\"abc", "a", s, sizeof s));       /* unterminated */
 
+    assert(!ts_json_string_span(NULL, "a", &data, &len));          /* null JSON */
+    assert(!ts_json_string_span("{\"a\":\"x\"}", "missing", &data, &len));
     assert(!ts_json_string_span("{\"a\":\"x\"}", "a", NULL, &len));  /* null data */
     assert(!ts_json_string_span("{\"a\":\"x\"}", "a", &data, NULL)); /* null length */
     assert(!ts_json_string_span("{\"a\":1}", "a", &data, &len));     /* wrong type */
@@ -534,6 +536,10 @@ static void test_query_ignores_other_replies(void)
     ready(&b, &m);
     feed(&b, &m, "200 hwInfo {\"imei\":\"222222222222222\"}");
     assert(m.event_count == 0 && !strcmp(ts_bear_imei(&b), SIM_IMEI));
+
+    /* Unsolicited traffic with no active transfer is ignored in either build. */
+    feed(&b, &m, "299 unrelated {}");
+    assert(m.event_count == 0 && !b.mo_pending && !b.mt_pending);
 }
 
 static void test_shutdown_ignores_other_replies(void)
