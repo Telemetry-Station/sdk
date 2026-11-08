@@ -1,19 +1,21 @@
 # Hardware Design Files
 
-Index of design deliverables for the BEAR Module 9704. Files are published here as each is released.
+Customer-facing hardware summaries for the BEAR Module 9704. The current KiCad design is **Rev A** and its status
+is **DESIGN REVIEW REQUIRED**. Before boards are ordered, the modem land pattern must be confirmed. Rev A is not
+built, validated or certified. Native design files, fabrication outputs and internal engineering reports are not
+included in this SDK; approved deliverables will be published separately with their applicable licenses.
 
-The [R&D and release checklist](../RD_CHECKLIST.md) summarizes hardware validation, certification, production readiness, and target availability. Published templates and guidance are not completed production deliverables.
+The [R&D and release checklist](../RD_CHECKLIST.md) tracks hardware validation, certification, production readiness
+and target availability.
 
 | Folder | Contents | Status |
 |---|---|---|
-| [`interfaces/`](interfaces/bear-9704_signals.csv) | Machine-readable signal list | Published (preliminary) |
-| [`bom/`](bom/BEAR-9704_BOM_template.csv) | Bill of materials template | Published (template) |
-| [`schematics/`](schematics/README.md) | Block-level schematic description, then full schematics | Block level published |
-| [`pcb/`](pcb/README.md) | Layout and stack-up guidance, then controlled Altium source and fabrication files | Guidance published |
-| [`design_inputs/`](design_inputs/README.md) | CAD-neutral initial topology and layout inputs for the next design iteration | Preliminary; not a netlist or fabrication definition |
-| [`mechanical/`](mechanical/README.md) | Outline, 3D model, footprint | Release package planned with Rev A; dimensions and connector **[Pending decision]** |
+| [`interfaces/`](interfaces/bear-9704_signals.csv) | Machine-readable signal list with Rev A pin assignments and electrical limits | Rev A design values |
+| [`bom/`](bom/BEAR-9704_BOM.csv) | Key-component summary by function; not a full assembly BOM | Rev A design values |
+| [`schematics/`](schematics/README.md) | Block-level description; full schematic release pending | Customer summary |
+| [`pcb/`](pcb/README.md) | Stack-up and layout summary; fabrication-file release pending | Customer summary |
+| [`mechanical/`](mechanical/README.md) | Outline and mounting summary; customer drawings and model release pending | Rev A design values |
 | [`manufacturing/`](manufacturing/README.md) | Build, test and serialization process | Process outline published |
 
-Licensing for released design files is stated with the files.
-
-The production schematic and Altium PCB design package are planned for controlled publication before product launch (general availability), together with revision metadata, manufacturing outputs and a clear license.
+Licensing and required third-party attribution for approved hardware design files will be stated with those files.
+The repository MIT license does not grant rights to restricted vendor documents or separately licensed designs.

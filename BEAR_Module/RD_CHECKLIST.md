@@ -2,9 +2,9 @@
 
 # BEAR Module 9704 R&D and Release Checklist
 
-Document ID: BEAR-RD-9704 | Revision: P2 | Status: Preliminary
+Document ID: BEAR-RD-9704 | Revision: P3 | Status: Preliminary
 
-Updated: 2026-11-03 | Current stage: **G1 - Design**
+Updated: 2026-11-07 | Current stage: **G1 - Design** (Rev A design review required)
 
 ## Availability
 
@@ -19,7 +19,7 @@ Checked items are documented or available as described. Unchecked items are rema
 | Stage | Status | Customer milestone |
 |---|---|---|
 | G0 - Concept | Complete | Product scope and architecture defined |
-| G1 - Design | In progress | Detailed hardware design and preliminary interface specifications |
+| G1 - Design | In progress: Rev A KiCad design complete, design review required | Detailed hardware design and interface specifications |
 | G2 - Engineering validation (EVT) | Planned | BEAR engineering units demonstrated with the SDK |
 | G3 - Design validation (DVT) | Planned | Electrical, RF, environmental, and host compatibility verified |
 | G4 - Certification | Planned | Applicable approvals for supported regions and configurations |
@@ -32,21 +32,23 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 
 - [x] Iridium 9704-based module and intended remote sensing/OEM applications described in the [product brief](docs/01_Product_Brief.md).
 - [x] Host-independent architecture with an external customer MCU described in the [system architecture](docs/02_System_Architecture.md).
-- [x] Signal functions, 230400 baud/8N1 UART, and ENABLE/BOOTED handshake defined in the [hardware interface](docs/03_Hardware_Interface.md) and [signal list](hardware/interfaces/bear-9704_signals.csv). Electrical limits and connector pin assignments remain open.
-- [x] Input protection, regulation, burst-energy storage, and sequencing functions described in [power management](docs/04_Power_Management.md). Component design and measured performance remain open.
+- [x] Signal functions, 230400 baud/8N1 UART, and ENABLE/BOOTED handshake defined in the [hardware interface](docs/03_Hardware_Interface.md) and [signal list](hardware/interfaces/bear-9704_signals.csv). Rev A electrical limits and connector pin assignments are specified there; verification is pending at EVT.
+- [x] Input protection, regulation, burst-energy storage, and sequencing functions described in [power management](docs/04_Power_Management.md). Rev A component design is complete; measured performance is pending EVT.
 - [x] [Preliminary datasheet](datasheet/BEAR-9704_Datasheet.md) and [requirements with verification methods](docs/10_Requirements_and_Verification.md) available.
 - [x] Portable C99 alpha [SDK](../Telemetry_Station_SDK/README.md), simulated-modem tests, and first MSP430F169 reference port available. Validation on BEAR hardware is pending.
-- [x] [Preliminary design inputs](hardware/design_inputs/README.md), [BOM template](hardware/bom/BEAR-9704_BOM_template.csv), and [manufacturing overview](hardware/manufacturing/README.md) available. These are not a fabrication-ready design package.
+- [x] [Key-component BOM](hardware/bom/BEAR-9704_BOM.csv), [signal list](hardware/interfaces/bear-9704_signals.csv) and [manufacturing overview](hardware/manufacturing/README.md) available.
 - [ ] Launch configurations, supported regions, and evaluation-kit contents finalized.
 
 ## Detailed design
 
-- [ ] Input-voltage range, source requirements, burst-energy storage, and protection characteristics finalized.
-- [ ] Host connector, mating parts, pin assignments, logic thresholds, absolute ratings, and unpowered-host behavior specified.
-- [ ] Antenna/RF configurations, connection requirements, and integration constraints specified in [antenna and RF](docs/05_Antenna_and_RF.md).
-- [ ] Dimensions, mounting, connector positions, host footprint, and thermal/environmental limits specified in [mechanical and environmental](docs/08_Mechanical_and_Environmental.md).
-- [ ] Component-level schematic, PCB layout, and populated BOM completed.
-- [ ] Rev P2 preliminary datasheet available with updated design targets.
+- [x] Input-voltage range (5.0 V ±5 %), source requirement (≥ 0.5 A), burst-energy storage (2.5 F supercapacitor bank), and protection (P-FET reverse polarity, 6.0 V TVS, 18 V charger OVP) specified in [power management](docs/04_Power_Management.md).
+- [x] Host connector (Molex Micro-Fit 3.0 43045-1012), mating parts, pin assignments, 3.3 V logic thresholds, absolute ratings, and unpowered-host behavior specified in the [hardware interface](docs/03_Hardware_Interface.md).
+- [x] Antenna/RF configuration (SMA, 50 Ω; Maxtena M1621HCT-P-SMA reference antenna), connection requirements, and integration constraints specified in [antenna and RF](docs/05_Antenna_and_RF.md).
+- [x] Dimensions (80 × 60 mm), mounting (4 × M3), and connector positions specified in [mechanical and environmental](docs/08_Mechanical_and_Environmental.md). Environmental limits require DVT validation; approved mechanical files will be published separately.
+- [x] Rev A schematic, routed four-layer PCB, populated BOM and fabrication outputs completed for design review. Native files and internal review reports are not included in this SDK.
+- [x] Rev P2 preliminary datasheet available with Rev A design values.
+- [ ] Rev A design review closed, including confirmation of the modem land pattern.
+- [ ] Modem supply current and t_BOOT / t_DOWN / t_UART timing measured; Iridium does not publish them.
 
 ## Engineering validation (EVT)
 
@@ -79,7 +81,7 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [ ] Serial/lot traceability linked to IMEI, hardware revision, and unit test results.
 - [ ] Production configuration consistent with the qualified design and applicable approvals.
 - [ ] ESD-protective packaging, labeling, production supply, and fulfillment ready.
-- [ ] Released schematic, Altium PCB source, fabrication/assembly files, BOM, mechanical drawings/models, and applicable licenses available through the [hardware index](hardware/README.md).
+- [ ] Released KiCad schematic and PCB source, fabrication/assembly files, BOM, mechanical drawings/models, and applicable licenses available through the [hardware index](hardware/README.md).
 
 ## Customer release
 
@@ -95,16 +97,14 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 
 | Date | Revision | Summary |
 |---|---|---|
+| 2026-11-07 | P3 | Rev A KiCad design complete (design review required). Detailed-design inputs filled from Rev A; Altium replaced by KiCad. |
 | 2026-11-03 | P2 | Progress update: design in progress, SDK bench checkout available; no production gate advanced. |
 | 2026-10-29 | P1 | Initial product-readiness checklist. Current status: design in progress. Tentative sales target: April 1, 2027. |
 
-## Progress update — 2026-11-03
+## Progress update — 2026-11-07
 
-G1 (design) remains **in progress**. Schematic capture and PCB layout have started
-and are in review; no fabrication-ready design exists yet, and no later gate has
-been advanced.
-
-The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line
-and branch test coverage and a flash-and-go MSP430F169 checkout that reports each
-step on the serial console. Validation on BEAR hardware is **NOT YET RUN**.
-The April 1, 2027 availability target remains tentative.
+G1 (design) remains **in progress** at **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for review.
+Approved design deliverables will be published separately; native files and internal reports are not part of this SDK.
+Boards are not ordered until the modem land pattern is confirmed.
+No hardware has been built. Validation on BEAR hardware is **NOT YET RUN**. The April 1, 2027 availability target
+remains tentative.

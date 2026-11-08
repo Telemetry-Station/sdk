@@ -1,8 +1,8 @@
 # 10 Requirements and Verification
 
-Document ID: BEAR-RV-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-RV-9704 | Revision: P2 | Status: Preliminary
 
-Each requirement has an ID, a verification method (**T**est, **I**nspection, **A**nalysis, **D**emonstration) and a status. Proposed limits are marked **[Pending decision]**; final verified limits will be published in the Rev A [datasheet](../datasheet/BEAR-9704_Datasheet.md).
+Each requirement has an ID, a verification method (**T**est, **I**nspection, **A**nalysis, **D**emonstration) and a status. **Designed (Rev A)** means the current design implements the requirement, but hardware testing is pending. Native design files and internal traceability reports are not included in this SDK. Remaining open limits are marked **[Pending decision]**. Verified limits will be published in the [datasheet](../datasheet/BEAR-9704_Datasheet.md).
 
 ## Functional
 
@@ -21,26 +21,26 @@ Each requirement has an ID, a verification method (**T**est, **I**nspection, **A
 |---|---|---|---|
 | BEAR-REQ-010 | The module shall start only when ENABLE is asserted | T | Defined |
 | BEAR-REQ-011 | The module shall complete the boot and shutdown handshake using ENABLE and BOOTED | T | Defined |
-| BEAR-REQ-012 | Host inputs shall tolerate a host that is unpowered or high-impedance | T | In development |
-| BEAR-REQ-013 | The module shall accept the published regulated DC input range | T | Range **[Pending decision]**; verify at EVT/DVT |
-| BEAR-REQ-014 | The module shall support transmit bursts without host supply collapse | T/A | In development |
-| BEAR-REQ-015 | Disabled-state quiescent current shall be characterized and specified | T | Limit **[Pending decision]**; measure at EVT/DVT |
+| BEAR-REQ-012 | Host inputs shall tolerate a host that is unpowered or high-impedance | T | Designed (Rev A): SN74LVC1G125 I_off buffers and 100 kΩ default-state resistors; verify at EVT |
+| BEAR-REQ-013 | The module shall accept the published regulated DC input range | T | Designed (Rev A): 5.0 V ±5 %, ≥ 0.5 A source; verify at EVT/DVT |
+| BEAR-REQ-014 | The module shall support transmit bursts without host supply collapse | T/A | Designed (Rev A): 2.5 F bank; VIN draw ≤ 0.44 A design value; burst margin requires EVT measurement |
+| BEAR-REQ-015 | Disabled-state quiescent current shall be characterized and specified | T | Rev A test limit < 5 mA; final limit **[Pending decision]** after EVT measurement |
 
 ## RF
 
 | ID | Requirement | Method | Status |
 |---|---|---|---|
-| BEAR-REQ-020 | The RF path shall support the Iridium L-band | T | Defined |
-| BEAR-REQ-021 | The antenna configuration shall meet Iridium requirements | T | Planned |
-| BEAR-REQ-022 | RF performance shall be documented for each supported antenna configuration | T | Test limits/configurations **[Pending decision]** |
+| BEAR-REQ-020 | The RF path shall support the Iridium L-band | T | Designed (Rev A): 50 Ω microstrip to SMA; test at EVT |
+| BEAR-REQ-021 | The antenna configuration shall meet Iridium requirements | T | Maxtena M1621HCT-P-SMA reference selection; approved limits and regulatory review **[Pending decision]**; test planned |
+| BEAR-REQ-022 | RF performance shall be documented for each supported antenna configuration | T | Configuration: SMA plus Maxtena reference antenna. Test limits **[Pending decision]** |
 
 ## Mechanical and environmental
 
 | ID | Requirement | Method | Status |
 |---|---|---|---|
-| BEAR-REQ-030 | Operating temperature range shall suit outdoor remote sensing | T | Proposed target -40 °C to +85 °C **[Pending decision]**; verify at DVT |
+| BEAR-REQ-030 | Operating temperature range shall suit outdoor remote sensing | T | Proposed target −40 °C to +85 °C **[Pending decision]**; confirm component limits and verify at DVT |
 | BEAR-REQ-031 | The module shall pass vibration and shock tests (IEC 60068) | T | Planned |
-| BEAR-REQ-032 | Mounting holes and connector positions shall match the controlled mechanical drawing | I | Drawing **[Pending decision]**; verify before Rev A |
+| BEAR-REQ-032 | Mounting holes and connector positions shall match the controlled mechanical drawing | I | Designed (Rev A): 4 × M3 on 72 × 52 mm; approved customer model and dimensioned drawing release **[Pending decision]** |
 
 ## Firmware
 

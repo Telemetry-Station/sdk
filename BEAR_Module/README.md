@@ -8,9 +8,9 @@ The BEAR Module family from Pacific Gyre, built under the Telemetry Station orga
 
 The first member of the family is the **BEAR Module 9704**, built around the Iridium 9704 modem. The MSP430F169 is its first SDK reference host, not a requirement for using the module. The host interface is intended to support customer products using STM32, MSP430, Nordic, Microchip, ESP32 and other microcontrollers, subject to each host's electrical compatibility and SDK port.
 
-BEAR hardware is in detailed design. Validation on BEAR engineering units is planned at G2 (EVT). Production qualification is a release objective, not a claim about the current preliminary design.
+BEAR hardware is in detailed design: the Rev A KiCad design is complete and in design review. Native board files and internal engineering reports are not included in this customer SDK. Validation on BEAR engineering units is planned at G2 (EVT). Production qualification is a release objective, not a claim about the current preliminary design.
 
-This folder contains product and integration documentation for the BEAR Module family, including interfaces, specifications, validation status, and support information. Proposed values are marked **[Pending decision]** and are not released specifications. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
+This folder contains product and integration documentation for the BEAR Module family, including interfaces, specifications, validation status, and support information. Rev A design values are calculated, not yet measured. Open items are marked **[Pending decision]** and are not released specifications. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
 ## Status
 
@@ -21,8 +21,8 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed product de
 | Product definition and system architecture                | Defined                                                                                                         |
 | Host interface and power sequencing                       | Defined                                                                                                         |
 | Firmware (Telemetry Station SDK)                          | Alpha (version 0.2)                                                                                             |
-| Electrical specification and datasheet values             | Proposed targets under review; released with Rev A                                                              |
-| Schematics, layout, mechanical drawings                   | Release package planned before general availability                                                             |
+| Electrical specification and datasheet values             | Rev A design values in the preliminary datasheet; measured at EVT                                               |
+| Schematics, layout, fabrication files, STEP model         | Rev A KiCad design complete; design review required before boards are ordered                                   |
 | Evaluation units and firm availability dates              | Planned; schedule pending engineering and supply readiness                                                      |
 | Customer launch resources                                 | Platform quickstarts, decoder samples, public status/SLA and evaluation-kit schedule; see [roadmap](ROADMAP.md) |
 | Production qualification and regulatory/Iridium approvals | Planned, see [compliance](docs/09_Compliance_and_Quality.md)                                                    |
@@ -61,13 +61,12 @@ BEAR_Module/
 │   ├── 09_Compliance_and_Quality.md
 │   ├── 10_Requirements_and_Verification.md
 │   └── 11_Ordering_and_Support.md
-├── hardware/                      Design-file index and templates
-│   ├── interfaces/                Machine-readable signal list
-│   ├── bom/                       Bill of materials template
-│   ├── design_inputs/             CAD-neutral initial topology and layout inputs
-│   ├── schematics/                Schematic package (block level now)
-│   ├── pcb/                       Layout rules and stack-up
-│   ├── mechanical/                Outline and 3D model
+├── hardware/                      Customer hardware summaries and release status
+│   ├── interfaces/                Machine-readable signal list (Rev A pins and limits)
+│   ├── bom/                       Key-component BOM (Rev A)
+│   ├── schematics/                Block-level description; full design release pending
+│   ├── pcb/                       Stack-up and layout (Rev A)
+│   ├── mechanical/                Outline, mounting and 3D model (Rev A)
 │   └── manufacturing/             Build, test and traceability
 └── reference/                     External documents and standards
 ```
@@ -90,6 +89,6 @@ All documents in this folder follow the same conventions:
 - **Document ID and revision** at the top of each controlled document (for example `BEAR-DS-9704`, Rev P1).
 - **Revision letters** (A, B, C) apply to released hardware. **P-numbers** (P1, P2) mark preliminary documents.
 - Changes that affect form, fit or function are announced before they ship. See [Ordering and support](docs/11_Ordering_and_Support.md).
-- The text in this folder is covered by the repository [MIT license](../LICENSE). Hardware design files will be released with their applicable license and revision metadata.
+- The text in this folder is covered by the repository [MIT license](../LICENSE). Approved hardware design files will be published separately with their applicable licenses and revision metadata.
 
 Product and company names are trademarks of their respective owners. Third-party names identify their respective products and do not imply affiliation or endorsement.

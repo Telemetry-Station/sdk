@@ -65,3 +65,6 @@ build-*/
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# Local agent tooling is not part of the customer SDK
+/.codex/

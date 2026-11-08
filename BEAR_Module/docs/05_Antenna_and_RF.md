@@ -1,6 +1,6 @@
 # 05 Antenna and RF
 
-Document ID: BEAR-RF-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-RF-9704 | Revision: P2 | Status: Preliminary (Rev A design values; not RF-tested)
 
 ## Overview
 
@@ -8,10 +8,10 @@ The BEAR Module 9704 operates in the Iridium L-band (1616 to 1626.5 MHz). Perfor
 
 | Configuration | Description | Status |
 |---|---|---|
-| Connector | RF connector for an antenna you choose and qualify | In development |
-| Qualified antenna | A BEAR-supplied Iridium antenna, characterized with the module | In development |
+| Connector | SMA jack (J2, Amphenol 132134) for an antenna approved for the released configuration | Rev A design complete; RF test at EVT |
+| Reference antenna | Maxtena M1621HCT-P-SMA (100-00003-02), passive Iridium helical, 2.8 dBic, screws directly onto J2 | Selected for Rev A; characterization with the module at DVT |
 
-Final configuration names and part numbers **[Pending decision]** will be published with the ordering information.
+Configuration part-number suffixes **[Pending decision]** will be published with the ordering information. The reference antenna is a design selection, not a qualified configuration.
 
 ## RF specifications
 
@@ -19,12 +19,12 @@ Final configuration names and part numbers **[Pending decision]** will be publis
 |---|---|
 | Frequency range | 1616 to 1626.5 MHz (Iridium L-band) |
 | Polarization | Right-hand circular, as required by Iridium |
-| Impedance | 50 Ω nominal **[Pending decision]** |
-| Connector type | Select and qualify per product configuration **[Pending decision]** |
-| Maximum conducted output power | Publish from controlled Iridium 9704 OEM specification and verify the assembled RF path **[Pending decision]** |
-| Receive sensitivity | Publish from controlled Iridium 9704 OEM specification and applicable test configuration **[Pending decision]** |
-| Antenna gain and pattern (qualified antenna) | Publish measured/certified data for each supported antenna SKU **[Pending decision]** |
-| Required antenna gain range (your own antenna) | Publish only after Iridium approval and RF/regulatory review **[Pending decision]** |
+| Impedance | 50 Ω. Rev A: 0.34 mm microstrip on a fabricator-controlled-impedance stack-up, about 8 mm long |
+| Connector type | SMA jack, vertical |
+| Conducted output power (modem) | Publish permitted specifications and verify the assembled RF path at EVT **[Pending decision]** |
+| Receive sensitivity | Publish permitted specifications and verify the applicable test configuration **[Pending decision]** |
+| Reference antenna gain | 2.8 dBic peak (Maxtena data). About 2.7 dBi after the 0.14 dB board trace loss |
+| Required antenna gain and separation (your own antenna) | Publish approved antenna limits and RF-exposure guidance after regulatory review **[Pending decision]**. Do not treat the reference antenna as an approved installation |
 
 ## Choosing and placing an antenna
 
@@ -44,7 +44,7 @@ These rules apply to any Iridium installation.
 |---|---|---|
 | Patch (flat) | Low profile, good for fixed installs | Needs ground plane; sky view overhead |
 | Helical or whip | Wide coverage, tolerant of orientation | Larger |
-| Qualified BEAR antenna | Characterized with the module | Candidate SKUs and qualification scope **[Pending decision]** |
+| Reference antenna (Maxtena M1621HCT-P-SMA) | Selected for Rev A; 2.8 dBic | Characterization with the module planned at DVT; additional SKUs **[Pending decision]** |
 
 ## Link design
 
@@ -52,4 +52,4 @@ Message delivery time depends on satellite visibility. Plan for variable deliver
 
 ## Regulatory note
 
-Antenna and installation choices affect RF exposure and regulatory compliance. Approved antenna configurations, installation guidance, labeling and documentation **[Pending decision]** will be published with the certification package. See [09 Compliance and quality](09_Compliance_and_Quality.md).
+Antenna and installation choices affect RF exposure and regulatory compliance. Approved configurations, antenna gain limits, separation distances, labeling and installation guidance **[Pending decision]** will be published with the certification package. BEAR Rev A is not certified; do not deploy it as a qualified radio product. See [09 Compliance and quality](09_Compliance_and_Quality.md).

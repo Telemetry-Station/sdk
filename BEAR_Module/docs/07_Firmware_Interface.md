@@ -1,6 +1,6 @@
 # 07 Firmware Interface
 
-Document ID: BEAR-FW-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-FW-9704 | Revision: P2 | Status: Preliminary
 
 The BEAR Module 9704 is controlled by the [Telemetry Station SDK](../../Telemetry_Station_SDK), a portable C99 library. This document maps the module's hardware signals to the SDK, so hardware and firmware engineers can work from one reference.
 
@@ -13,6 +13,8 @@ The BEAR Module 9704 is controlled by the [Telemetry Station SDK](../../Telemetr
 | TXD, RXD | `serial_read()`, `serial_write()`, `uart_enable()` | Never blocks. Disables the UART and tri-states its pins when the module is off |
 | (timing) | `millis()` | Drives all timeouts. Wrap-around is handled |
 | TX_ACTIVE, WAKE_IN, WAKE_OUT | Not used by the SDK today | Available to your application |
+
+**Power-up delay (t_VIN).** The SDK does not control VIN and does not wait for the module's energy bank to charge. After VIN is applied, wait at least 35 s before the first `ts_bear_start()` (Rev A has no hardware supervisor). After a clean shutdown with VIN still present, the bank stays charged and no wait is needed. See the [hardware interface](03_Hardware_Interface.md#timing-parameters).
 
 ## Driver states
 

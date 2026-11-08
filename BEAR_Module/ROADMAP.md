@@ -2,7 +2,7 @@
 
 # Roadmap
 
-Document ID: BEAR-RM-001 | Revision: P2 | 2026-11-03
+Document ID: BEAR-RM-001 | Revision: P3 | 2026-11-07
 
 BEAR Module products move through standard hardware development gates toward a host-independent, production-qualified satellite communications module. Each gate has defined exit criteria, so you can see exactly what a given status means. Dates are published with each gate as it is scheduled. Qualification is not complete while the product is in G1.
 
@@ -11,12 +11,12 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed and remain
 | Gate | Name | What it means | Exit criteria | Status |
 |---|---|---|---|---|
 | G0 | Concept | Product definition, target users, interface and architecture | Product brief and system architecture approved | Complete |
-| G1 | Design | Detailed electrical, mechanical and firmware design | Schematic and layout reviewed; datasheet Rev P2 with target values | In progress |
+| G1 | Design | Detailed electrical, mechanical and firmware design | Schematic and layout reviewed; 9704 land pattern confirmed against Iridium's drawing; datasheet with Rev A design values | In progress: Rev A KiCad design complete, **design review required** |
 | G2 | EVT (engineering validation) | First hardware built and brought up on the bench | Power sequencing, UART link and IMEI readout demonstrated with the SDK | Planned; schedule **[Pending decision]** |
 | G3 | DVT (design validation) | Full characterization and pre-compliance testing | All requirements in the [verification plan](docs/10_Requirements_and_Verification.md) verified or dispositioned | Planned; schedule **[Pending decision]** |
 | G4 | Certification | Regulatory and Iridium approvals | Certificates issued for the target regions | Planned; scope and schedule **[Pending decision]** |
 | G5 | PVT (production validation) | Pilot build on the production line | Yield and test coverage targets met | Planned; schedule **[Pending decision]** |
-| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support channel, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and the controlled schematic and Altium PCB design package available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
+| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support channel, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and the controlled KiCad schematic and PCB design package available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
 
 ## Firmware and tools
 
@@ -38,13 +38,16 @@ The MSP430F169 is the first reference host. SDK validation on BEAR engineering u
 
 The BEAR Module 9704 is the first product. Further family members will share the same host interface conventions, SDK and Telemetry Station workflow. They will be announced as they reach design gate G1.
 
-## Progress update — 2026-11-03
+## Progress update — 2026-11-07
 
-G1 (design) remains **in progress**. Schematic capture and PCB layout have started
-and are in review; no fabrication-ready design exists yet, and no later gate has
-been advanced.
+G1 (design) remains **in progress**, at status **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for
+review, including an 80 × 60 mm four-layer PCB. Approved design deliverables will be published separately;
+native files, fabrication outputs and internal engineering reports are not included in this customer SDK.
 
-The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line
-and branch test coverage and a flash-and-go MSP430F169 checkout that reports each
-step on the serial console. Validation on BEAR hardware is **NOT YET RUN**.
-The April 1, 2027 availability target remains tentative.
+Before boards are ordered, the modem land pattern must be confirmed. Rev A uses a 2.0 A burst-current design
+envelope, not a modem specification; actual current will be measured at G2 (EVT). No hardware has been built,
+so no later gate has been advanced.
+
+The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line and branch test coverage and a
+flash-and-go MSP430F169 checkout that reports each step on the serial console. Validation on BEAR hardware is
+**NOT YET RUN**. The April 1, 2027 availability target remains tentative.

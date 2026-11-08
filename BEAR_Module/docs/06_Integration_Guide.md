@@ -1,6 +1,6 @@
 # 06 Integration Guide
 
-Document ID: BEAR-IG-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-IG-9704 | Revision: P2 | Status: Preliminary (Rev A design values)
 
 How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. BEAR is host-independent. The TI MSP430F169 is the first SDK reference host and worked example; STM32, MSP430, Nordic, Microchip, ESP32 and other hosts are intended integration targets when their electrical characteristics meet the released module specification and a suitable SDK port is available.
 
@@ -9,24 +9,26 @@ How to connect a BEAR Module 9704 to a microcontroller and bring it up with the 
 | Item | Notes |
 |---|---|
 | BEAR Module 9704 | Evaluation-kit availability date **[Pending decision]**; see [ordering and support](11_Ordering_and_Support.md) |
-| Power source | Regulated DC input proposed; use only the released VIN range **[Pending decision]** |
-| Iridium antenna | Included or connected, per configuration. Needs a clear sky view |
-| Host microcontroller | One UART at 230400 baud, two GPIO pins, a millisecond timer, compatible logic levels and an SDK port |
+| Power source | Regulated 5.0 V ±5 % (4.75-5.25 V), rated ≥ 0.5 A |
+| Iridium antenna | SMA; reference: Maxtena M1621HCT-P-SMA. Needs a clear sky view. Approved gain limits and RF-exposure conditions **[Pending decision]**; engineering evaluation only |
+| Host microcontroller | One UART at 230400 baud, two GPIO pins, a millisecond timer, 3.3 V-compatible logic and an SDK port |
 | USB-serial adapter | Optional, for a debug console |
 | Telemetry Station account | For the calculator and activation |
+| Host cable | Molex Micro-Fit 3.0 43025-1000 housing with 43030-0007 crimp terminals |
 
 ## Connections
 
-| Host side | Module signal | Notes |
-|---|---|---|
-| GPIO output | ENABLE | Hold low until your supply is stable |
-| GPIO input | BOOTED | Do not use the UART until this is high |
-| UART TX | RXD | Cross-over: your TX goes to the module's RXD |
-| UART RX | TXD | Your RX comes from the module's TXD |
-| Ground | GND | Common ground is required |
-| Supply | VIN | Within the datasheet range |
+| Host side | Module signal | J1 pin | Notes |
+|---|---|---|---|
+| Supply | VIN | 1, 2 | 5.0 V, ≥ 0.5 A |
+| Ground | GND | 3, 4 | Common ground is required |
+| GPIO output | ENABLE | 5 | Hold low for at least 35 s after applying VIN while the energy bank charges |
+| GPIO input | BOOTED | 6 | Do not use the UART until this is high |
+| UART RX | TXD | 7 | Your RX comes from the module's TXD |
+| UART TX | RXD | 8 | Cross-over: your TX goes to the module's RXD |
+| GPIO input (optional) | TX_ACTIVE | 9 | High while transmitting |
 
-Keep UART wires short. The proposed host-I/O level is 3.3 V CMOS **[Pending decision]**. Confirm electrical limits in the released datasheet and add a level translator where required.
+Keep UART wires short. Host I/O is 3.3 V CMOS: module inputs need ≥ 2.0 V high and ≤ 0.8 V low and tolerate up to 5.5 V; module outputs give ≥ 2.4 V high. A 5 V host needs a level translator on BOOTED, TXD and TX_ACTIVE unless its inputs accept 2.4 V as high. See the [hardware interface](03_Hardware_Interface.md).
 
 ### Worked example: MSP430F169 test bench
 
@@ -47,7 +49,7 @@ The F169 reference port uses an external 8 MHz crystal on XT2 for the main clock
 
 Work through these in order. Stop at the first step that fails.
 
-1. **Bench supply first.** Power the module from a bench supply with a current limit, with ENABLE low and no antenna transmitting. Confirm that BOOTED is low.
+1. **Bench supply first.** Power the module from a 5.0 V bench supply with a 0.6 A current limit, with ENABLE low. Input current rises to about 0.4 A while the bank charges, then falls. Confirm that BOOTED is low. Wait at least 35 s.
 2. **Antenna.** Connect the antenna. Do not enable the module without an antenna or a matched load.
 3. **Build the SDK tests.** Run the host tests in `Telemetry_Station_SDK` to confirm your toolchain and settings.
 4. **Add your platform file.** Implement the `ts_platform_t` functions for your microcontroller, or start from the F169 port. See [07 Firmware interface](07_Firmware_Interface.md).

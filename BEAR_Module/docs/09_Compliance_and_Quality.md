@@ -1,6 +1,6 @@
 # 09 Compliance and Quality
 
-Document ID: BEAR-CQ-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-CQ-9704 | Revision: P2 | Status: Preliminary
 
 Customers integrating a radio module need to know which approvals exist, what is inherited from the modem, and what is left to them. This document lays out the plan. Listed regions are markets under assessment, not committed approvals. Certificates are published here as they are issued.
 
@@ -8,7 +8,7 @@ Customers integrating a radio module need to know which approvals exist, what is
 
 | Area | Scope | Standards (target) | Status |
 |---|---|---|---|
-| Iridium approval | Network access for the module and its antenna configurations | Iridium requirements for integrated devices | Planned at G4; scope **[Pending decision]** |
+| Iridium approval | Network access for the module and its antenna configurations | Iridium requirements for integrated devices | Not started; planned at G4; scope **[Pending decision]** |
 | United States | Radio and EMC | FCC 47 CFR Part 15, applicable Part 25 requirements | Under assessment; scope **[Pending decision]** |
 | Canada | Radio and EMC | ISED RSS standards, ICES-003 | Under assessment; scope **[Pending decision]** |
 | European Union | Radio and EMC, safety | RED 2014/53/EU with EN 301 441, EN 301 489, EN 62368-1 | Under assessment; scope **[Pending decision]** |
@@ -16,7 +16,11 @@ Customers integrating a radio module need to know which approvals exist, what is
 | Australia and New Zealand | EMC | RCM | Under assessment; scope **[Pending decision]** |
 | Other regions | Scope assessed on demand | Applicable local radio and EMC requirements **[Pending decision]** | Scope **[Pending decision]** |
 
-The exact standards list and test scope is confirmed with the accredited test laboratory at the certification gate (G4). The modem's own approvals reduce the module-level scope. Details are published with the certificates.
+The exact standards list and test scope is confirmed with the accredited test laboratory at the certification gate (G4). Details are published with the certificates.
+
+**Modem approvals.** Any reuse of modem approvals, required labeling and RF-exposure conditions must be confirmed with the accredited test laboratory. Approved customer integration guidance will be published with the certificates **[Pending decision]**.
+
+**What BEAR still needs.** Modem approvals do not certify BEAR. BEAR Rev A is **not certified**: no EMC test, Iridium network approval or regional assessment has been started. Status is tracked in the [R&D and release checklist](../RD_CHECKLIST.md).
 
 ## Environmental and material compliance
 
@@ -66,4 +70,4 @@ The exact standards list and test scope is confirmed with the accredited test la
 |---|---|
 | Export classification (ECCN, HS code) | Classification to be determined and published with ordering information **[Pending decision]** |
 | Warranty | None. Modules are sold as-is under the [Telemetry Station Terms](https://telemetrystation.com/terms#hardware-warranty) |
-| Hardware design license | Published with the design files |
+| Hardware design license | Published separately with approved design files, revision metadata and required third-party attribution **[Pending decision]** |
