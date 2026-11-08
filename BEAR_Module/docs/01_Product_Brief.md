@@ -1,6 +1,6 @@
 # 01 Product Brief
 
-Document ID: BEAR-PB-9704 | Revision: P1 | Status: Preliminary
+Document ID: BEAR-PB-9704 | Revision: P2 | Status: Preliminary
 
 ## The problem
 
@@ -13,8 +13,8 @@ The BEAR Module is a host-independent satellite communications module designed t
 | You need | BEAR Module provides |
 |---|---|
 | A satellite modem | Iridium 9704 modem (BEAR Module 9704) |
-| A power supply that handles transmit bursts | On-board power management |
-| An antenna | Antenna connection, or a qualified Iridium antenna, depending on configuration |
+| A power supply that handles transmit bursts | On-board power management: a 5 V / 0.5 A source is enough, because a 2.5 F supercapacitor bank supplies the bursts |
+| An antenna | SMA antenna connector; Maxtena M1621HCT-P-SMA reference antenna |
 | A driver | The open-source [Telemetry Station SDK](../../Telemetry_Station_SDK) |
 | A small, cheap message format | [Payload Optimizer](https://telemetrystation.com/payload-optimizer) |
 | A plan and activation | [Calculator](https://telemetrystation.com/calculators/certus) and [activation](https://telemetrystation.com/activate/certus) at telemetrystation.com |
@@ -34,12 +34,12 @@ The same module is intended to serve a single prototype and a production run. Th
 | Capability | Description | Status |
 |---|---|---|
 | Iridium 9704 modem | Messages up to 100,000 bytes over the Iridium network | Defined |
-| Power management | Input conditioning, regulation, energy storage for transmit bursts, protected on/off sequencing | Defined |
+| Power management | Input protection, supercapacitor energy storage for transmit bursts, regulation, ENABLE/BOOTED sequencing | Rev A design complete; EVT pending |
 | Simple host interface | Power, an enable line, a booted line and one UART | Defined |
 | Host-independent interface | UART plus ENABLE and BOOTED; no vendor-specific bus or required host MCU | Defined |
 | Customer MCU compatibility | Intended for STM32, MSP430, Nordic, Microchip, ESP32 and other MCUs with a compatible UART/GPIO interface and SDK port | Design target |
 | Production qualification | Qualification and release evidence through EVT, DVT, certification and PVT | In development |
-| Antenna options | Connector for your antenna, or a qualified antenna | In development |
+| Antenna options | SMA connector; Maxtena reference antenna. Approved antenna limits and installation conditions **[Pending decision]** | Rev A design complete; RF test pending |
 | IMEI on the label | Each module carries its IMEI so activation can start before firmware exists | In development |
 | Open firmware | MIT-licensed SDK with a portable C99 driver and a hardware abstraction layer | Alpha |
 | Telemetry Station workflow | Payload design, sizing, activation and data in one flow | Available at telemetrystation.com |

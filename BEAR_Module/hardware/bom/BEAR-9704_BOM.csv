@@ -1,0 +1,14 @@
+line,reference_designator,function,description,manufacturer,manufacturer_part_number,quantity,package,status
+1,U1,Iridium 9704 modem,Iridium 9704 IMT module (FCC ID Q639704),Iridium,9704,1,LGA-88 31.5 x 42.0 mm,Rev A design
+2,Q1,Input protection,"Reverse-polarity P-FET, -30 V, V_GS ±20 V",Diodes Inc,DMP3099L-7,1,SOT-23,Rev A design
+3,D1,Input protection,"TVS, V_RWM 6.0 V, V_C 10.3 V",Bourns,SMAJ6.0A,1,SMA,Rev A design
+4,U2,Power path and charge control,"Supercapacitor linear charger; 0.40 A typ (R40 750 Ω), V_reg 4.18 V (R43/R44)",Texas Instruments,BQ25173DSGR,1,WSON-8 2 x 2 mm,Rev A design
+5,"C1, C2",Energy storage,"5 F / 2.7 V supercapacitors in series (2.5 F), balanced by R45/R46 15 kΩ",KYOCERA AVX,SCCS20B505SRB,2,Radial D10 x 20 mm,Rev A design
+6,C33,Modem bulk decoupling,"220 µF 6.3 V polymer tantalum, 15 mΩ ESR",KEMET,T520D227M006ATE015,1,7343-31,Rev A design
+7,U8,Regulation,3.3 V 500 mA LDO for the modem V_IO and buffers,Texas Instruments,TLV75533PDBVR,1,SOT-23-5,Rev A design
+8,U3-U7,Host interface,"Single buffers with I_off (unpowered-safe), 5.5 V-tolerant inputs",Texas Instruments,SN74LVC1G125DBVR,5,SOT-23-5,Rev A design
+9,J1,Host connector,"Micro-Fit 3.0 2 x 5 vertical, keyed (mate 43025-1000 + 43030-0007)",Molex,43045-1012,1,Through-hole 3.0 mm pitch,Rev A design
+10,J2,RF connector,"SMA jack, vertical, 50 Ω",Amphenol RF,132134,1,Through-hole,Rev A design
+11,R47,Current sense,10 mΩ 1 W shunt for burst-current measurement,Vishay Dale,WSL2512R0100FEA,1,2512,Rev A design
+12,(not fitted),Antenna,"Iridium passive helical antenna, 2.8 dBic, SMA plug",Maxtena,M1621HCT-P-SMA,1,Off-board,Reference antenna
+13,(none),Indicators,No LEDs in Rev A; CHG_STAT and CHG_PG on test pads TP4 and TP5,n/a,n/a,0,n/a,Deferred to Rev B
