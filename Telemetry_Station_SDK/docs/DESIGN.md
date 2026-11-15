@@ -14,7 +14,7 @@ driver core  ts_bear9704.c  (state machine, timeouts, line buffers)
       |-- ts_mt.c      receiving a message (optional)
       |-- ts_cmd.c     builds command lines (no stdio)
       |-- ts_jspr.c, ts_crc.c, ts_base64.c   protocol helpers
-      |  ts_platform_t  (seven functions)             include/ts_platform.h
+      |  ts_platform_t  (seven required callbacks and the supply_ready gate)             include/ts_platform.h
       v
 your port    ports/msp430f169, ports/posix, ports/template
 ```
@@ -27,7 +27,7 @@ The driver is **cooperative and polled**. You call `ts_bear_poll()` from your ma
 
 | Rule | Why |
 |---|---|
-| Call `ts_bear_poll()` every few milliseconds | The 230400 baud UART delivers a byte about every 43 µs. Your port's receive ring buffer absorbs the gap between polls. Size it for your loop period |
+| Call `ts_bear_poll()` every 1 ms (validate worst-case service latency) | The 230400 baud UART delivers a byte about every 43 µs. Your port's receive ring buffer absorbs the gap between polls. Size it for your loop period |
 | Never call the driver from an interrupt | The driver is not re-entrant. Interrupts only move bytes into ring buffers and count milliseconds |
 | Each call does bounded work | At most `TS_POLL_BYTE_BUDGET` bytes are read, one line is parsed, and one segment is encoded. Nothing waits |
 | Events arrive inside `ts_bear_poll()` | The callback runs in your main loop context, so it needs no locking. Keep it short. Do not call `ts_bear_poll()` from it |
@@ -42,7 +42,11 @@ Proportional to `TS_POLL_BYTE_BUDGET` (default 64) plus one parse of a line of u
 ```mermaid
 stateDiagram-v2
     [*] --> TS_OFF
-    TS_OFF --> TS_BOOTING: ts_bear_start (ENABLE high)
+    TS_OFF --> TS_CHARGING: start, supply not qualified
+    TS_OFF --> TS_BOOTING: start, supply qualified (ENABLE high)
+    TS_CHARGING --> TS_BOOTING: supply_ready (ENABLE high)
+    TS_CHARGING --> TS_FAULT: charge timeout or unexpected BOOTED
+    TS_CHARGING --> TS_POWERING_DOWN: cancel
     TS_BOOTING --> TS_API_QUERY: BOOTED high
     TS_API_QUERY --> TS_SIM_QUERY: API version chosen
     TS_SIM_QUERY --> TS_MODE_QUERY: SIM selected
@@ -53,24 +57,27 @@ stateDiagram-v2
     TS_READY --> TS_SHUTDOWN_WAIT: ts_bear_shutdown
     TS_SHUTDOWN_WAIT --> TS_POWERING_DOWN: modem inactive (ENABLE low)
     TS_POWERING_DOWN --> TS_OFF: BOOTED low (TS_EVENT_STOPPED)
-    TS_BOOTING --> TS_POWERING_DOWN: timeout or I/O error
+    TS_BOOTING --> TS_FAULT_HOLD: timeout with BOOTED low
+    TS_FAULT_HOLD --> TS_POWERING_DOWN: late BOOTED high
     TS_READY --> TS_POWERING_DOWN: protocol error
     TS_POWERING_DOWN --> TS_FAULT: after an error
-    TS_FAULT --> TS_BOOTING: ts_bear_start
+    TS_FAULT --> TS_CHARGING: restart with BOOTED low, supply not qualified
+    TS_FAULT --> TS_BOOTING: restart with BOOTED low, supply qualified
 ```
 
 `TS_API_SELECT` and `TS_SIM_SET` are the short waits after the driver changes a setting. They are folded into the arrows above.
 
-`TS_OFF` and `TS_FAULT` both mean "powered down". Use `ts_bear_state()` to read the state.
+`TS_OFF` is the initial software state and does not by itself prove the hardware is off. `TS_FAULT` does not guarantee BOOTED low. `TS_FAULT_HOLD` keeps ENABLE asserted until a late boot completes; continue polling and use a reviewed hardware recovery procedure if it never does. Only `TS_EVENT_STOPPED` confirms ENABLE/BOOTED low. VIN and the capacitor bank may still be energized.
 
 ## Timeouts
 
-Every wait ends. None can hang the driver.
+Protocol waits are bounded. `TS_FAULT_HOLD` intentionally waits indefinitely without blocking the caller; it must not interrupt a boot by dropping ENABLE.
 
 | Wait | Limit | On expiry |
 |---|---|---|
-| BOOTED to go high | `TS_BOOT_TIMEOUT_MS` (30 s) | Power down, `TS_EVENT_ERROR` with `TS_ERR_TIMEOUT`, state `TS_FAULT` |
-| BOOTED to go low | `TS_BOOT_TIMEOUT_MS` | Same |
+| Supply qualification | `TS_CHARGE_TIMEOUT_MS` (120 s) | `TS_FAULT`, ENABLE stays low, `TS_ERR_SUPPLY`; no STOPPED event |
+| BOOTED to go high | `TS_BOOT_TIMEOUT_MS` (30 s) | `TS_FAULT_HOLD`, ENABLE held, error; wait for late boot |
+| BOOTED to go low | `TS_SHUTDOWN_TIMEOUT_MS` (30 s) | `TS_FAULT`; never emit STOPPED unless BOOTED falls |
 | A reply during start-up or shutdown | `TS_CMD_TIMEOUT_MS` (5 s) | Power down, fault |
 | A reply to a signal or IMEI request | `TS_CMD_TIMEOUT_MS` | `TS_EVENT_ERROR` (`TS_ERR_TIMEOUT`). The driver stays ready |
 | A message to finish | `TS_MO_TIMEOUT_MS` (10 min) | `TS_EVENT_MO_FAILED` (`TS_ERR_TIMEOUT`). The outcome is unknown |
@@ -87,7 +94,7 @@ Timestamps are 32-bit milliseconds. Comparisons use signed subtraction, so the c
 | Floating point | None |
 | stdio (`printf` family) | None in the driver core. A CI test fails the build if it appears |
 | Stack | Small and flat. Command lines are built in place, and the base64 encoder writes into the transmit buffer |
-| Driver RAM | `sizeof(ts_bear9704_t)` is **800 bytes** with defaults and receive support, **728 bytes** without it. Measured on a 64-bit computer. A 16-bit MCU has smaller pointers, so expect a little less. Measure on your target |
+| Driver RAM | `sizeof(ts_bear9704_t)` is **808 bytes** with defaults and receive support, **736 bytes** without it. Measured on a 64-bit computer. A 16-bit MCU has smaller pointers, so expect a little less. Measure on your target |
 | Flash | Per-target figures **[Pending decision]**; measure and publish with each validated platform port |
 
 Buffer sizes follow `TS_LINE_CAP` (twice) and `TS_MAX_PAYLOAD` (up to twice), set in [`ts_config.h`](../include/ts_config.h). Invalid combinations fail at compile time.

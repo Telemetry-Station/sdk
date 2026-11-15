@@ -68,3 +68,40 @@ __pycache__/
 
 # Local agent tooling is not part of the customer SDK
 /.codex/
+
+# Manufacturing sources and fabrication outputs belong outside this repository.
+*.kicad_sch
+*.kicad_pcb
+*.kicad_pro
+*.kicad_prl
+*.kicad_sym
+*.kicad_mod
+*.SchDoc
+*.PcbDoc
+*.PrjPcb
+*.SchLib
+*.PcbLib
+*.gbr
+*.gbrjob
+*.gtl
+*.gbl
+*.gts
+*.gbs
+*.gtp
+*.gbp
+*.gto
+*.gbo
+*.gm1
+*.g[0-9]
+*.drl
+*.step
+*.stp
+*-gerbers.zip
+
+# Local credentials and agent settings are never customer SDK content.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+/.agents/

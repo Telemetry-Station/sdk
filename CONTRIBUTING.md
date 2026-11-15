@@ -10,3 +10,9 @@ Thanks for helping. This project aims to stay small and readable.
 - Add a line to [CHANGELOG.md](CHANGELOG.md) for any change a user would notice.
 - Say in your pull request what you tested and on which hardware. Hardware validation on the BEAR Module 9704 is tracked in the [roadmap](BEAR_Module/ROADMAP.md).
 - Use the name "BEAR Module 9704" (family: "BEAR Module").
+
+## Public repository boundary
+
+Everything committed here, including tests, fixtures, documentation and commit messages, is public. Include only material authorized for public distribution. Public BEAR interface specifications and approved component summaries belong here; they must be usable without access to additional design files.
+
+Before committing, review `git diff --cached` and the staged filenames for credentials, real customer/device identifiers, local machine paths and nonpublic links. Use synthetic test data and repository-relative paths. Hardware file ignore rules are an additional safeguard, not a substitute for review; never force-add confidential files. Sanitized configuration examples must contain placeholders only. Any approved hardware deliverable needs explicit publication review and applicable licensing/attribution before inclusion.

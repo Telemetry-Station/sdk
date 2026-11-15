@@ -4,6 +4,14 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## Unreleased
 
+### Rev A integration consistency (2026-11-15)
+- Added nonblocking `TS_CHARGING`, an optional `supply_ready` platform gate, a 120 s charge timeout and an independent shutdown timeout. A NULL gate explicitly requires external power qualification before every start. Template gates fail closed until implemented.
+- Added `ts_bear_can_send()` to distinguish protocol readiness from accepting a send while an IMEI/signal query is pending. Examples check submission results and retain unaccepted payloads.
+- F169 bench firmware waits a provisional 60 s from initialization with VIN already valid and continuously applied; qualification at EVT remains required. Report intervals now begin at completion so a long cold start cannot trigger back-to-back cycles.
+- Corrected charge tolerance/calculation, PG versus STAT, powered-off host limitations, J1 wiring, polling budgets and fault/shutdown semantics across hardware and SDK documentation.
+- API/ABI change for the next minor release: platform struct extended and state enum values changed. Rebuild all objects together, use symbolic state names and zero-initialize platform structs.
+- Added charge timeout, cancellation, wraparound, late boot and send-readiness regression cases. Hardware validation is still pending.
+
 ### Flash-and-go BEAR checkout and stress tests
 - The MSP430F169 bench firmware now runs a BEAR checkout every cycle and prints a timestamped PASS/WARN/CHECK/SKIP row for each step (module off, boot, serial link, SIM, radio, IMEI, signal, send, delivery, power down) on USART0 at 115200 8N1. The bench order and CCS project enable the console.
 - Added an interrupt-driven F169 console ring; writes never block the modem and checkout text is never dropped.

@@ -26,7 +26,7 @@ your sensor --> your MCU + this SDK --> BEAR Module 9704 --> Iridium satellites 
 | **MO / MT** | Mobile-originated (device to cloud) and mobile-terminated (cloud to device) |
 | **Power management** | The module's supply circuitry. See below |
 
-**Power management, briefly.** A satellite modem idles on little power but pulls large, short current bursts when it transmits. Many small supplies cannot provide those bursts and will brown out. The module smooths this out and switches the modem on and off in the safe order. You only drive an `ENABLE` pin and watch a `BOOTED` pin.
+**Power management, briefly.** A satellite modem idles on little power but pulls large, short current bursts when it transmits. Many small supplies cannot provide those bursts and will brown out. The module smooths this out and supports the ENABLE/BOOTED sequence performed by the SDK and host. You only drive an `ENABLE` pin and watch a `BOOTED` pin.
 
 ## 2. See it work with no hardware
 
@@ -61,8 +61,8 @@ That is the whole life of one message: start, ready, IMEI, send, delivered, shut
 |---|---|
 | Nothing yet, just evaluating | Stop at step 2, then read [Design notes](DESIGN.md) |
 | A TI MSP430F169 and a BEAR Module | Run the checkout in step 4, then step 5 with `ports/msp430f169`. Module availability: see the [roadmap](../../BEAR_Module/ROADMAP.md) |
-| Another microcontroller | Follow [Porting](PORTING.md). You write seven small functions, starting from `ports/template` |
-| A computer and a modem on a USB serial adapter | Use `ports/posix` and the `ts_posix_modem` program |
+| Another microcontroller | Follow [Porting](PORTING.md). You write the platform callbacks and supply-ready gate, starting from `ports/template` |
+| A computer and a modem on a USB serial adapter | `ports/posix` supplies a UART transport only; real ENABLE/BOOTED control is required before use |
 
 ## 4. Check a BEAR Module on an MSP430F169 (flash and go)
 
@@ -72,19 +72,21 @@ The F169 example is a self-test. Flash it, open a terminal, and it tells you whe
 
    | F169 pin | Connects to |
    |---|---|
-   | P1.0 | BEAR `ENABLE` |
-   | P1.1 | BEAR `BOOTED` |
-   | P3.6 (USART1 TX) | BEAR `RXD` |
-   | P3.7 (USART1 RX) | BEAR `TXD` |
+   | P1.0 | J1 pin 5, BEAR `ENABLE` |
+   | P1.1 | J1 pin 6, BEAR `BOOTED` |
+   | P3.6 (USART1 TX) | J1 pin 8, BEAR `RXD` |
+   | P3.7 (USART1 RX) | J1 pin 7, BEAR `TXD` |
    | P3.4 (USART0 TX) | USB serial adapter RX (console) |
-   | GND | BEAR ground and adapter ground |
+   | GND | J1 pins 3 and 4, and adapter ground |
 
-   You also need an 8 MHz crystal on XT2. Check logic levels on both sides before you power up.
+   Connect a regulated 5 V ±5%, ≥0.5 A source to J1 pins 1 and 2 and a suitable Iridium antenna to J2. J1 pin 9 is optional TX_ACTIVE; pin 10 is NC. Confirm connector orientation using the hardware drawing. You also need an 8 MHz XT2 crystal and compatible host inputs, including when the host is unpowered.
+
+   Apply VIN with ENABLE low before MCU initialization. Qualify stored energy using the engineering unit’s supplied test procedure. The F169 port waits 60 s from initialization before ENABLE, a provisional bench policy requiring EVT validation; PG is not charge-ready. Keep VIN applied between cycles. See [power requirements](../../BEAR_Module/docs/04_Power_Management.md).
 2. **Build and flash.** In CCS, import [`ccs/bear9704_sdk_msp430f169.projectspec`](../ccs/bear9704_sdk_msp430f169.projectspec), build, and flash. From the command line, `python3 tools/build_f169.py --order orders/bench.json` builds the same image (the console is on in this order).
 3. **Open the console** at **115200 8N1** on the adapter. Any terminal works; colour is ANSI.
-4. **Reset the board.** One checkout cycle runs immediately, then one every 10 minutes (`report_interval_ms`).
+4. **Reset the board.** Supply qualification starts first; the first ENABLE waits for the provisional 60 s gate. Subsequent cycles start after a 10-minute idle interval (`report_interval_ms`) following completion.
 
-A healthy module looks like this:
+The following older illustrative transcript excludes the charge wait. Current first-cycle timestamps include the 60 s supply gate; boot duration is measured after qualification. It is not a hardware measurement:
 
 ```text
 ============================================================
@@ -113,7 +115,7 @@ A healthy module looks like this:
 
 (Times are from the simulated modem; a real module takes longer to boot and to find the sky.) The IMEI is printed with the activation links. Once you have a topic ID, set `TS_TOPIC_ID` (or `topic_id` in the order) and the send and delivery rows run too. Later cycles print a one-line summary.
 
-**RESULT** is PASS when every step passed, WARN when something works but needs attention (for example 0 bars indoors), and CHECK when a step needs your attention before the module can be used. A CHECK step marks the steps that depend on it as SKIP, and the module is always powered down before the cycle ends.
+**RESULT** is PASS when every step passed, WARN when something works but needs attention (for example 0 bars indoors), and CHECK when a step needs your attention before the module can be used. A CHECK step marks the steps that depend on it as SKIP, and the report distinguishes shutdown from FAULT_HOLD. Keep polling after faults; only STOPPED confirms ENABLE/BOOTED low.
 
 | Row shows | What to check |
 |---|---|
@@ -132,7 +134,7 @@ You can see every outcome without hardware: `build/test_checkout transcript 1234
 
 1. **Design your message.** Open the [Payload Optimizer](https://telemetrystation.com/payload-optimizer), describe your readings, and download `payload.c` and `payload.h`. Note the **bytes per message**.
 2. **Connect your encoder.** Edit [`examples/common/app_payload.c`](../examples/common/app_payload.c) to call the generated code. Set `TS_MAX_PAYLOAD` to your bytes per message.
-3. **Write or choose a port.** Seven functions in a `ts_platform_t` struct connect the SDK to your UART, a millisecond clock, and two GPIO pins.
+3. **Write or choose a port.** Seven required callbacks plus the supply-ready gate in a `ts_platform_t` struct connect the SDK to your UART, a millisecond clock, and two GPIO pins.
 4. **Wire the module.** `ENABLE` (output from your MCU), `BOOTED` (input), UART `TXD`/`RXD` crossed, common ground. Check logic voltages on both sides before powering. The F169 wiring is in the [integration guide](../../BEAR_Module/docs/06_Integration_Guide.md).
 5. **Run it.** The firmware prints the **IMEI** and the next steps. You do not need a topic ID for this.
 6. **Activate.** Put your bytes per message into the [calculator](https://telemetrystation.com/calculators/certus), then [activate](https://telemetrystation.com/activate/certus) the IMEI. You get a **topic ID**.
@@ -142,9 +144,12 @@ You can see every outcome without hardware: `build/test_checkout transcript 1234
 The main loop is short:
 
 ```c
-ts_bear_poll(&bear);                      /* every few ms: does all the work */
-if (ts_bear_is_ready(&bear) && have_data)
-    ts_bear_send(&bear, TS_TOPIC_ID, bytes, length);
+ts_bear_poll(&bear);                      /* every 1 ms; validate target service latency */
+if (have_data && ts_bear_can_send(&bear)) {
+    ts_result_t result = ts_bear_send(&bear, TS_TOPIC_ID, bytes, length);
+    if (result == TS_OK) have_data = false;
+    /* Otherwise retain the payload and handle result. Await delivery events. */
+}
 ```
 
 For a battery product, start the module only when you have something to send and shut it down after delivery. [`examples/msp430f169/main.c`](../examples/msp430f169/main.c) shows the pattern as a small state machine.
@@ -154,6 +159,7 @@ For a battery product, start the module only when you have something to send and
 | Symptom | Likely cause |
 |---|---|
 | `ts_bear_init` returns `TS_ERR_ARGUMENT` | A function is missing from your `ts_platform_t` |
+| Stays in `TS_CHARGING` | Supply gate not satisfied; inspect VCAP qualification. F169 first boot waits 60 s provisionally; template fails closed until implemented |
 | Stays in `TS_BOOTING`, then `TS_EVENT_ERROR` / `TS_ERR_TIMEOUT` | `BOOTED` never rose: check `ENABLE`, supply and your `boot_ready()` polarity |
 | Boots but no IMEI | UART TX and RX swapped, or baud rate wrong. It must be 230400 8N1 and needs a crystal-based clock on many MCUs |
 | `ts_bear_send` returns `TS_ERR_NOT_READY` | Still starting up, or the IMEI query is answering. Try again on the next loop |

@@ -15,7 +15,7 @@ Other GPIOs are unassigned. Pin assignments from other products do not apply her
    approved limits (currently unavailable for complete BEAR design).
 3. Program only the reviewed image using CCS, verify flash read-back separately,
    and record it. Confirm reset/startup, clock/baud and disconnected-host behavior.
-4. Capture OFF, BOOTING, READY and shutdown states. Measure actual I/O leakage,
+4. Capture OFF, CHARGING, BOOTING, READY and shutdown states. Measure actual I/O leakage,
    ENABLE/BOOTED order, UART timing and supply behavior; registers alone cannot.
 5. Inject missing oscillator, delayed/stuck BOOTED, UART overflow, interrupted
    replies, resets and loss of supply. FAULT_HOLD must not be bypassed by resets
@@ -49,3 +49,11 @@ not the electrical measurements above.
 Use PASS / IN REVIEW / NOT YET RUN / PENDING for each required observation, with numeric
 limits, actual values, units and raw evidence. Do not collapse unmeasured items
 into an overall PASS.
+
+Rev A release gates added 2026-11-15:
+
+- Measure cold-bank charge time over input, temperature and capacitance tolerance, including thermal foldback and modem/logic load. Establish VCAP boot threshold, hysteresis, timeout and charge margin. The provisional 60 s bench delay is not acceptance evidence.
+- Confirm ENABLE stays low and UART isolated during charging; test slow/missing charge, cancellation, timer wrap and a separate boot deadline. PG alone must never authorize boot. Validate any STAT gate against its fault blinking and startup rail behavior.
+- Test host reset during boot and while running using an approved recovery procedure. The reference initialization drives ENABLE low; it is not a safe hot-attach/reset recovery implementation.
+- Measure powered-BEAR/unpowered-host injection and retained-bank behavior after VIN removal; qualify host I/O or add isolation.
+- Capture worst-case UART service latency and overflow behavior. Exercise READY with the automatic IMEI query, checked send acceptance, delivery and shutdown with outstanding MT data.

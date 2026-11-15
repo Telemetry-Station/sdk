@@ -55,7 +55,7 @@ The customer's host MCU is external to the module. The TI MSP430F169 is the firs
 A BEAR Module contains:
 
 - **An Iridium modem.** The 9704 in this first version.
-- **Power management.** A satellite modem idles on little power but pulls short, large bursts of current when it transmits. Power management is the circuitry that regulates and stores energy for those bursts and switches the modem on and off in the safe order, so your microcontroller does not have to. From your firmware, it is an `ENABLE` pin and a `BOOTED` pin.
+- **Power management.** A satellite modem idles on little power but pulls short, large bursts of current when it transmits. Power management is the circuitry that regulates and stores energy for those bursts and supports modem operation; the SDK and host perform supply qualification and the ENABLE/BOOTED sequence. From your firmware, it is an `ENABLE` pin and a `BOOTED` pin.
 - **An antenna connection**, and in some configurations a qualified Iridium antenna.
 
 ## Status and roadmap
@@ -103,7 +103,7 @@ sh tests/run_tests.sh && sh tests/compile_adapter.sh
 - Shut the module down properly and wait for `TS_EVENT_STOPPED` before removing its power.
 - Add a hardware watchdog, and decide what your product does after a fault.
 - Use the topic ID Telemetry Station gives you, never another project's.
-- Check voltage levels on both sides before connecting. The MSP430F169 pins in the SDK are test-bench wiring. BEAR Module 9704 electrical limits, pin numbering and connector details are **[Pending decision]** and will be frozen for the Rev A datasheet.
+- Check voltage levels on both sides before connecting. The MSP430F169 pins in the SDK are test-bench wiring. Rev A design pinout and electrical values are in the [datasheet](BEAR_Module/datasheet/BEAR-9704_Datasheet.md); physical validation remains pending. Qualify the energy bank before ENABLE, and verify unpowered-host compatibility.
 - The SDK checks message integrity but does not encrypt or authenticate. See the [security policy](SECURITY.md).
 
 ## Help and contributions

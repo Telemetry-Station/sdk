@@ -37,18 +37,26 @@ static void on_event(void *user, ts_event_t event, int32_t detail) {
 ts_bear9704_t bear;
 ts_platform_t port = my_mcu_platform();   /* you write this, see docs/PORTING.md */
 
-ts_bear_init(&bear, &port, on_event, &bear);
-ts_bear_start(&bear);
+/* Apply VIN first. Implement port.supply_ready; see the Rev A charge policy. */
+if (ts_bear_init(&bear, &port, on_event, &bear) != TS_OK) return;
+if (ts_bear_start(&bear) != TS_OK) return;
 
 for (;;) {
-    ts_bear_poll(&bear);                  /* call every few milliseconds */
-    if (done) ts_bear_shutdown(&bear);    /* then remove power after TS_EVENT_STOPPED */
-    if (time_to_report && ts_bear_is_ready(&bear))
-        ts_bear_send(&bear, TS_TOPIC_ID, bytes, length);
+    ts_bear_poll(&bear);                  /* call every 1 ms (validate worst-case service latency) */
+    if (done) {
+        /* Retry BUSY later; remove VIN only after TS_EVENT_STOPPED. */
+        (void)ts_bear_shutdown(&bear);
+    } else if (time_to_report && ts_bear_can_send(&bear)) {
+        ts_result_t result = ts_bear_send(&bear, TS_TOPIC_ID, bytes, length);
+        if (result == TS_OK) time_to_report = false; /* Accepted locally. */
+        /* Otherwise retain the payload and handle result. Wait for delivery. */
+    }
 }
 ```
 
 Run it without hardware: `cmake -S . -B build && cmake --build build && ./build/simulated_demo`.
+
+`TS_EVENT_READY` means protocol initialization is complete; an automatic IMEI query may still be pending. `ts_bear_can_send()` reports whether a valid send can be accepted now. The Rev A supply gate and host electrical requirements are described in [Porting](docs/PORTING.md#rev-a-integration-contract--2026-11-15).
 
 A complete duty-cycled example for the MSP430F169 (module on only while there is work) is in [`examples/msp430f169/main.c`](examples/msp430f169/main.c).
 
@@ -60,7 +68,7 @@ A complete duty-cycled example for the MSP430F169 (module on only while there is
 | `src/`                                   | Driver split by job: `ts_bear9704.c` (state machine), `ts_setup.c` (startup), `ts_mo.c` (send), `ts_mt.c` (receive), `ts_cmd.c` (command builder), plus protocol helpers. `ts_names.c` (log names) and `ts_activation.c` (console text) are optional |
 | `ports/msp430f169/`                      | MSP430F169 platform file and console                                                                                                                                                                                                                 |
 | `ports/template/`                        | Starting point for a new MCU. Compiles as-is                                                                                                                                                                                                         |
-| `ports/posix/`                           | Linux/macOS platform for a bench modem on a USB serial adapter                                                                                                                                                                                       |
+| `ports/posix/`                           | Linux/macOS UART transport skeleton; GPIO lifecycle integration is required                                                                                                                                                                                       |
 | `examples/common/`                       | `app_payload.c`, the one file you edit to match your device                                                                                                                                                                                          |
 | `examples/msp430f169/`, `examples/host/` | Complete example programs, including `simulated_demo`                                                                                                                                                                                                |
 | `tests/`                                 | Unit tests and the simulated modem (`sim_modem.c`)                                                                                                                                                                                                   |
@@ -80,7 +88,7 @@ Set these at build time (for example `-DTS_MAX_PAYLOAD=40`) or in [`include/ts_c
 | `TS_LINE_CAP`            | `256`   | Modem line buffer size.                                                         |
 | `TS_QUERY_IMEI_ON_READY` | `1`     | Read the IMEI as soon as the modem is ready.                                    |
 
-Defaults are sized for the MSP430F169's 2 KB of RAM. The driver's state is 800 bytes with the defaults (728 without receive support), measured on a computer. See [Design notes](docs/DESIGN.md#memory).
+Defaults are sized for the MSP430F169's 2 KB of RAM. The driver's state is 808 bytes with the defaults (736 without receive support), measured on a computer. See [Design notes](docs/DESIGN.md#memory).
 
 ## Build and test on a computer
 
