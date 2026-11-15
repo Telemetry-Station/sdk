@@ -3,6 +3,7 @@
 #define TS_F169_PORT_H
 
 #include "ts_platform.h"
+#include "ts_config.h"
 
 /*
  * Platform adapter for the TI MSP430F169.
@@ -36,6 +37,17 @@
 /* Size of the UART buffers filled by interrupts. Power of two, 256 or less. */
 #ifndef TS_F169_RING_SIZE
 #define TS_F169_RING_SIZE 128u
+#endif
+
+/* Rev A bench policy: VIN must be valid before init and remain applied.
+ * 60 s is provisional, NOT a measured worst-case guarantee. Qualify VCAP on
+ * the bench; production ports should use a qualified voltage/status gate.
+ * Override only with a validated charge interval for the actual hardware. */
+#ifndef TS_F169_CHARGE_WAIT_MS
+#define TS_F169_CHARGE_WAIT_MS 60000UL
+#endif
+#if TS_F169_CHARGE_WAIT_MS < 1 || TS_F169_CHARGE_WAIT_MS >= TS_CHARGE_TIMEOUT_MS
+#error F169 charge wait must be positive and less than TS_CHARGE_TIMEOUT_MS
 #endif
 
 /* Hardware watchdog. Off by default so the bench port works on any board.

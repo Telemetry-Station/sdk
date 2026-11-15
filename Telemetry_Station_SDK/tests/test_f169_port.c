@@ -138,7 +138,10 @@ static void model_booted(void)
     if (enable != board.enable) {
         board.enable = enable;
         board.enable_edge = board.now;
-        if (enable) board.enable_rises++;
+        if (enable) {
+            assert(board.now >= TS_F169_CHARGE_WAIT_MS);
+            board.enable_rises++;
+        }
     }
     if (board.enable) board.enable_high_ms++;
     if (board.booted_stuck) {
@@ -358,7 +361,7 @@ static void test_firmware_booted_stuck_high(void)
 static void test_firmware_headless(void)
 {
     board_init();
-    board.stop_ms = 2u * REPORT_INTERVAL_MS + 5000u;
+    board.stop_ms = TS_F169_CHARGE_WAIT_MS + 2u * REPORT_INTERVAL_MS + 15000u;
     assert(run_firmware(NULL, 0) == 0);
     assert(board.console_len == 0u);
     assert(!(ME1 & UTXE0) && !(P3SEL & (BIT4 | BIT5)) && !(IE1 & UTXIE0));

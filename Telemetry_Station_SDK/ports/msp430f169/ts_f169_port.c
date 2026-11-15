@@ -14,6 +14,7 @@
 #endif
 
 static volatile uint32_t tick_ms;
+static bool supply_qualified;
 
 /* Single producer, single consumer rings. */
 static volatile uint8_t rx_ring[TS_F169_RING_SIZE];
@@ -50,6 +51,9 @@ bool ts_f169_init(void)
     } while ((IFG1 & OFIFG) && --attempts);
     if (IFG1 & OFIFG) return false; /* No UART/timer on an unverified clock. */
     BCSCTL2 = SELM_2 | SELS;
+
+    tick_ms = 0;
+    supply_qualified = false;
 
     /* Timer_A: 8 MHz / 8 = 1 MHz, so 1000 counts = 1 ms. */
     TACTL = TASSEL_2 | ID_3 | TACLR;
@@ -137,6 +141,12 @@ static int16_t port_serial_write(void *user, const uint8_t *src, size_t length)
     return (int16_t)count;
 }
 
+static bool port_supply_ready(void *user)
+{
+    if (port_millis(user) >= TS_F169_CHARGE_WAIT_MS) supply_qualified = true;
+    return supply_qualified; /* Remains qualified across tick wrap; VIN stays on. */
+}
+
 static bool port_power_start(void *user)
 {
     (void)user;
@@ -166,6 +176,7 @@ ts_platform_t ts_f169_platform(void)
     port.power_stop = port_power_stop;
     port.uart_enable = port_uart_enable;
     port.boot_ready = port_boot_ready;
+    port.supply_ready = port_supply_ready;
     return port;
 }
 

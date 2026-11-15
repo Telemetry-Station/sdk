@@ -16,16 +16,16 @@
  * plain-language hint for each failure. Every later cycle prints a one-line
  * summary (plus any WARN/FAIL rows), so leaving it running is a soak test.
  *
- * The module is only powered while it has work to do:
+ * VIN remains applied; the modem is enabled only while it has work:
  *
- *   wait REPORT_INTERVAL_MS -> checkout cycle (power on ... power off) -> wait
+ *   wait REPORT_INTERVAL_MS -> checkout cycle (ENABLE high ... BOOTED low) -> wait
  *
  * Until TS_TOPIC_ID is set (after activation) no message is sent; the report
  * shows the IMEI and the activation steps instead.
  */
 
 #ifndef REPORT_INTERVAL_MS
-#define REPORT_INTERVAL_MS 600000UL /* One cycle every 10 minutes. */
+#define REPORT_INTERVAL_MS 600000UL /* Idle for 10 minutes after each completed cycle. */
 #endif
 
 /* ANSI colours in the console. Set to 0 for terminals that show "[32m". */
@@ -118,8 +118,11 @@ int main(void)
             started = true;
             last_start = now;
         }
-        if (bear_checkout_poll(&checkout, now) && bear_checkout_sent(&checkout))
-            ++reading.sequence; /* Gaps and repeats are visible to the cloud. */
+        if (bear_checkout_poll(&checkout, now)) {
+            last_start = now; /* Full idle interval after even a slow first charge. */
+            if (bear_checkout_sent(&checkout))
+                ++reading.sequence; /* Gaps and repeats are visible to the cloud. */
+        }
         ts_f169_watchdog_kick();
         __bis_SR_register(LPM0_bits | GIE); /* Sleep until the next interrupt. */
         if (TS_FIRMWARE_STOP()) return 0;
