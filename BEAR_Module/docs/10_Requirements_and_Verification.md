@@ -1,6 +1,6 @@
 # 10 Requirements and Verification
 
-Document ID: BEAR-RV-9704 | Revision: P2 | Status: Preliminary
+Document ID: BEAR-RV-9704 | Revision: P3 (2026-11-15) | Status: Preliminary
 
 Each requirement has an ID, a verification method (**T**est, **I**nspection, **A**nalysis, **D**emonstration) and a status. **Designed (Rev A)** means the current design implements the requirement, but hardware testing is pending. Remaining open limits are marked **[Pending decision]**. Verified limits will be published in the [datasheet](../datasheet/BEAR-9704_Datasheet.md).
 
@@ -10,7 +10,7 @@ Each requirement has an ID, a verification method (**T**est, **I**nspection, **A
 |---|---|---|---|
 | BEAR-REQ-001 | The module shall provide Iridium 9704 connectivity for sending and receiving messages | D | Defined |
 | BEAR-REQ-002 | The module shall expose a serial interface at 230400 baud, 8N1 | T | Defined |
-| BEAR-REQ-003 | The module shall report readiness on BOOTED | T | Defined |
+| BEAR-REQ-003 | The module shall report boot completion on BOOTED; this does not establish protocol or network readiness | T | Defined |
 | BEAR-REQ-004 | The IMEI shall be readable over the serial interface | D | Defined |
 | BEAR-REQ-005 | The IMEI shall be printed on the module label | I | Target |
 | BEAR-REQ-006 | The module shall not require a specific host MCU or vendor-specific host bus | I/T | Defined |
@@ -21,10 +21,11 @@ Each requirement has an ID, a verification method (**T**est, **I**nspection, **A
 |---|---|---|---|
 | BEAR-REQ-010 | The module shall start only when ENABLE is asserted | T | Defined |
 | BEAR-REQ-011 | The module shall complete the boot and shutdown handshake using ENABLE and BOOTED | T | Defined |
-| BEAR-REQ-012 | Host inputs shall tolerate a host that is unpowered or high-impedance | T | Designed (Rev A): SN74LVC1G125 I_off buffers and 100 kΩ default-state resistors; verify at EVT |
+| BEAR-REQ-012 | The host interface shall support documented powered-off and high-impedance host conditions | T | Partially addressed: default-state resistors and buffer Ioff at V_CC = 0 V. Powered BEAR outputs can inject into an unpowered host; verify host limits or add isolation at EVT |
 | BEAR-REQ-013 | The module shall accept the published regulated DC input range | T | Designed (Rev A): 5.0 V ±5 %, ≥ 0.5 A source; verify at EVT/DVT |
-| BEAR-REQ-014 | The module shall support transmit bursts without host supply collapse | T/A | Designed (Rev A): 2.5 F bank; VIN draw ≤ 0.44 A design value; burst margin requires EVT measurement |
+| BEAR-REQ-014 | The module shall support transmit bursts without host supply collapse | T/A | Designed (Rev A): 2.5 F bank; charger 0.36–0.44 A before resistor tolerance and overhead; burst margin requires EVT measurement |
 | BEAR-REQ-015 | Disabled-state quiescent current shall be characterized and specified | T | Rev A test limit < 5 mA; final limit **[Pending decision]** after EVT measurement |
+| BEAR-REQ-016 | The host shall qualify stored energy before asserting ENABLE; PG alone shall not authorize startup | T/A | SDK charge gate tested in host models. VCAP threshold, hysteresis and worst-case charge interval remain EVT release gates; 60 s F169 bench delay is provisional |
 
 ## RF
 
@@ -51,6 +52,9 @@ Each requirement has an ID, a verification method (**T**est, **I**nspection, **A
 | BEAR-REQ-042 | The SDK shall not resend a message automatically | T | Defined (simulated modem) |
 | BEAR-REQ-043 | The SDK shall provide a reference host port, initially the TI MSP430F169 | T | In development |
 | BEAR-REQ-044 | The portable SDK core shall support additional host ports through the documented platform interface without requiring changes to the core | T | Defined (simulated modem) |
+| BEAR-REQ-045 | Applications shall distinguish protocol initialization, send acceptance, modem acceptance and delivery | T | `ts_bear_can_send()` plus checked submission; automatic-query contention tested on host |
+| BEAR-REQ-046 | Charging shall be nonblocking, cancellable, and bounded independently of boot and shutdown | T | Charge gate, deadline wrap, timeout, cancellation and late boot tested on host; physical timing remains unverified |
+| BEAR-REQ-047 | The reference port shall sustain the UART rate without overflow under its documented service schedule | T/A | 1 ms polling target; 64-byte drain budget and 127-byte usable RX ring analyzed. Worst-case target latency requires EVT |
 
 The MSP430F169 is the first reference host, not a product-use requirement. STM32, Nordic, Microchip, ESP32 and other MCU families are intended customer targets; each SDK port and its electrical compatibility must be validated independently. See the [firmware interface](07_Firmware_Interface.md).
 

@@ -2,7 +2,7 @@
 
 # BEAR Module 9704 Datasheet
 
-Document ID: BEAR-DS-9704 | Revision: P2 | Status: Preliminary (Rev A design values; not yet measured)
+Document ID: BEAR-DS-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; not yet measured)
 
 Preliminary information. Specifications may change. Values below are the Rev A design values, not measured or released specifications. Items that can only be established by measurement are marked **Characterize at EVT**. Remaining open items, including vendor limits awaiting publication clearance, are marked **[Pending decision]**.
 
@@ -16,7 +16,7 @@ The BEAR Module 9704 is designed as a host-independent satellite communications 
 - UART interface, 230400 baud 8N1
 - ENABLE and BOOTED handshake signals
 - SMA antenna connector (50 Ω); Maxtena M1621HCT-P-SMA reference antenna
-- Buffered 3.3 V host I/O, 5.5 V-tolerant and safe when either side is unpowered
+- Buffered 3.3 V host I/O, 5.5 V-tolerant and Ioff-protected when the buffer supply is off; unpowered-host compatibility requires verification
 - Telemetry Station SDK in portable C99, with an MSP430F169 first reference port
 - Host-independent interface: UART, ENABLE and BOOTED; no specific host MCU required
 
@@ -68,26 +68,26 @@ RF connector J2: Amphenol 132134 SMA jack, vertical. See [03 Hardware interface]
 |---|---|---|---|---|
 | Absolute maximum supply voltage | −20 V (reverse) | | 6.0 V continuous | Q1 DMP3099L V_GS ±20 V; D1 SMAJ6.0A V_RWM 6.0 V (conducts from 6.67 V) |
 | Recommended supply voltage (VIN) | 4.75 V | 5.0 V | 5.25 V | Rev A power design |
-| Supply source capability | 0.5 A | | | Worst-case input current 0.44 A (charger I_CHG 0.36 / 0.40 / 0.44 A) |
+| Supply source capability | 0.5 A | | | Charger I_CHG 0.36 / 0.40 / 0.44 A before resistor tolerance and quiescent current; validate total input current at EVT |
 | Host input V_IH (ENABLE, RXD) | 2.0 V | | 5.5 V | SN74LVC1G125 at V_CC 3.0–3.6 V |
 | Host input V_IL (ENABLE, RXD) | 0 V | | 0.8 V | SN74LVC1G125 |
 | Host output V_OH (BOOTED, TXD, TX_ACTIVE) | 2.4 V at −16 mA | 3.3 V | | SN74LVC1G125 at V_CC 3.0 V |
 | Host output V_OL | | | 0.55 V at 24 mA | SN74LVC1G125 |
-| Unpowered behavior | | | ±10 µA | I_off; I/O safe with either side unpowered |
+| Unpowered behavior | | | ±10 µA | I_off at buffer V_CC = 0 V only; powered module outputs may back-power an unpowered host |
 | Current, disabled (ENABLE low, bank full) | | | | Characterize at EVT; Rev A test limit < 5 mA |
-| Current, transmit | | | 0.44 A from VIN | Burst current comes from the supercapacitor bank, not VIN. Modem burst current is not published by Iridium; Rev A design envelope 2.0 A from the bank. Characterize at EVT |
+| Current, transmit | | | Characterize at EVT | Charger design range 0.36–0.44 A before resistor tolerance and overhead; the bank supplies bursts. Modem burst current is not published by Iridium; Rev A design envelope 2.0 A from the bank. Characterize at EVT |
 | Operating temperature | −40 °C target | | +85 °C target | Confirm component limits and verify at DVT **[Pending decision]** |
 
 ## Timing
 
 | Parameter | Description | Value |
 |---|---|---|
-| t_VIN | Supply applied to ENABLE allowed | ≥ 35 s (bank charge from empty: 26 s typical, longer under charger thermal regulation). Rev A has no hardware supervisor |
+| t_VIN | Supply applied to ENABLE allowed | Qualified stored energy required. About 26 s nominal; ≥38 s calculated maximum-capacitance/minimum-current case before thermal effects and load. F169 bench wait: 60 s provisional; worst-case limit requires EVT |
 | t_BOOT | ENABLE high to BOOTED high | Not published by Iridium. Characterize at EVT; the SDK uses a timeout |
 | t_DOWN | ENABLE low to BOOTED low | Not published by Iridium. Characterize at EVT |
 | t_UART | BOOTED high to first serial command | Not published by Iridium. Characterize at EVT |
 
-Always wait for BOOTED before using the UART and before removing power. See [04 Power management](../docs/04_Power_Management.md).
+Wait for BOOTED high before using the UART and for TS_EVENT_STOPPED (ENABLE and BOOTED low) before removing VIN. See [04 Power management](../docs/04_Power_Management.md).
 
 ## RF, mechanical, environmental
 
@@ -113,5 +113,6 @@ See [11 Ordering and support](../docs/11_Ordering_and_Support.md).
 
 | Revision | Date | Change |
 |---|---|---|
+| P3 | 2026-11-15 | Correct supply qualification and unpowered-host limits; synchronize SDK lifecycle requirements |
 | P2 | 2026-11-07 | Rev A design values: connector and pinout, supply, logic levels, protection, t_VIN, RF and mechanical. Unpublished modem currents and timing marked for EVT characterization |
 | P1 | October 2026 | Preliminary release |

@@ -1,6 +1,6 @@
 # 03 Hardware Interface
 
-Document ID: BEAR-HI-9704 | Revision: P2 | Status: Preliminary (Rev A design values; verification pending at EVT)
+Document ID: BEAR-HI-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; verification pending at EVT)
 
 This document defines how a host system connects to the BEAR Module 9704. The signal set, directions and sequencing below are defined. Connector, pin assignment and electrical limits are Rev A design values; hardware verification is pending at EVT.
 
@@ -47,6 +47,7 @@ sequenceDiagram
     participant M as BEAR Module 9704
     H->>H: Set module-facing inputs to high impedance or low
     H->>M: Apply VIN
+    H->>H: Qualify stored energy (SDK supply_ready gate)
     H->>M: ENABLE high
     M-->>H: BOOTED high (modem has booted)
     H->>H: Initialise UART pins and peripheral
@@ -55,7 +56,7 @@ sequenceDiagram
 ```
 
 1. Before power is applied, hold every host pin that connects to a module input at high impedance or low. This prevents back-powering the module through its input protection.
-2. Apply VIN and wait t_VIN (≥ 35 s) while the energy-storage bank charges.
+2. Apply VIN and qualify stored energy before asserting ENABLE (see t_VIN below).
 3. Drive ENABLE high.
 4. Wait for BOOTED to go high. The SDK waits up to `TS_BOOT_TIMEOUT_MS`.
 5. Only now initialise the UART pins and start communicating.
@@ -95,7 +96,7 @@ The Iridium 9704 modem requires this handshake. Interrupting a boot or shutdown 
 |---|---|---|
 | t_BOOT | ENABLE high to BOOTED high | Not published by Iridium. Characterize at EVT |
 | t_DOWN | ENABLE low to BOOTED low | Not published by Iridium. Characterize at EVT |
-| t_VIN | VIN valid to ENABLE allowed | ≥ 35 s. The bank charges from empty in 26 s typical, longer if the charger is in thermal regulation. Rev A has no hardware supervisor, so the host must wait |
+| t_VIN | VIN valid to ENABLE allowed | Qualify VCAP before ENABLE. About 26 s nominal; ≥38 s at maximum capacitance/minimum current before thermal effects and load. F169 bench wait: 60 s provisional, not a guaranteed worst-case limit |
 | t_UART | BOOTED high to first serial command accepted | Not published by Iridium. Characterize at EVT |
 
 The SDK uses a generous default boot timeout (30 s). It is configurable with `TS_BOOT_TIMEOUT_MS`.
@@ -110,7 +111,7 @@ The interface is designed for 3.3 V class microcontrollers. Every host signal pa
 | Module input range | 0 to 5.5 V; inputs are 5 V tolerant |
 | Module output V_OH (BOOTED, TXD, TX_ACTIVE) | ≥ 2.4 V at −16 mA; 3.3 V nominal |
 | Module output V_OL | ≤ 0.4 V at 16 mA |
-| Unpowered behavior | I_off ≤ ±10 µA: no back-powering when either the host or the module is unpowered |
+| Unpowered behavior | I_off ≤ ±10 µA at buffer V_CC = 0 V only. With BEAR powered, outputs remain driven; the host must tolerate these levels while unpowered or use isolation |
 
 5 V hosts may drive ENABLE and RXD directly. A 5 V host input must accept 2.4 V as high; otherwise add a level translator on BOOTED, TXD and TX_ACTIVE.
 

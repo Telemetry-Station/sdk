@@ -1,6 +1,6 @@
 # 06 Integration Guide
 
-Document ID: BEAR-IG-9704 | Revision: P2 | Status: Preliminary (Rev A design values)
+Document ID: BEAR-IG-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values)
 
 How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. BEAR is host-independent. The TI MSP430F169 is the first SDK reference host and worked example; STM32, MSP430, Nordic, Microchip, ESP32 and other hosts are intended integration targets when their electrical characteristics meet the released module specification and a suitable SDK port is available.
 
@@ -22,7 +22,7 @@ How to connect a BEAR Module 9704 to a microcontroller and bring it up with the 
 |---|---|---|---|
 | Supply | VIN | 1, 2 | 5.0 V, ≥ 0.5 A |
 | Ground | GND | 3, 4 | Common ground is required |
-| GPIO output | ENABLE | 5 | Hold low for at least 35 s after applying VIN while the energy bank charges |
+| GPIO output | ENABLE | 5 | Hold low until stored energy is qualified; see the charge policy below |
 | GPIO input | BOOTED | 6 | Do not use the UART until this is high |
 | UART RX | TXD | 7 | Your RX comes from the module's TXD |
 | UART TX | RXD | 8 | Cross-over: your TX goes to the module's RXD |
@@ -49,7 +49,7 @@ The F169 reference port uses an external 8 MHz crystal on XT2 for the main clock
 
 Work through these in order. Stop at the first step that fails.
 
-1. **Bench supply first.** Power the module from a 5.0 V bench supply with a 0.6 A current limit, with ENABLE low. Input current rises to about 0.4 A while the bank charges, then falls. Confirm that BOOTED is low. Wait at least 35 s.
+1. **Bench supply first.** Power the module from a 5.0 V bench supply with a 0.6 A current limit, with ENABLE low. Input current rises to about 0.4 A while the bank charges, then falls. Confirm that BOOTED is low. Use the engineering unit’s supplied test procedure to qualify stored energy before enabling the modem; the provisional F169 wait is 60 s, not a guaranteed charge limit.
 2. **Antenna.** Connect the antenna. Do not enable the module without an antenna or a matched load.
 3. **Build the SDK tests.** Run the host tests in `Telemetry_Station_SDK` to confirm your toolchain and settings.
 4. **Add your platform file.** Implement the `ts_platform_t` functions for your microcontroller, or start from the F169 port. See [07 Firmware interface](07_Firmware_Interface.md).

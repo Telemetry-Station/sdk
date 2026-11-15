@@ -1,6 +1,6 @@
 # 04 Power Management
 
-Document ID: BEAR-PM-9704 | Revision: P2 | Status: Preliminary (Rev A design values; measurement pending at EVT)
+Document ID: BEAR-PM-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; measurement pending at EVT)
 
 ## What power management means
 
@@ -39,12 +39,14 @@ flowchart LR
 | Current limiting and charge control | Limits inrush and source current | U2 BQ25173 supercapacitor charger. Charge current 0.36 / 0.40 / 0.44 A (min / typ / max), set by a 750 Ω R_ISET. This also limits inrush |
 | Energy storage | Supplies transmit-burst current | Two 5 F / 2.7 V supercapacitors in series (2.5 F), charged to 4.18 V (4.14 to 4.23 V), with balancing resistors. Usable energy and burst margin require EVT measurement and confirmation against permitted modem limits **[Pending decision]** |
 | Regulation | Produces modem and interface rails | The modem supply runs directly from the bank. U8 TLV75533 LDO makes the 3.3 V I/O and buffer rail. Modem supply limits are not published here pending publication clearance |
-| Sequencing and supervision | Applies the ENABLE and BOOTED handshake | ENABLE is buffered to the modem with a 100 kΩ pull-down (off by default). No hardware supervisor in Rev A: the host waits t_VIN ≥ 35 s after power-up |
+| Sequencing and supervision | Applies the ENABLE and BOOTED handshake | ENABLE is buffered to the modem with a 100 kΩ pull-down (off by default). No hardware supervisor in Rev A: the host qualifies stored energy before ENABLE |
 
 ## What it means for your design
 
-- **Source sizing.** Use a regulated 5.0 V ±5 % (4.75 to 5.25 V) source rated for at least 0.5 A. The module draws at most 0.44 A from VIN, including during transmission; the bank supplies the bursts. For a weaker 0.2 A source, Rev A can be built with R_ISET = 1.5 kΩ (0.18 to 0.22 A), with slower recharge.
-- **Charge time.** After VIN is applied, the bank charges from empty in about 26 s, up to about 60 s if the charger is in thermal regulation. Wait at least 35 s (t_VIN) before driving ENABLE high. After a short power interruption the bank is still charged, and the wait is shorter.
+- **Source sizing.** Use a regulated 5.0 V ±5 % (4.75 to 5.25 V) source rated for at least 0.5 A. The charger design range is 0.36–0.44 A, before resistor tolerance and quiescent current; verify total input current at EVT. The bank supplies bursts. R_ISET = 1.5 kΩ gives 0.18–0.22 A before tolerances and overhead, so it does not establish compatibility with a 0.2 A source; source capability and sustained-load recovery require requalification.
+- **Charge qualification.** Component tolerance increases the calculated charge interval to about 38 s before thermal regulation and system load. There is no measured worst-case charge time. The F169 bench port waits 60 s from initialization, with VIN already valid and continuously applied. This is a provisional engineering policy, not a production guarantee. Verify stored-energy readiness using the engineering unit’s supplied test procedure before running it; a production port must use a validated delay or voltage/status qualification with margin and hysteresis. After VIN loss, requalify the bank; do not infer its charge from elapsed MCU uptime.
+- **Status signals.** TP5 CHG_PG indicates valid charger input, not a charged bank. TP4 CHG_STAT indicates the charge threshold and also blinks on faults; it requires fault and startup qualification. Neither is on J1. See [TI BQ25173 datasheet](https://www.ti.com/lit/ds/symlink/bq25173.pdf). Rev A has no energy-ready signal on J1; pin 10 remains NC.
+- **Host power loss.** Module outputs can remain driven while the energy bank is charged. Ioff applies when the buffers' own V_CC is zero, not when the host loses power. Verify the host's powered-off input limits or add isolation. Removing VIN does not immediately discharge the bank. See [TI SN74LVC1G125 datasheet](https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf).
 - **Brown-out ride-through (target).** Energy storage is intended to support a clean shutdown after VIN is lost. Hold-up energy, duration and shutdown performance require EVT measurement **[Pending decision]**; do not assume guaranteed ride-through. The charger is designed to block reverse current.
 - **Supply options.** Regulated DC only. Above 6 V the TVS conducts; reversed polarity is blocked.
 
@@ -57,7 +59,7 @@ Iridium does not publish the 9704's supply current, so module currents are measu
 | Off (ENABLE low, bank full) | Characterize at EVT; Rev A test limit < 5 mA | Most of the time | |
 | Boot | Characterize at EVT | t_BOOT | |
 | Idle, registered | Characterize at EVT; design assumption < 0.15 A | Until sent | |
-| Transmit burst | From the bank: 2.0 A design envelope, not a modem specification. Burst timing and average current require EVT measurement **[Pending decision]**. From VIN: ≤ 0.44 A design value | Per message | |
+| Transmit burst | From the bank: 2.0 A design envelope, not a modem specification. Burst timing and average current require EVT measurement **[Pending decision]**. Charger 0.36–0.44 A before resistor tolerance and overhead; verify total VIN current | Per message | |
 | Shutdown | Characterize at EVT | t_DOWN | |
 
 Energy per message depends on how long the modem needs to find a satellite. Sky view and antenna quality matter. See [05 Antenna and RF](05_Antenna_and_RF.md).
