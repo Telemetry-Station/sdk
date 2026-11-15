@@ -139,6 +139,7 @@ static void put_verdict(bear_checkout_t *ck, bc_verdict_t verdict)
 const char *bear_checkout_reason(int32_t reason)
 {
     switch (reason) {
+    case TS_ERR_SUPPLY:    return "supply qualification failed; ENABLE not asserted";
     case TS_ERR_TIMEOUT:   return "timed out";
     case TS_ERR_IO:        return "serial I/O error or BOOTED dropped";
     case TS_ERR_PROTOCOL:  return "unexpected reply from modem";
@@ -205,9 +206,10 @@ static void abort_cycle(bear_checkout_t *ck, uint32_t now)
 {
     uint8_t i;
     int32_t reason = error_or(ck, TS_ERR_BUSY);
-    /* While booting the driver only gives up on a BOOTED timeout. Any other
-     * fault means BOOTED rose and the handshake failed in the same poll. */
-    if (ck->status[BC_BOOT] == BC_RUN && reason != TS_ERR_TIMEOUT) {
+    /* Supply failures never establish a successful boot. Other non-timeout
+     * faults here mean the handshake failed after BOOTED rose. */
+    if (ck->status[BC_BOOT] == BC_RUN && reason != TS_ERR_TIMEOUT &&
+        reason != TS_ERR_SUPPLY) {
         pass_elapsed(ck, BC_BOOT, now);
         run_check(ck, BC_LINK, now);
     }
@@ -351,6 +353,10 @@ static void settle_step(bear_checkout_t *ck, ts_state_t state, uint32_t now)
 
 static void startup_step(bear_checkout_t *ck, ts_state_t state, uint32_t now)
 {
+    if (state == TS_CHARGING) {
+        ck->mark[BC_BOOT] = now; /* Boot timing begins after charge qualification. */
+        return;
+    }
     /* The handshake is strictly ordered, so reaching a state proves every
      * earlier step worked, even if several happened in one poll. */
     if (state >= TS_API_QUERY) {

@@ -39,7 +39,7 @@ static void power_off(ts_bear9704_t *ctx, ts_state_t final)
     ctx->rx_discard = false;
     ctx->down_final = final;
     ctx->state = TS_POWERING_DOWN;
-    ts_set_deadline(ctx, TS_BOOT_TIMEOUT_MS);
+    ts_set_deadline(ctx, TS_SHUTDOWN_TIMEOUT_MS);
 }
 
 static void wait_for_power_down(ts_bear9704_t *ctx)
@@ -111,6 +111,12 @@ ts_result_t ts_bear_start(ts_bear9704_t *ctx)
     ctx->rx_len = ctx->tx_len = ctx->tx_pos = 0;
     ctx->rx_discard = false;
     ctx->port.uart_enable(ctx->port.user, false);
+    if (ctx->port.supply_ready && !ctx->port.supply_ready(ctx->port.user)) {
+        ctx->port.power_stop(ctx->port.user); /* BOOTED was checked low above. */
+        ctx->state = TS_CHARGING;
+        ts_set_deadline(ctx, TS_CHARGE_TIMEOUT_MS);
+        return TS_OK;
+    }
     if (!ctx->port.power_start(ctx->port.user)) return TS_ERR_IO;
     ctx->state = TS_BOOTING;
     ts_set_deadline(ctx, TS_BOOT_TIMEOUT_MS);
@@ -121,6 +127,10 @@ ts_result_t ts_bear_shutdown(ts_bear9704_t *ctx)
 {
     if (!ctx) return TS_ERR_ARGUMENT;
     if (ctx->state == TS_OFF) return TS_OK;
+    if (ctx->state == TS_CHARGING) {
+        power_off(ctx, TS_OFF);
+        return TS_OK;
+    }
     if (ctx->state != TS_READY || ctx->query) return TS_ERR_BUSY;
 #if TS_ENABLE_MT
     if (ctx->mt_pending || ctx->mt_available) return TS_ERR_BUSY;
@@ -134,6 +144,11 @@ ts_result_t ts_bear_shutdown(ts_bear9704_t *ctx)
 bool ts_bear_is_ready(const ts_bear9704_t *ctx)
 {
     return ctx && ctx->state == TS_READY;
+}
+
+bool ts_bear_can_send(const ts_bear9704_t *ctx)
+{
+    return ts_bear_is_ready(ctx) && ctx->query == TS_QUERY_NONE && !ts_tx_busy(ctx);
 }
 
 ts_state_t ts_bear_state(const ts_bear9704_t *ctx)
@@ -372,6 +387,23 @@ static void check_timeouts(ts_bear9704_t *ctx)
 void ts_bear_poll(ts_bear9704_t *ctx)
 {
     if (!ctx || ctx->state == TS_OFF || ctx->state == TS_FAULT) return;
+    if (ctx->state == TS_CHARGING) {
+        ts_result_t result = TS_OK;
+        /* Unexpected BOOTED while ENABLE is low is a wiring/state fault. */
+        if (ctx->port.boot_ready(ctx->port.user)) result = TS_ERR_IO;
+        else if (ts_expired(ts_now(ctx), ctx->deadline)) result = TS_ERR_TIMEOUT;
+        else if (ctx->port.supply_ready(ctx->port.user)) {
+            if (ctx->port.power_start(ctx->port.user)) {
+                ctx->state = TS_BOOTING;
+                ts_set_deadline(ctx, TS_BOOT_TIMEOUT_MS);
+            } else result = TS_ERR_IO;
+        }
+        if (result != TS_OK) {
+            ctx->state = TS_FAULT; /* ENABLE was never asserted. */
+            ts_emit(ctx, TS_EVENT_ERROR, TS_ERR_SUPPLY);
+        }
+        return;
+    }
     if (ctx->state == TS_FAULT_HOLD) {
         if (ctx->port.boot_ready(ctx->port.user)) power_off(ctx, TS_FAULT);
         return;

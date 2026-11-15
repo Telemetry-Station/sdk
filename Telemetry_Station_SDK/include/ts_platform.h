@@ -26,9 +26,10 @@ typedef struct {
     /* Milliseconds since start. Wrapping around is fine. */
     uint32_t (*millis)(void *user);
 
-    /* Power sequencing for the BEAR Module. power_start() returns true if the
-     * module was switched on. uart_enable(false) must leave the MCU's TX pin
-     * high impedance so the unpowered modem is not back-fed. boot_ready()
+    /* power_start() asserts ENABLE, returning true on success; false must
+     * leave ENABLE low. power_stop() deasserts ENABLE. Neither switches VIN.
+     * uart_enable(false) releases the MCU TX pin. This does not protect an
+     * unpowered host from the module's powered outputs. boot_ready()
      * reports the module's "booted" signal.
      *
      * The module needs a complete boot and shutdown cycle. The driver turns
@@ -40,6 +41,14 @@ typedef struct {
     void (*power_stop)(void *user);
     void (*uart_enable)(void *user, bool enable);
     bool (*boot_ready)(void *user);
+
+    /* Optional nonblocking pre-enable gate. true means VIN and stored energy
+     * are qualified for boot. false keeps ENABLE low; the driver waits up to
+     * TS_CHARGE_TIMEOUT_MS. NULL is an explicit externally-qualified supply
+     * contract: the application MUST qualify power before every start.
+     * Do not use charger PG alone: it indicates input power, not stored energy.
+     * This gate is checked before boot, not a runtime brownout monitor. */
+    bool (*supply_ready)(void *user);
 } ts_platform_t;
 
 #endif

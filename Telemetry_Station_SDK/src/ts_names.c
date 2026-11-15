@@ -7,6 +7,7 @@ const char *ts_state_name(ts_state_t state)
 {
     switch (state) {
     case TS_OFF:            return "TS_OFF";
+    case TS_CHARGING:       return "TS_CHARGING";
     case TS_BOOTING:        return "TS_BOOTING";
     case TS_API_QUERY:      return "TS_API_QUERY";
     case TS_API_SELECT:     return "TS_API_SELECT";
@@ -53,6 +54,7 @@ const char *ts_result_name(ts_result_t result)
     case TS_ERR_PROTOCOL:   return "TS_ERR_PROTOCOL";
     case TS_ERR_TIMEOUT:    return "TS_ERR_TIMEOUT";
     case TS_ERR_REJECTED:   return "TS_ERR_REJECTED";
+    case TS_ERR_SUPPLY:     return "TS_ERR_SUPPLY";
     case TS_ERR_NOT_READY:  return "TS_ERR_NOT_READY";
     }
     return "TS_ERR_UNKNOWN";

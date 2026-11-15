@@ -68,6 +68,16 @@ static bool my_boot_ready(void *user)
     return false;
 }
 
+/* Fail closed until supply qualification is implemented. Use a measured VCAP
+ * threshold with hysteresis, or a validated delay from known VIN application.
+ * PG alone is NOT charge-ready. Never block while waiting for charging. */
+static bool my_supply_ready(void *user)
+{
+    (void)user;
+    /* TODO: return true only when the supply and stored energy are qualified. */
+    return false;
+}
+
 ts_platform_t my_platform(void)
 {
     ts_platform_t port = {0};
@@ -79,5 +89,6 @@ ts_platform_t my_platform(void)
     port.power_stop = my_power_stop;
     port.uart_enable = my_uart_enable;
     port.boot_ready = my_boot_ready;
+    port.supply_ready = my_supply_ready;
     return port;
 }

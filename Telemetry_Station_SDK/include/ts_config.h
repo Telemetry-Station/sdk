@@ -49,7 +49,13 @@
 #define TS_QUERY_IMEI_ON_READY 1
 #endif
 
-/* Timeouts, in milliseconds. */
+/* Timeouts, in milliseconds. All must be below 2^31 for wrap-safe deadlines. */
+#ifndef TS_CHARGE_TIMEOUT_MS
+#define TS_CHARGE_TIMEOUT_MS 120000ul
+#endif
+#ifndef TS_SHUTDOWN_TIMEOUT_MS
+#define TS_SHUTDOWN_TIMEOUT_MS 30000ul
+#endif
 #ifndef TS_CMD_TIMEOUT_MS
 #define TS_CMD_TIMEOUT_MS 5000ul
 #endif
@@ -72,6 +78,17 @@
     (TS_ENABLE_CONSOLE != 0 && TS_ENABLE_CONSOLE != 1) || \
     (TS_ENABLE_GNSS != 0 && TS_ENABLE_GNSS != 1)
 #error Feature flags must be 0 or 1
+#endif
+#if TS_CHARGE_TIMEOUT_MS < 1 || TS_CHARGE_TIMEOUT_MS >= 2147483648UL || \
+    TS_BOOT_TIMEOUT_MS < 1 || TS_BOOT_TIMEOUT_MS >= 2147483648UL || \
+    TS_SHUTDOWN_TIMEOUT_MS < 1 || TS_SHUTDOWN_TIMEOUT_MS >= 2147483648UL || \
+    TS_CMD_TIMEOUT_MS < 1 || TS_CMD_TIMEOUT_MS >= 2147483648UL || \
+    TS_MO_TIMEOUT_MS < 1 || TS_MO_TIMEOUT_MS >= 2147483648UL || \
+    TS_MT_TIMEOUT_MS < 1 || TS_MT_TIMEOUT_MS >= 2147483648UL
+#error Timeouts must be in the range 1..2147483647 milliseconds
+#endif
+#if TS_POLL_BYTE_BUDGET < 1
+#error TS_POLL_BYTE_BUDGET must be positive
 #endif
 #if TS_MAX_PAYLOAD < 1 || TS_MAX_PAYLOAD > 1024
 #error TS_MAX_PAYLOAD must be between 1 and 1024

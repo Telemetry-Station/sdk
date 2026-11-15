@@ -1156,6 +1156,20 @@ static void test_api_edges(void)
     assert(r.out_len == 0);
 }
 
+static bool unqualified_supply(void *user) { (void)user; return false; }
+
+static void test_charge_failure_report(void)
+{
+    static rig_t r;
+    rig_init(&r, TOPIC);
+    r.bear.port.supply_ready = unqualified_supply;
+    run_cycle(&r);
+    assert(r.power_starts == 0);
+    assert(bear_checkout_status(&r.ck, BC_BOOT) == BC_FAIL);
+    assert(bear_checkout_status(&r.ck, BC_LINK) == BC_SKIP);
+    assert(strstr(r.out, "supply qualification failed; ENABLE not asserted"));
+}
+
 /* ---- Transcript for documentation ---- */
 
 static void print_transcript(uint16_t topic)
@@ -1178,6 +1192,7 @@ int main(int argc, char **argv)
         print_transcript(argc > 2 ? (uint16_t)atoi(argv[2]) : 0u);
         return 0;
     }
+    test_charge_failure_report();
     test_api_edges();
     test_activation_cycle();
     test_send_delivered();

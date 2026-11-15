@@ -19,12 +19,14 @@ extern "C" {
  *
  * Typical use:
  *
- *   ts_bear_init(&bear, &platform, on_event, NULL);
- *   ts_bear_start(&bear);
+ *   // Apply VIN and configure the supply-ready gate first.
+ *   if (ts_bear_init(&bear, &platform, on_event, NULL) != TS_OK) return;
+ *   if (ts_bear_start(&bear) != TS_OK) return;
  *   for (;;) {
- *       ts_bear_poll(&bear);                       // every few milliseconds
- *       if (time_to_report && ts_bear_is_ready(&bear))
- *           ts_bear_send(&bear, TS_TOPIC_ID, bytes, length);
+ *       ts_bear_poll(&bear); // every 1 ms; validate target service latency
+ *       if (time_to_report && ts_bear_can_send(&bear) &&
+ *           ts_bear_send(&bear, TS_TOPIC_ID, bytes, length) == TS_OK)
+ *           time_to_report = false;
  *   }
  *
  * One message is sent at a time and nothing is retried automatically, because
@@ -38,6 +40,7 @@ extern "C" {
 /* The driver's state. Read it with ts_bear_state(). */
 typedef enum {
     TS_OFF = 0,
+    TS_CHARGING, /* ENABLE low; waiting for the platform supply gate. */
     TS_BOOTING,
     TS_API_QUERY,
     TS_API_SELECT,
@@ -56,7 +59,7 @@ typedef enum {
 
 /* Events reported to the callback given to ts_bear_init(). */
 typedef enum {
-    TS_EVENT_READY = 1,    /* Modem is up; you may send. */
+    TS_EVENT_READY = 1,    /* Protocol initialized; check ts_bear_can_send() in main. */
     TS_EVENT_MO_ACCEPTED,  /* Modem queued the message. Not yet delivered. */
     TS_EVENT_MO_DELIVERED, /* Iridium confirmed receipt. */
     TS_EVENT_MO_FAILED,    /* detail is a ts_result_t. Outcome may be unknown. */
@@ -64,7 +67,7 @@ typedef enum {
     TS_EVENT_MT_DROPPED,
     TS_EVENT_SIGNAL,       /* Read ts_bear_signal_bars(). */
     TS_EVENT_IMEI,         /* Read ts_bear_imei(). */
-    TS_EVENT_STOPPED,      /* Modem is powered off. */
+    TS_EVENT_STOPPED,      /* ENABLE and BOOTED low; VIN may now be removed. */
     TS_EVENT_ERROR         /* detail is a ts_result_t. */
 } ts_event_t;
 
@@ -77,7 +80,8 @@ typedef enum {
     TS_ERR_PROTOCOL = -5,
     TS_ERR_TIMEOUT = -6,
     TS_ERR_REJECTED = -7,
-    TS_ERR_NOT_READY = -8
+    TS_ERR_NOT_READY = -8,
+    TS_ERR_SUPPLY = -9 /* Pre-enable qualification timed out or failed. */
 } ts_result_t;
 
 /* The one information request that may be outstanding while TS_READY. */
@@ -132,17 +136,23 @@ struct ts_bear9704 {
 ts_result_t ts_bear_init(ts_bear9704_t *ctx, const ts_platform_t *port,
                          ts_event_fn cb, void *cb_user);
 
-/* Powers the modem and begins start-up. Wait for TS_EVENT_READY. */
+/* Begins supply qualification, then asserts ENABLE and boots. VIN must already
+ * be applied. With no supply_ready callback, power must be externally qualified.
+ * The SDK does not switch VIN. Wait for TS_EVENT_READY, then can_send(). */
 ts_result_t ts_bear_start(ts_bear9704_t *ctx);
 
-/* Asks the modem to stop, then powers it off (TS_EVENT_STOPPED). */
+/* Cancels CHARGING, or requests shutdown when READY and idle. STOPPED confirms
+ * ENABLE/BOOTED low, not that VIN or the capacitor-backed rails are off. */
 ts_result_t ts_bear_shutdown(ts_bear9704_t *ctx);
 
-/* Does all the work. Call it every few milliseconds from your main loop,
- * never from an interrupt. */
+/* Call every 1 ms from the main loop, never from an interrupt.
+ * Validate worst-case service latency and buffering on the target. */
 void ts_bear_poll(ts_bear9704_t *ctx);
 
+/* Protocol initialized and not sending; an information query may be pending. */
 bool ts_bear_is_ready(const ts_bear9704_t *ctx);
+/* True when a valid send can be accepted now. Still check ts_bear_send's result. */
+bool ts_bear_can_send(const ts_bear9704_t *ctx);
 
 /* Restart from OFF/FAULT also requires BOOTED low. FAULT_HOLD forbids
  * restart: keep polling for a late BOOTED rise, or use a separately reviewed

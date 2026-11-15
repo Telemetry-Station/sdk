@@ -9,6 +9,8 @@ static ts_bear9704_t bear;
 static ts_platform_t base;
 static bool uart, supply_ok=true;
 static unsigned starts, stops, order_errors;
+static bool charged;
+static bool supply_ready(void *u) { (void)u; return charged; }
 static void uart_enable(void *u,bool on) { if(on && !modem.booted) ++order_errors; uart=on; base.uart_enable(u,on); }
 static bool power_start(void *u) { ++starts; if(!supply_ok)return false; return base.power_start(u); }
 static void power_stop(void *u) { if(uart)++order_errors; ++stops; base.power_stop(u); }
@@ -70,6 +72,42 @@ int main(int argc,char **argv) {
  } else if(!strcmp(name,"boot_timeout_sequence")) {
   CHECK(!init());CHECK(ts_bear_start(&bear)==TS_OK);sim_run(&bear,&modem,(int)TS_BOOT_TIMEOUT_MS+100);
   CHECK(sim_saw(&modem,TS_EVENT_ERROR));CHECK(stops==0); /* Must not negate ENABLE before BOOTED rises. */
+ } else if(!strcmp(name,"charge_gate")) {
+  CHECK(!init());bear.port.supply_ready=supply_ready;charged=false;
+  modem.now=UINT32_MAX-100u;CHECK(ts_bear_start(&bear)==TS_OK);
+  CHECK(ts_bear_state(&bear)==TS_CHARGING && starts==0 && !uart);
+  CHECK(!strcmp(ts_state_name(TS_CHARGING),"TS_CHARGING"));
+  CHECK(!strcmp(ts_result_name(TS_ERR_SUPPLY),"TS_ERR_SUPPLY"));
+  CHECK(ts_bear_start(&bear)==TS_ERR_BUSY);sim_run(&bear,&modem,60000);
+  CHECK(starts==0 && !uart && !modem.sent_log[0]);charged=true;
+  sim_run(&bear,&modem,1);CHECK(starts==1 && ts_bear_state(&bear)==TS_BOOTING);
+  sim_run(&bear,&modem,(int)TS_BOOT_TIMEOUT_MS-1);CHECK(ts_bear_state(&bear)==TS_BOOTING);
+  modem.booted=true;sim_run(&bear,&modem,3000);CHECK(ts_bear_can_send(&bear));
+  CHECK(ts_bear_shutdown(&bear)==TS_OK);sim_run(&bear,&modem,100);
+  CHECK(ts_bear_start(&bear)==TS_OK && starts==2); /* Already-qualified supply. */
+ } else if(!strcmp(name,"charge_faults")) {
+  CHECK(!init());bear.port.supply_ready=supply_ready;charged=false;
+  CHECK(ts_bear_start(&bear)==TS_OK);sim_run(&bear,&modem,(int)TS_CHARGE_TIMEOUT_MS);
+  CHECK(ts_bear_state(&bear)==TS_FAULT && starts==0 && !uart);
+  CHECK(modem.last_detail==TS_ERR_SUPPLY && !sim_saw(&modem,TS_EVENT_STOPPED));
+  CHECK(ts_bear_start(&bear)==TS_OK);charged=true;supply_ok=false;
+  sim_run(&bear,&modem,1);CHECK(ts_bear_state(&bear)==TS_FAULT && modem.last_detail==TS_ERR_SUPPLY);
+  charged=false;CHECK(ts_bear_start(&bear)==TS_OK);modem.booted=true;
+  sim_run(&bear,&modem,1);CHECK(ts_bear_state(&bear)==TS_FAULT && modem.last_detail==TS_ERR_SUPPLY);
+  CHECK(ts_bear_start(&bear)==TS_ERR_BUSY);
+ } else if(!strcmp(name,"charge_cancel")) {
+  CHECK(!init());bear.port.supply_ready=supply_ready;charged=false;
+  CHECK(ts_bear_start(&bear)==TS_OK);CHECK(ts_bear_shutdown(&bear)==TS_OK);
+  sim_run(&bear,&modem,1);CHECK(ts_bear_state(&bear)==TS_OFF && starts==0);
+  CHECK(sim_saw(&modem,TS_EVENT_STOPPED));
+ } else if(!strcmp(name,"send_readiness")) {
+  uint8_t byte=1;CHECK(!ready());CHECK(!ts_bear_can_send(NULL));
+  CHECK(ts_bear_can_send(&bear));CHECK(ts_bear_request_imei(&bear)==TS_OK);
+  CHECK(ts_bear_is_ready(&bear) && !ts_bear_can_send(&bear));
+  CHECK(ts_bear_send(&bear,1234,&byte,1)==TS_ERR_NOT_READY);
+  sim_run(&bear,&modem,100);CHECK(ts_bear_can_send(&bear));
+  bear.tx_len=1;bear.tx_pos=0;CHECK(!ts_bear_can_send(&bear));bear.tx_len=0;
+  CHECK(ts_bear_send(&bear,1234,&byte,1)==TS_OK);CHECK(!ts_bear_can_send(&bear));
  } else {fprintf(stderr,"Unknown case\n");return 2;}
  printf("PASS %s (host model only)\n",name);return 0;
 }
