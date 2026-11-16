@@ -16,7 +16,7 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed and remain
 | G3 | DVT (design validation) | Full characterization and pre-compliance testing | All requirements in the [verification plan](docs/10_Requirements_and_Verification.md) verified or dispositioned | Planned; schedule **[Pending decision]** |
 | G4 | Certification | Regulatory and Iridium approvals | Certificates issued for the target regions | Planned; scope and schedule **[Pending decision]** |
 | G5 | PVT (production validation) | Pilot build on the production line | Yield and test coverage targets met | Planned; schedule **[Pending decision]** |
-| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support channel, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and the controlled KiCad schematic and PCB design package available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
+| G6 | General availability | Orders accepted and shipped | Rev A datasheet PDF, support channel, public status page and SLA, customer quickstarts and decoder examples, published evaluation-kit dates, changelog, and public customer interface/mechanical documentation available | Tentative target **2027-04-01**; not committed; see [release checklist](RD_CHECKLIST.md) |
 
 ## Firmware and tools
 
@@ -33,6 +33,10 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed and remain
 | Evaluation-kit availability | Firm public dates are a launch-readiness deliverable; date **[Pending decision]** until build and supply readiness are confirmed |
 
 The MSP430F169 is the first reference host. SDK validation on BEAR engineering units is planned at G2.
+
+## Beginner setup
+
+The intended first-use flow is a labeled connection, a ready-to-load sample, activation, one deliberate send and a visible decoded result. The current engineering reference does not yet provide that complete experience. Hardware kit readiness, supported-board packages and first-time-user testing are tracked in the [beginner setup acceptance criteria](RD_CHECKLIST.md#beginner-setup-acceptance-criteria).
 
 ## The BEAR Module family
 

@@ -1,6 +1,10 @@
 # Telemetry Station SDK
 
-Firmware reference in C99 for sending messages over Iridium with the **BEAR Module 9704**. It is small, has no dynamic memory, and does not depend on any one microcontroller. You supply a short platform file for your MCU, and the SDK does the rest.
+This SDK is the software that lets your device send and receive messages through a **BEAR Module 9704**. It handles communication with the modem and reports whether a message was delivered.
+
+**First time? Use [Getting started](docs/GETTING_STARTED.md).** Try the included sample before designing your own message. A real-hardware setup currently requires embedded engineering experience: the F169 is the reference implementation, while other microcontrollers need a hardware adapter written and tested for them.
+
+For developers: the core is portable C99, uses no dynamic memory, and runs through platform callbacks supplied by your MCU adapter.
 
 > **Status: alpha (version 0.2).** The driver has a complete test suite on a computer. Validation on the BEAR Module 9704 and the MSP430F169 reference port is next on the [roadmap](../BEAR_Module/ROADMAP.md). As with any new peripheral, plan bench time for your own board. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
@@ -25,7 +29,9 @@ For BEAR hardware status, SDK hardware validation, and target availability, see 
 
 Using Telemetry Station is encouraged but optional. The driver talks to the modem and does not require an account.
 
-## Quick start (any MCU)
+## Developer API sketch (requires a completed MCU adapter)
+
+This sketch shows the application flow; it is not a complete program to paste into an arbitrary board. For a runnable example, use the simulation or the [F169 engineering setup](docs/GETTING_STARTED.md#4-check-a-bear-module-on-an-msp430f169-flash-and-go).
 
 ```c
 #include "ts_bear9704.h"
@@ -123,7 +129,7 @@ the start of an overlapping sync sequence.
 
 See [LICENSE](../LICENSE). Contributions: [CONTRIBUTING.md](../CONTRIBUTING.md). Security issues: [SECURITY.md](../SECURITY.md).
 
-## Engineering update — 2026-11-03 (uncommitted)
+## Engineering baseline — 2026-11-03
 
 See [Engineering baseline](docs/ENGINEERING.md) for validated feature orders,
 actual TI F169 builds, the generated Certus Payload Optimizer codec, optional

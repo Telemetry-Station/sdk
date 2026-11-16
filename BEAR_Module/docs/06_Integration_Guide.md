@@ -4,6 +4,8 @@ Document ID: BEAR-IG-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev
 
 How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. BEAR is host-independent. The TI MSP430F169 is the first SDK reference host and worked example; STM32, MSP430, Nordic, Microchip, ESP32 and other hosts are intended integration targets when their electrical characteristics meet the released module specification and a suitable SDK port is available.
 
+**First-time users:** follow [Getting started](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md) first. This document is the engineering wiring reference; it assumes a qualified supply, compatible host and programming tools.
+
 ## What you need
 
 | Item | Notes |

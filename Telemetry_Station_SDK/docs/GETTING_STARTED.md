@@ -1,6 +1,17 @@
 # Getting started
 
-This guide assumes you know embedded C and UARTs, and nothing about Iridium, Telemetry Station or the BEAR Module. About 30 minutes to run the demo, and an afternoon to get a real message through.
+Start by sending a simulated message on your computer. You do not need a module, antenna, account or paid service for that step.
+
+**What is ready today?** The simulation is runnable. Connecting a real BEAR engineering unit still requires electronics and embedded programming skills; there is no validated beginner kit or universal one-click installer yet. Hardware setup time and satellite delivery time are not guaranteed.
+
+| What you want to do | Start here |
+|---|---|
+| Understand the product without programming | Read the explanation below |
+| See a message succeed on your computer | [Run the simulation](#2-see-it-work-with-no-hardware) |
+| Connect hardware you already have | [Check support first](#3-pick-your-path) |
+| Connect a sensor after the sample works | [Customize your project](#5-put-it-in-your-project) |
+
+Keep the included example message for your first test. You can design a compact custom message later.
 
 ## 1. What problem this solves
 
@@ -11,6 +22,8 @@ Talking to an Iridium modem takes real work: a serial command protocol, a carefu
 ```text
 your sensor --> your MCU + this SDK --> BEAR Module 9704 --> Iridium satellites --> cloud
 ```
+
+The **module** is the satellite radio hardware. Your **microcontroller** is the small computer that reads your sensor. The **SDK** is software loaded onto that computer to operate the module. The module does not replace your microcontroller.
 
 ### Words you will meet
 
@@ -23,6 +36,9 @@ your sensor --> your MCU + this SDK --> BEAR Module 9704 --> Iridium satellites 
 | **Topic ID** | A number, 64 or higher, that identifies where your messages go. You receive it at activation |
 | **Payload** | The bytes your device sends. Smaller means cheaper, so pack them tightly |
 | **Payload Optimizer** | Free web tool that designs a compact payload and generates `payload.c` and `payload.h` |
+| **Firmware** | The program loaded onto your microcontroller; loading it is often called “flashing” |
+| **Console** | A computer window showing messages printed by your device |
+| **UART / serial** | The wired connection used to exchange data with the module |
 | **MO / MT** | Mobile-originated (device to cloud) and mobile-terminated (cloud to device) |
 | **Power management** | The module's supply circuitry. See below |
 
@@ -30,7 +46,7 @@ your sensor --> your MCU + this SDK --> BEAR Module 9704 --> Iridium satellites 
 
 ## 2. See it work with no hardware
 
-You need CMake and a C compiler.
+You need a downloaded copy of this repository, **CMake** (the build tool), and a **C compiler** (the tool that turns the code into a program). Open a terminal in the repository folder—the folder containing this README's parent `Telemetry_Station_SDK` directory. These commands are for macOS/Linux or a compatible shell with the tools already installed.
 
 ```sh
 cd Telemetry_Station_SDK
@@ -53,20 +69,42 @@ Modem IMEI: 300000000000001
 BOOTED is low: it is now safe to remove power from the module.
 ```
 
+**Success:** both `TS_EVENT_MO_DELIVERED` and `TS_EVENT_STOPPED` appear. No real satellite message was sent, and the printed ID `300000000000001` is fictional. Do not use it for activation.
+
+| What you see | What to do |
+|---|---|
+| `cmake: command not found` | Install CMake, reopen the terminal, and try again |
+| C compiler not found | Install your operating system's C development tools, then rerun the configure command |
+| The source directory does not contain `CMakeLists.txt` | Start in the downloaded repository folder, then run `cd Telemetry_Station_SDK` once |
+| Build failed | Read the first error above the final failure message; report that error and your operating system |
+| Program not found after a successful Windows build | With a multi-configuration generator, run `cmake --build build --config Debug`, then `build\Debug\simulated_demo.exe` in PowerShell |
+
 That is the whole life of one message: start, ready, IMEI, send, delivered, shut down. The modem here is simulated ([`tests/sim_modem.c`](../tests/sim_modem.c)); the driver is the real one. Read [`examples/host/simulated_demo.c`](../examples/host/simulated_demo.c), about 80 lines, to see the API in use.
 
 ## 3. Pick your path
 
 | You have | Do this |
 |---|---|
-| Nothing yet, just evaluating | Stop at step 2, then read [Design notes](DESIGN.md) |
+| Nothing yet, just evaluating | Try step 2. For hardware availability, see [ordering and support](../../BEAR_Module/docs/11_Ordering_and_Support.md); no hardware purchase is needed for the demo |
 | A TI MSP430F169 and a BEAR Module | Run the checkout in step 4, then step 5 with `ports/msp430f169`. Module availability: see the [roadmap](../../BEAR_Module/ROADMAP.md) |
-| Another microcontroller | Follow [Porting](PORTING.md). You write the platform callbacks and supply-ready gate, starting from `ports/template` |
+| Arduino, ESP32, STM32 or another microcontroller | No ready-to-use BEAR adapter is included for these boards. An embedded developer must complete and validate [a port](PORTING.md). The separate Arduino LaunchPad example is for different hardware |
 | A computer and a modem on a USB serial adapter | `ports/posix` supplies a UART transport only; real ENABLE/BOOTED control is required before use |
 
 ## 4. Check a BEAR Module on an MSP430F169 (flash and go)
 
-The F169 example is a self-test. Flash it, open a terminal, and it tells you whether every part of the connection works. You do not need an account or a topic ID.
+**Engineering setup; not a beginner kit.** The F169 example checks the connection and prints a result for each step. With the topic left at zero, it reads the module ID and skips sending; no airtime activation is needed for that checkout. It does not establish electrical safety or production readiness.
+
+Have an embedded engineer prepare these before proceeding:
+
+| Required item | Why it is needed |
+|---|---|
+| BEAR Module 9704 engineering unit and its supplied setup procedure | The actual satellite radio and revision-specific power checks |
+| MSP430F169 host board with an 8 MHz XT2 crystal | Runs the supplied reference firmware; a different MSP430 is not a drop-in replacement |
+| Compatible programming probe and TI MSP430 compiler | Loads the firmware; a USB serial cable does not program this MCU |
+| Regulated 5 V supply rated for at least 0.5 A, mating cable, and antenna | Powers and connects the module; confirm compatibility before applying power |
+| USB-to-serial adapter with compatible logic levels and a terminal program | Shows the checkout results on your computer |
+
+A complete validated shopping list, labeled cable kit and tested toolchain installation walkthrough are release requirements, not currently supplied products.
 
 1. **Wire it.**
 
@@ -82,55 +120,69 @@ The F169 example is a self-test. Flash it, open a terminal, and it tells you whe
    Connect a regulated 5 V ±5%, ≥0.5 A source to J1 pins 1 and 2 and a suitable Iridium antenna to J2. J1 pin 9 is optional TX_ACTIVE; pin 10 is NC. Confirm connector orientation using the hardware drawing. You also need an 8 MHz XT2 crystal and compatible host inputs, including when the host is unpowered.
 
    Apply VIN with ENABLE low before MCU initialization. Qualify stored energy using the engineering unit’s supplied test procedure. The F169 port waits 60 s from initialization before ENABLE, a provisional bench policy requiring EVT validation; PG is not charge-ready. Keep VIN applied between cycles. See [power requirements](../../BEAR_Module/docs/04_Power_Management.md).
-2. **Build and flash.** In CCS, import [`ccs/bear9704_sdk_msp430f169.projectspec`](../ccs/bear9704_sdk_msp430f169.projectspec), build, and flash. From the command line, `python3 tools/build_f169.py --order orders/bench.json` builds the same image (the console is on in this order).
+2. **Build and flash.** In CCS, import [`ccs/bear9704_sdk_msp430f169.projectspec`](../ccs/bear9704_sdk_msp430f169.projectspec), build, and flash. From the command line, `python3 tools/build_f169.py --order orders/bench.json` builds an image with the console enabled. It does not flash the board; program the generated `firmware.out` with your probe.
 3. **Open the console** at **115200 8N1** on the adapter. Any terminal works; colour is ANSI.
-4. **Reset the board.** Supply qualification starts first; the first ENABLE waits for the provisional 60 s gate. Subsequent cycles start after a 10-minute idle interval (`report_interval_ms`) following completion.
+4. **Start from a confirmed stopped modem using the engineering unit’s setup procedure.** Supply qualification starts first; the first ENABLE waits for the provisional 60 s gate. Subsequent cycles start after a 10-minute idle interval (`report_interval_ms`) following completion.
 
-The following older illustrative transcript excludes the charge wait. Current first-cycle timestamps include the 60 s supply gate; boot duration is measured after qualification. It is not a hardware measurement:
+This excerpt comes from the host test of the F169 firmware, including the charge wait. It is not a hardware measurement; the IMEI is fictional:
 
 ```text
-============================================================
- Telemetry Station SDK v0.2.0  |  BEAR Module 9704 checkout
-============================================================
- Board    MSP430F169, XT2 8 MHz, watchdog 0
- Wiring   ENABLE P1.0, BOOTED P1.1, UART1 TX P3.6 / RX P3.7
- Console  USART0 TX P3.4, 115200 8N1; modem 230400 8N1
- Topic    not set; send test skipped
- Options  receive on, payload max 64 B, cycle every 600 s
-------------------------------------------------------------
 [    0.036] PASS   Module off at reset  BOOTED low
-[    1.501] PASS   Module boot          BOOTED high after 1501 ms
-[    1.504] PASS   Serial link          modem replied in 3 ms
-[    1.511] PASS   SIM                  internal SIM selected
-[    1.519] PASS   Radio active         operational state active
-[    1.522] PASS   IMEI                 300000000000001
-[    1.527] PASS   Satellite signal     4/5 bars
-[    1.534] SKIP   Message queued       TS_TOPIC_ID not set
-[    1.541] SKIP   Delivery             nothing sent
-[    2.233] PASS   Power down           BOOTED low after 706 ms; safe to cut power
+[   15.042] WAIT   Module boot          charging power reserve; keep power connected
+[   30.042] WAIT   Module boot          charging power reserve; keep power connected
+[   45.042] WAIT   Module boot          charging power reserve; keep power connected
+[   60.042] WAIT   Module boot          waiting for BOOTED to rise (0 s)
+[   61.501] PASS   Module boot          BOOTED high after 1502 ms
+[   61.504] PASS   Serial link          modem replied in 3 ms
+[   61.511] PASS   SIM                  internal SIM selected
+[   61.519] PASS   Radio active         operational state active
+[   61.522] PASS   IMEI                 300000000000001
+[   61.527] PASS   Satellite signal     4/5 bars
+[   61.534] SKIP   Message queued       TS_TOPIC_ID not set
+[   61.541] SKIP   Delivery             nothing sent
+[   62.233] PASS   Power down           BOOTED low after 706 ms; safe to cut power
 ------------------------------------------------------------
- RESULT   PASS   8 pass  0 warn  0 check  2 skip   2.2 s
-------------------------------------------------------------
+ RESULT   PASS   8 pass  0 warn  0 check  2 skip   62.2 s
 ```
 
-(Times are from the simulated modem; a real module takes longer to boot and to find the sky.) The IMEI is printed with the activation links. Once you have a topic ID, set `TS_TOPIC_ID` (or `topic_id` in the order) and the send and delivery rows run too. Later cycles print a one-line summary.
+These are simulated timings, not a promised setup or delivery time. The IMEI is printed with activation links. `SKIP` on the send and delivery rows is expected while the topic is zero; a checkout `PASS` with those rows skipped does not mean a message was delivered.
+
+### Send the included sample before adding your sensor
+
+1. Copy the **real module's IMEI** from its checkout. Do not copy the fictional number above.
+2. Arrange service activation and obtain your **topic ID** using the printed activation instructions. The included F169 application sample is 4 bytes; the SDK adds a 2-byte integrity check to its transmitted payload. Confirm service sizing with your provider.
+3. Configure the topic in the build path you actually use:
+
+   | Build path | Setting to change |
+   |---|---|
+   | Python build script | Set `topic_id` in `orders/bench.json` to your assigned number, then run `python3 tools/build_f169.py --order orders/bench.json` from `Telemetry_Station_SDK`. This creates a new `firmware.out` in the output directory printed by the script; program that image with your probe |
+   | Imported CCS project | Change the project's `TS_TOPIC_ID=0` compiler definition to your assigned topic, rebuild, and program the resulting image. Editing `orders/bench.json` does not change an already imported CCS project |
+
+4. Keep the included payload code and buffer settings unchanged. With the antenna installed and a clear sky view, run the checkout under the engineering setup procedure.
+5. Look for **`PASS Delivery`**. “Message queued” only means the modem accepted it. Confirm the sample also appears at the service destination configured for your account; satellite confirmation does not prove your own dashboard received it.
+6. After delivery, confirm **`PASS Power down`** before removing the module's input supply. If shutdown reports `CHECK`, follow the engineering unit's recovery procedure.
+
+The F169 sample sends a counter and a fixed example temperature of **21.5 °C**. It is not reading a real temperature sensor. Repeated cycles are enabled; the default waits 10 minutes between completed cycles and can use airtime once a topic is configured. Stop the evaluation after a clean shutdown if you only want one sample. Later cycles print a one-line summary.
 
 **RESULT** is PASS when every step passed, WARN when something works but needs attention (for example 0 bars indoors), and CHECK when a step needs your attention before the module can be used. A CHECK step marks the steps that depend on it as SKIP, and the report distinguishes shutdown from FAULT_HOLD. Keep polling after faults; only STOPPED confirms ENABLE/BOOTED low.
 
 | Row shows | What to check |
 |---|---|
+| `WAIT` with `charging power reserve; keep power connected` | Expected while the first-start supply gate is waiting. The F169 bench policy waits 60 s; do not reset it to skip this step |
 | Nothing at all on the console | Console wiring (P3.4 to adapter RX, common ground) and baud. If still blank, XT2: the firmware stops with everything off when the crystal does not start |
 | Module off at reset CHECK `BOOTED stuck high` | `BOOTED` wiring or a module still powered from an earlier run |
-| Module boot CHECK `BOOTED never rose` | Module supply, `ENABLE` wiring. The driver then holds `ENABLE` for safety, so Power down also reports `ENABLE held`; power-cycle after fixing it |
+| Module boot CHECK `BOOTED never rose` | Module supply, `ENABLE` wiring. The driver then holds `ENABLE` for safety, so Power down also reports `ENABLE held`; follow the engineering unit’s recovery procedure after correcting the fault |
 | Serial link CHECK `no reply; check TX/RX crossover and baud` | TX and RX swapped or unconnected |
 | SIM / Radio active / IMEI CHECK | The modem answered with an error: note the detail and the IMEI, and report it |
 | Satellite signal WARN `antenna needs open sky` | Normal indoors. Go outside with a clear view of the sky |
 | Delivery CHECK `not confirmed in time; outcome unknown` | Sky view, or topic not activated. Queued is not delivered; do not resend automatically |
-| Power down CHECK `BOOTED still high` / `BOOTED low, ENABLE held` | The module did not stop cleanly. Power-cycle the board and check `BOOTED` |
+| Power down CHECK `BOOTED still high` / `BOOTED low, ENABLE held` | The module did not stop cleanly. Check `BOOTED` and follow the engineering unit’s recovery procedure |
 
 You can see every outcome without hardware: `build/test_checkout transcript 1234` prints a full run, and `build/test_f169_firmware_0 console nomodule` (or `swapped`) runs the real firmware on an emulated F169 with a missing module or crossed wires.
 
 ## 5. Put it in your project
+
+Do this after the included sample is delivered. This section is for the developer integrating your sensor and microcontroller.
 
 1. **Design your message.** Open the [Payload Optimizer](https://telemetrystation.com/payload-optimizer), describe your readings, and download `payload.c` and `payload.h`. Note the **bytes per message**.
 2. **Connect your encoder.** Edit [`examples/common/app_payload.c`](../examples/common/app_payload.c) to call the generated code. Set `TS_MAX_PAYLOAD` to your bytes per message.

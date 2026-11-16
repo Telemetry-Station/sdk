@@ -29,10 +29,17 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed product de
 
 Every document carries a status. **Defined** means the design decision is made. **In development** means work is underway. **[Pending decision]** marks an unresolved proposal or value requiring review; it is not a guaranteed specification. **Target** marks design intent, which is not yet a guaranteed specification.
 
+## First time using a satellite module?
+
+Start with the [plain-language setup guide](../Telemetry_Station_SDK/docs/GETTING_STARTED.md). It separates what you can try on a computer today from the engineering work needed to connect real hardware.
+
+The intended experience is: **connect a labeled cable → load the example → activate your module → send the included sample → see it arrive**. The complete kit and tested board-specific packages needed for that experience are not available yet. Do not buy an arbitrary microcontroller board expecting this SDK to work unchanged.
+
 ## Start here
 
 | If you are a...                        | Read                                                                                                                                                                                             |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| New to embedded systems | [Getting started](../Telemetry_Station_SDK/docs/GETTING_STARTED.md): try a simulated message, then check supported hardware |
 | Decision maker, buyer, product manager | [Product brief](docs/01_Product_Brief.md), [Ordering and support](docs/11_Ordering_and_Support.md), [Roadmap](ROADMAP.md), [R&D checklist and release estimate](RD_CHECKLIST.md) |
 | Electrical engineer                    | [Datasheet](datasheet/BEAR-9704_Datasheet.md), [Hardware interface](docs/03_Hardware_Interface.md), [Power management](docs/04_Power_Management.md), [Antenna and RF](docs/05_Antenna_and_RF.md) |
 | Embedded firmware engineer             | [Firmware interface](docs/07_Firmware_Interface.md), [Integration guide](docs/06_Integration_Guide.md), [SDK](../Telemetry_Station_SDK)                                                          |

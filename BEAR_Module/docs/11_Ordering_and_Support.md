@@ -54,7 +54,7 @@ A public service status page and a service-level agreement are launch-readiness 
 
 The public launch package is planned to include:
 
-- Revision-A datasheet PDF and controlled hardware design files.
+- Revision-A datasheet PDF and customer interface/mechanical drawings.
 - Arduino, STM32 and Raspberry Pi SDK quickstarts, with tested platform/toolchain versions stated in each guide.
 - Sample payload decoders and matching test vectors.
 - Public product/service status page and approved SLA.

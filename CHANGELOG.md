@@ -4,6 +4,12 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## Unreleased
 
+### First-time setup guidance
+- Added a plain-language entry path, current board-support limits, prerequisite checklist, sample-first activation/configuration steps and clear success/failure outcomes.
+- Distinguished the computer simulation, engineering checkout, satellite delivery and application receipt; documented synthetic sample data and recurring-send behavior.
+- Show charging as “charging power reserve; keep power connected” instead of a misleading BOOTED wait with a zero-second timer.
+- Added measurable beginner-kit acceptance criteria and defined the planned customer documentation.
+
 ### Rev A integration consistency (2026-11-15)
 - Added nonblocking `TS_CHARGING`, an optional `supply_ready` platform gate, a 120 s charge timeout and an independent shutdown timeout. A NULL gate explicitly requires external power qualification before every start. Template gates fail closed until implemented.
 - Added `ts_bear_can_send()` to distinguish protocol readiness from accepting a send while an IMEI/signal query is pending. Examples check submission results and retain unaccepted payloads.

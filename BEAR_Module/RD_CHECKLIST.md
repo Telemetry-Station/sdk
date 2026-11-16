@@ -81,7 +81,7 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [ ] Serial/lot traceability linked to IMEI, hardware revision, and unit test results.
 - [ ] Production configuration consistent with the qualified design and applicable approvals.
 - [ ] ESD-protective packaging, labeling, production supply, and fulfillment ready.
-- [ ] Released KiCad schematic and PCB source, fabrication/assembly files, BOM, mechanical drawings/models, and applicable licenses available through the [hardware index](hardware/README.md).
+- [ ] Customer interface/mechanical documentation available through the [hardware index](hardware/README.md).
 
 ## Customer release
 
@@ -92,6 +92,20 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [ ] Sales terms (sold as-is, no hardware warranty), support, lifecycle, and product-change notification terms available before sales.
 - [ ] Product/service status page and approved service-level terms available.
 - [ ] Required validation, approvals, and production readiness completed; customer sales availability confirmed.
+
+## Beginner setup acceptance criteria
+
+These are proposed release gates, not claims about the current engineering prototype. The beginner path must work with the supplied hardware instructions and a ready-to-use platform adapter.
+
+- [ ] Select one exact supported host board and ship a tested adapter board or keyed, labeled harness, compatible supply, antenna and programming/USB connection. No soldering, connector crimping or voltage measurements in normal customer setup.
+- [ ] Publish a complete kit contents list, connector-orientation photos, exact supported tool versions and installation steps for each supported operating system.
+- [ ] Provide a ready-to-load sample and a short setup flow. First obtain the real module ID without sending paid messages; then activate and set the topic in one clearly identified place.
+- [ ] Make the first live sample a deliberate single-send action. Explain that it is sample data, show delivery and shutdown, and provide an exact route to view the decoded result. Repeated sending must be an explicit choice.
+- [ ] Report progress in ordinary language: charging, starting, connecting, sending, delivered and safe to disconnect. Every error should identify the next action; charge waits must not look like frozen boot timers.
+- [ ] Handle supply qualification and normal reset/shutdown behavior in the released kit. Customers must not estimate capacitor charge time or understand modem sequencing to use it.
+- [ ] Test the published instructions with at least five first-time users who did not develop the product. Target at least four completing connection, loading and module-ID readout within 15 minutes without verbal coaching; record tool-installation time separately.
+- [ ] Measure activation and live delivery separately under documented sky and service conditions; do not promise a satellite delivery deadline based on setup time. Confirm all participants can distinguish queued, delivered and received by their application.
+- [ ] Test first-run mistakes: wrong serial port, disconnected cable, inactive service, no sky view and interrupted setup. Record assistance required and resolve blockers before describing the kit as beginner-ready.
 
 ## Revision history
 

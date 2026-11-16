@@ -1,6 +1,10 @@
 # Telemetry Station SDK
 
-Send small messages from a remote sensor to the cloud over the Iridium satellite network, from any microcontroller, using open-source C firmware and optionally the **BEAR Module 9704**.
+Send small sensor readings over the Iridium satellite network using the **BEAR Module 9704** and its matching software.
+
+**New to embedded systems? [Start here](Telemetry_Station_SDK/docs/GETTING_STARTED.md).** The BEAR Module is the hardware; the SDK is software that runs on your microcontroller (the small computer in your device).
+
+**Available today:** a computer simulation and an engineering reference implementation. **Still in development:** a beginner-ready BEAR kit and tested setup packages for common development boards. Real BEAR hardware currently needs an engineer to check wiring and power. You do not need to buy or activate anything to try the simulation.
 
 ## Is this for you?
 
@@ -8,16 +12,16 @@ Send small messages from a remote sensor to the cloud over the Iridium satellite
 
 **Not a fit** for continuous or high-rate data (video, audio, frequent large uploads), for devices that need an answer within a second, or for sites that already have reliable cellular coverage, which is usually cheaper.
 
-## See it work in 60 seconds
+## Try a simulated message first
 
-No hardware needed. You need CMake and a C compiler.
+No hardware or account is needed. With CMake and a C compiler installed, open a terminal in this repository and run:
 
 ```sh
 cd Telemetry_Station_SDK
 cmake -S . -B build && cmake --build build && ./build/simulated_demo
 ```
 
-It runs the real driver against a simulated modem and prints one message's whole life: start, ready, IMEI, send, delivered, shut down.
+Success means you see `TS_EVENT_MO_DELIVERED`, then `TS_EVENT_STOPPED`. This runs on your computer; it does not contact a satellite or use paid airtime. The printed modem ID is fictional—do not activate it. See [setup and troubleshooting](Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware) if a command fails.
 
 ## Choose your path
 
@@ -38,6 +42,8 @@ Payload Optimizer --> payload.c / payload.h --> your firmware + this SDK --> BEA
                                                         |
                        calculator --> activate with the IMEI --> telemetrystation.com
 ```
+
+For a first test, keep the included sample message. Once you have it working, customize it:
 
 1. **Design a compact message** with the free [Payload Optimizer](https://telemetrystation.com/payload-optimizer). Download `payload.c` and `payload.h` to encode (and decode) it, and note the **bytes per message**. Smaller messages cost less.
 2. **Add this firmware** to your microcontroller and connect your encoder.
@@ -70,7 +76,7 @@ The [BEAR Module R&D and release checklist](BEAR_Module/RD_CHECKLIST.md) summari
 | Sample decoders                                      | Planned                                         | Runnable decoder examples with matching test vectors                                                                               |
 | Public status page and SLA                           | Planned                                         | Status URL, service scope and approved service-level terms available before general availability                                             |
 | Evaluation-kit availability                          | Planned                                         | Confirmed dates available after hardware, validation and supply readiness are established                                                           |
-| BEAR Module 9704 hardware                            | In development                                  | Pinout, electrical limits and availability details **[Pending decision]** for the Rev A release. See the [roadmap](BEAR_Module/ROADMAP.md) |
+| BEAR Module 9704 hardware                            | In development                                  | Preliminary Rev A pinout and design values are published; measurements and kit availability remain pending. See the [roadmap](BEAR_Module/ROADMAP.md) |
 | Certification                                        | Planned                                         | See [Compliance and quality](BEAR_Module/docs/09_Compliance_and_Quality.md)                                                                |
 
 The SDK follows [semantic versioning](https://semver.org). While it is below 1.0, the API may change between minor versions. See the [changelog](CHANGELOG.md).
@@ -80,7 +86,7 @@ The SDK follows [semantic versioning](https://semver.org). While it is below 1.0
 | Folder                                                                    | What it is                                                                                                                                                                  |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`Telemetry_Station_SDK/`](Telemetry_Station_SDK/README.md)               | Portable C99 firmware for any microcontroller. Includes a port for the TI MSP430F169, the first test target, a template for your own port, and a computer-based test suite. |
-| [`BEAR_Module/`](BEAR_Module/README.md)                                   | The hardware blueprint for the BEAR Module 9704: datasheet, architecture, interfaces, power, RF, compliance, roadmap.                                                       |
+| [`BEAR_Module/`](BEAR_Module/README.md)                                   | Public product and integration documentation: datasheet, interfaces, power requirements, compliance and roadmap. Native board designs are private.                                                       |
 | [`Iridium_Development_Kit_9704/`](Iridium_Development_Kit_9704/README.md) | Separate Arduino example for owners of third-party Iridium 9704 LaunchPad hardware to send messages to Telemetry Station. |
 | [`docs/`](docs/EVALUATION.md)                                             | Guidance for decision makers evaluating the platform.                                                                                                                       |
 
