@@ -6,19 +6,20 @@ The development kit is third-party hardware, not a Telemetry Station product. Th
 
 > **Note:** the sketch sends **demo** coordinates and temperature, not real readings. Sending messages may use credits. Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions.
 
-## The workflow
+## Start with the hardware you actually own
 
-1. **Get your payload code.** Open the [Payload Optimizer](https://telemetrystation.com/payload-optimizer), describe your data, and download `payload.c` and `payload.h`. The tool tells you your **bytes per message**. This kit includes a sample pair in `src/generated/` so you can try it first.
-2. **Set your size.** Put the bytes per message in `TS_MAX_PAYLOAD` in [`src/ts_config.h`](src/ts_config.h).
-3. **Find your IMEI.** Upload the sketch, open the Serial Monitor at 115200 baud, and read the 15-digit modem IMEI from the startup log (or the modem's label). Type `i <IMEI>` to get your next steps with the right links.
-4. **Size your plan and activate.** Use the [calculator](https://telemetrystation.com/calculators/certus), then [activate](https://telemetrystation.com/activate/certus) with your IMEI. Telemetry Station gives you a **topic ID**.
-5. **Send.** Put the topic in `TS_TOPIC_ID`, upload again, and type `s` (or press the USER button).
+This guide is only for the third-party **Iridium 9704 LaunchPad**. It is not an Arduino adapter for BEAR. **Using BEAR? [Follow the BEAR setup guide →](../Telemetry_Station_SDK/docs/GETTING_STARTED.md)**
 
-## Setup
+## Send the included example once
 
-1. Install Iridium's [Satellite Boards package and 9704 LaunchPad library](https://iridium.gitlab.io/9704_launch_pad/documentation/software_setup.html) and select the **Iridium 9704 Launch Pad**.
-2. Open `Iridium_Development_Kit_9704.ino` in the Arduino IDE.
-3. Connect the **battery** and antenna. USB power alone is not enough to transmit. Go outside with a clear view of the sky.
+1. Follow Iridium’s [board and library installation instructions](https://iridium.gitlab.io/9704_launch_pad/documentation/software_setup.html), then select **Iridium 9704 Launch Pad** in the Arduino IDE.
+2. Open `Iridium_Development_Kit_9704.ino`. Keep `TS_TOPIC_ID` at zero initially. Keep the included demo payload and buffer size for this first checkout.
+3. Connect the battery and antenna according to the manufacturer’s procedure. USB power alone is not enough to transmit. Use a clear sky view for a live test.
+4. Upload, then open Serial Monitor at **115200 baud**. Read the actual 15-digit IMEI from the log or module label. Type `i <IMEI>` for activation instructions.
+5. Confirm sample message sizing and service destination with the provider, activate the actual modem, and put your assigned topic in `TS_TOPIC_ID` in [`src/ts_config.h`](src/ts_config.h). Upload again. Keep assigned identifiers out of public commits.
+6. Type **`s`** once (or press USER). Look for `ACCEPTED`, then `DELIVERED`. Confirm the same message appears at your configured service destination.
+
+**Success:** the message is delivered and its example values decode correctly at the destination. The sketch uses synthetic coordinates and temperature; it is not connected to your sensors. Setup and live hardware operation have not been validated by the host tests.
 
 ## Serial Monitor commands (115200 baud)
 
@@ -58,7 +59,7 @@ The example uses `TS_TOPIC_ID` for the Telemetry Station topic, `TS_MAX_PAYLOAD`
 4. Set `TS_MAX_PAYLOAD` to your bytes per message. The build stops with an error if the generated payload can be larger.
 5. Run the tests (below).
 
-The sample in `src/generated/` was exported for the SBD network, not Certus. Regenerate it for a real 9704 deployment.
+The included demonstration codec was exported for SBD, not Certus. Confirm that demonstration format with your receiver; regenerate for Certus and validate the matching decoder before using this in a real 9704 deployment. Do not use the BEAR sequence/temperature decoder for this different sample schema.
 
 Two layers are kept apart. The generated code packs only your data. The kit adds a 2-byte CRC around it before sending. When decoding in the Payload Optimizer, use the payload bytes without those 2 bytes. The Serial Monitor prints the full message as hex; remove its last 2 bytes first.
 
@@ -72,3 +73,5 @@ sh tests/compile_adapter.sh   # Arduino code compiles against a stub library
 ```
 
 The tests check the logic and that the Arduino code compiles against a stub of Iridium's library. They do not verify operation on physical hardware.
+
+**Next:** after the sample is received, [replace the demo fields](#using-your-own-payload), update the receiver decoder and compare a real sensor reading with the received value. Hardware setup and support remain with the kit manufacturer.

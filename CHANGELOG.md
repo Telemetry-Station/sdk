@@ -1,8 +1,21 @@
 # Changelog
 
+Use this page when deciding whether to upgrade. “Unreleased” describes changes on the development branch, not a published release or proof of hardware qualification.
+
+**Upgrading?** Review API changes and rebuild all objects together. **First use?** [Start with the sample](Telemetry_Station_SDK/docs/GETTING_STARTED.md).
+
 Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 1.0, the API may change between minor versions.
 
 ## Unreleased
+
+### Guided sensor-to-insight setup
+- Reviewed every Markdown page for purpose, prerequisites, clear next actions and evidence-based status; consolidated the first-use flow and corrected conflicting power/fault descriptions.
+- Added `tools/try_sample.py` to prepare and run a simulated sensor reading. The demo uses the F169 sample codec, shows a decoded 21.5 °C preview and clearly marks simulated delivery and fictional identifiers.
+- Added `tools/decode_sample.py` for the included schema, with transport-CRC verification by default and explicit payload-only decoding. This is a local decoder, not a provisioned cloud destination.
+- Changed the F169 bench order and default application to one checkout per startup. `report_interval_ms` / `REPORT_INTERVAL_MS` equal to zero disables repeats; a positive interval explicitly enables them. Other existing orders retain their configured intervals.
+- Added emulated single-checkout tests with and without an activated topic and console, and decoder failure cases. Hardware validation and a new TI target build remain required before release.
+- Clarified the scope of customer hardware documentation.
+
 
 ### First-time setup guidance
 - Added a plain-language entry path, current board-support limits, prerequisite checklist, sample-first activation/configuration steps and clear success/failure outcomes.

@@ -1,120 +1,67 @@
-# Telemetry Station SDK
+# Telemetry Station: from sensor to insight
 
-Send small sensor readings over the Iridium satellite network using the **BEAR Module 9704** and its matching software.
+Send a small reading from a remote device, then turn it into a value you can use.
 
-**New to embedded systems? [Start here](Telemetry_Station_SDK/docs/GETTING_STARTED.md).** The BEAR Module is the hardware; the SDK is software that runs on your microcontroller (the small computer in your device).
+**BEAR Module 9704** is the satellite radio hardware. **Telemetry Station SDK** is the software that runs on your microcontroller—the small computer reading your sensor. **Telemetry Station** is the optional service for activation and data delivery.
 
-**Available today:** a computer simulation and an engineering reference implementation. **Still in development:** a beginner-ready BEAR kit and tested setup packages for common development boards. Real BEAR hardware currently needs an engineer to check wiring and power. You do not need to buy or activate anything to try the simulation.
+**[Try your first sample →](Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware)** No hardware, account or airtime is needed for the computer demo.
 
-## Is this for you?
+## Choose your next step
 
-**A good fit** when your device is somewhere with no cellular or Wi-Fi coverage (ocean, polar, desert, forest, mountains), it sends small readings (bytes to a few kilobytes) from every few minutes to a few times a day, and it runs on a battery or modest power source.
+| Your goal | Start here | You will finish with |
+|---|---|---|
+| Understand the product and buying decision | [Evaluate the fit](docs/EVALUATION.md) | What exists, what it costs to integrate, and what remains before release |
+| See a reading work | [Try the sample](Telemetry_Station_SDK/docs/GETTING_STARTED.md) | A simulated send and a locally decoded temperature |
+| Connect a BEAR engineering unit | [Check supported hardware](Telemetry_Station_SDK/docs/GETTING_STARTED.md#3-pick-your-path) | The correct host, wiring and setup procedure |
+| Integrate your sensor firmware | [SDK integration](Telemetry_Station_SDK/README.md) | The adapter, sample and checks your product needs |
+| Check electrical or enclosure requirements | [BEAR documentation](BEAR_Module/README.md) | The public interface and its validation status |
 
-**Not a fit** for continuous or high-rate data (video, audio, frequent large uploads), for devices that need an answer within a second, or for sites that already have reliable cellular coverage, which is usually cheaper.
+## Try it on your computer
 
-## Try a simulated message first
-
-No hardware or account is needed. With CMake and a C compiler installed, open a terminal in this repository and run:
+With Python 3, CMake and C development tools installed, open a terminal in this repository:
 
 ```sh
-cd Telemetry_Station_SDK
-cmake -S . -B build && cmake --build build && ./build/simulated_demo
+python3 Telemetry_Station_SDK/tools/try_sample.py
 ```
 
-Success means you see `TS_EVENT_MO_DELIVERED`, then `TS_EVENT_STOPPED`. This runs on your computer; it does not contact a satellite or use paid airtime. The printed modem ID is fictional—do not activate it. See [setup and troubleshooting](Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware) if a command fails.
+The command builds in a temporary directory, runs one simulated message and cleans up. Look for **`Local decode preview: sample 0, temperature 21.5 C`** and the completed shutdown. The value is example data. No satellite or cloud service is contacted. [Manual commands and troubleshooting](Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware).
 
-## Choose your path
-
-| I want to...                                      | Go to                                                                                                        |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Understand the concepts, then try it              | [Getting started](Telemetry_Station_SDK/docs/GETTING_STARTED.md)                                             |
-| Send to Telemetry Station from an Iridium 9704 LaunchPad I already own | [Independent Arduino example](Iridium_Development_Kit_9704/README.md) |
-| Add satellite messaging to my own microcontroller | [SDK](Telemetry_Station_SDK/README.md) and [Porting](Telemetry_Station_SDK/docs/PORTING.md)                  |
-| Review the firmware design                        | [Design notes](Telemetry_Station_SDK/docs/DESIGN.md)                                                         |
-| Understand the hardware                           | [BEAR Module 9704 docs](BEAR_Module/README.md) and [datasheet](BEAR_Module/datasheet/BEAR-9704_Datasheet.md) |
-| Evaluate this for my company                      | [Evaluation guide](docs/EVALUATION.md)                                                                       |
-
-## How it works
+## The path to a real reading
 
 ```text
-Payload Optimizer --> payload.c / payload.h --> your firmware + this SDK --> BEAR Module 9704 --> Iridium --> cloud
- (design the message)   (encode / decode)        (reads the IMEI)             (satellite modem)
-                                                        |
-                       calculator --> activate with the IMEI --> telemetrystation.com
+Your sensor → your microcontroller + SDK → BEAR Module → Iridium → your data destination
 ```
 
-For a first test, keep the included sample message. Once you have it working, customize it:
+1. **Try the included sample.** Keep its message format until the connection works.
+2. **Connect a supported host and module.** Follow the supplied engineering setup procedure.
+3. **Activate the real module.** Its IMEI identifies it; your assigned topic ID identifies the message destination.
+4. **Send once and check the result.** Confirm satellite delivery, then confirm and decode the message at your destination.
+5. **Add your sensor.** Replace the example reading. Change the message format only if you need different fields.
 
-1. **Design a compact message** with the free [Payload Optimizer](https://telemetrystation.com/payload-optimizer). Download `payload.c` and `payload.h` to encode (and decode) it, and note the **bytes per message**. Smaller messages cost less.
-2. **Add this firmware** to your microcontroller and connect your encoder.
-3. **Read the modem's IMEI**, its unique 15-digit serial number. The firmware prints it and the next steps.
-4. **Size your plan** by entering your needs, including bytes per message, in the [calculator](https://telemetrystation.com/calculators/certus). Then **[activate](https://telemetrystation.com/activate/certus)** the modem with its IMEI. You receive the **topic ID** your messages are sent to.
-
-Using Telemetry Station is encouraged, because the BEAR Module hardware and the data services are designed to work together. It is not required: the driver talks to the modem and works without an account.
-
-## What is the BEAR Module 9704?
-
-The BEAR Module family is a Telemetry Station product line, that makes it easier to add satellite connectivity to your own electronics. The **BEAR Module 9704** is the first member, built around an **Iridium 9704** modem. It is being designed as a host-independent, production-qualified satellite communications module; the design is in development and is not yet production-qualified.
-
-The customer's host MCU is external to the module. The TI MSP430F169 is the first SDK reference host, not a requirement for using BEAR. The interface is intended for STM32, MSP430, Nordic, Microchip, ESP32 and other microcontrollers, with compatibility validated per MCU and SDK port.
-
-A BEAR Module contains:
-
-- **An Iridium modem.** The 9704 in this first version.
-- **Power management.** A satellite modem idles on little power but pulls short, large bursts of current when it transmits. Power management is the circuitry that regulates and stores energy for those bursts and supports modem operation; the SDK and host perform supply qualification and the ENABLE/BOOTED sequence. From your firmware, it is an `ENABLE` pin and a `BOOTED` pin.
-- **An antenna connection**, and in some configurations a qualified Iridium antenna.
+The SDK handles modem communication and sequencing. Your integration supplies compatible hardware, sensor readings and a configured destination. A delivery event confirms network receipt; it does not prove a dashboard received or decoded the message.
 
 ## Status and roadmap
 
-The [BEAR Module R&D and release checklist](BEAR_Module/RD_CHECKLIST.md) summarizes current product status and remaining release milestones. **Target sales availability is April 1, 2027**, subject to validation, approvals, and production readiness; this is not a confirmed release date.
+**Available now:** alpha SDK (0.2), computer simulation, sample decoder, public integration documentation and an MSP430F169 engineering reference port.
 
-| Part                                                 | Status                                          | Next                                                                                                                                       |
-| ---------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| SDK driver (start-up, send, receive, shutdown, IMEI) | Alpha, version 0.2                              | Validation on BEAR Module 9704 hardware, then a 1.0 API freeze                                                                             |
-| MSP430F169 port and example                          | First reference host, not a product requirement | SDK validation on BEAR engineering units at G2                                                                 |
-| Arduino, STM32 and Raspberry Pi quickstarts          | Planned                                         | Tested setup and integration instructions per platform                                                                             |
-| Sample decoders                                      | Planned                                         | Runnable decoder examples with matching test vectors                                                                               |
-| Public status page and SLA                           | Planned                                         | Status URL, service scope and approved service-level terms available before general availability                                             |
-| Evaluation-kit availability                          | Planned                                         | Confirmed dates available after hardware, validation and supply readiness are established                                                           |
-| BEAR Module 9704 hardware                            | In development                                  | Preliminary Rev A pinout and design values are published; measurements and kit availability remain pending. See the [roadmap](BEAR_Module/ROADMAP.md) |
-| Certification                                        | Planned                                         | See [Compliance and quality](BEAR_Module/docs/09_Compliance_and_Quality.md)                                                                |
+**Still required for effortless hardware setup:** a complete validated kit, ready-to-load packages for named development boards, guided activation and destination setup, and first-time-user testing. Arduino, ESP32 and STM32 BEAR adapters are not included. The separate [Arduino example](Iridium_Development_Kit_9704/README.md) uses third-party Iridium LaunchPad hardware.
 
-The SDK follows [semantic versioning](https://semver.org). While it is below 1.0, the API may change between minor versions. See the [changelog](CHANGELOG.md).
+BEAR hardware is in design review. Physical validation, certification and production readiness remain pending. **April 1, 2027 is a tentative sales target, not a confirmed date.** See the [release checklist](BEAR_Module/RD_CHECKLIST.md) before planning a deployment.
+
+Small, occasional readings from remote sites are the intended use. Video, continuous streams and applications needing a guaranteed immediate response are outside this setup's scope.
 
 ## What is in this repository
 
-| Folder                                                                    | What it is                                                                                                                                                                  |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`Telemetry_Station_SDK/`](Telemetry_Station_SDK/README.md)               | Portable C99 firmware for any microcontroller. Includes a port for the TI MSP430F169, the first test target, a template for your own port, and a computer-based test suite. |
-| [`BEAR_Module/`](BEAR_Module/README.md)                                   | Public product and integration documentation: datasheet, interfaces, power requirements, compliance and roadmap. Native board designs are private.                                                       |
-| [`Iridium_Development_Kit_9704/`](Iridium_Development_Kit_9704/README.md) | Separate Arduino example for owners of third-party Iridium 9704 LaunchPad hardware to send messages to Telemetry Station. |
-| [`docs/`](docs/EVALUATION.md)                                             | Guidance for decision makers evaluating the platform.                                                                                                                       |
-
-The Iridium Development Kit is third-party hardware, not a Telemetry Station product. The Arduino example in this repository is separate from the BEAR Module product, development roadmap, and qualification. It does not require a BEAR Module. Hardware setup and support remain with the hardware manufacturer; the example documents sending messages to Telemetry Station and does not imply affiliation or endorsement.
-
-## Run all the tests
-
-```sh
-cd Telemetry_Station_SDK
-cmake -S . -B build && cmake --build build && ctest --test-dir build --output-on-failure
-
-cd ../Iridium_Development_Kit_9704
-sh tests/run_tests.sh && sh tests/compile_adapter.sh
-```
-
-## Before you deploy
-
-- Wait for a message to be **delivered**, not just queued.
-- The firmware never retries by itself, since a retry after an unknown result could send and bill a message twice. Put a sequence number in your payload.
-- Shut the module down properly and wait for `TS_EVENT_STOPPED` before removing its power.
-- Add a hardware watchdog, and decide what your product does after a fault.
-- Use the topic ID Telemetry Station gives you, never another project's.
-- Check voltage levels on both sides before connecting. The MSP430F169 pins in the SDK are test-bench wiring. Rev A design pinout and electrical values are in the [datasheet](BEAR_Module/datasheet/BEAR-9704_Datasheet.md); physical validation remains pending. Qualify the energy bank before ENABLE, and verify unpowered-host compatibility.
-- The SDK checks message integrity but does not encrypt or authenticate. See the [security policy](SECURITY.md).
+| Folder | Purpose |
+|---|---|
+| [Telemetry_Station_SDK](Telemetry_Station_SDK/README.md) | Software, examples, setup tools and tests |
+| [BEAR_Module](BEAR_Module/README.md) | Public product, interface and verification documentation |
+| [Iridium_Development_Kit_9704](Iridium_Development_Kit_9704/README.md) | Separate example for third-party hardware |
+| [docs](docs/EVALUATION.md) | Buyer evaluation guide |
 
 ## Help and contributions
 
-Contact [telemetrystation.com/contact](https://telemetrystation.com/contact) for questions. Bug reports: open an [issue](https://github.com/Telemetry-Station/sdk/issues). Security reports: see [SECURITY.md](SECURITY.md). Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Terms used in this project: [glossary](BEAR_Module/GLOSSARY.md).
+[Contact Telemetry Station](https://telemetrystation.com/contact) for hardware availability, service and integration questions. [Report a software issue](https://github.com/Telemetry-Station/sdk/issues) with your version, setup and first error. Follow the [security policy](SECURITY.md) for private reports and [contributing guide](CONTRIBUTING.md) for checks before a pull request. Unfamiliar term? Use the [glossary](BEAR_Module/GLOSSARY.md).
 
 ## License
 

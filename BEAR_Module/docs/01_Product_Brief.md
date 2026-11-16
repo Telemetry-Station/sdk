@@ -1,70 +1,41 @@
-# 01 Product Brief
+# 01 Product brief: what BEAR does for your device
 
-Document ID: BEAR-PB-9704 | Revision: P2 | Status: Preliminary
+Document ID: BEAR-PB-9704 | Revision: P4 (2026-11-15) | Status: Preliminary
 
-## The problem
+BEAR Module 9704 is being built to send readings from sensors beyond cellular and Wi-Fi coverage. It combines the satellite modem and its power circuitry; the SDK handles communication from your microcontroller.
 
-Adding satellite messaging to a remote sensor is harder than the sensor itself. Teams must source a modem, design a power supply that survives transmit bursts, sequence the modem on and off safely, find and qualify an antenna, write a serial protocol driver, size a data plan, and wire up cloud delivery. Each step is a place for a project to slip.
+**[See the sample →](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md#2-see-it-work-with-no-hardware)** You can evaluate the software without hardware or service activation.
 
-## The BEAR Module answer
+## What the system includes
 
-The BEAR Module is a host-independent satellite communications module designed to become a production-qualified product. Its hardware interface does not require a particular host MCU or vendor-specific bus. The first product, BEAR Module 9704, combines an Iridium 9704 with on-module power management and a simple UART/control interface:
-
-| You need | BEAR Module provides |
-|---|---|
-| A satellite modem | Iridium 9704 modem (BEAR Module 9704) |
-| A power supply that handles transmit bursts | On-board power management: a 5 V / 0.5 A source is enough, because a 2.5 F supercapacitor bank supplies the bursts |
-| An antenna | SMA antenna connector; Maxtena M1621HCT-P-SMA reference antenna |
-| A driver | The open-source [Telemetry Station SDK](../../Telemetry_Station_SDK) |
-| A small, cheap message format | [Payload Optimizer](https://telemetrystation.com/payload-optimizer) |
-| A plan and activation | [Calculator](https://telemetrystation.com/calculators/certus) and [activation](https://telemetrystation.com/activate/certus) at telemetrystation.com |
-| Your data | Telemetry Station data infrastructure |
-
-## Who it is for
-
-- Environmental, ocean, polar, agricultural and infrastructure monitoring.
-- Asset and fleet tracking where cellular coverage is absent or unreliable.
-- OEMs that want satellite connectivity as a feature of their own product.
-- Research teams that need a documented, reproducible connectivity layer.
-
-The same module is intended to serve a single prototype and a production run. The host interface and activation flow are designed to remain consistent at both scales. Production qualification is not complete; it is an explicit release objective in the [roadmap](../ROADMAP.md).
-
-## Key capabilities
-
-| Capability | Description | Status |
+| Part | Its job | Current status |
 |---|---|---|
-| Iridium 9704 modem | Messages up to 100,000 bytes over the Iridium network | Defined |
-| Power management | Input protection, supercapacitor energy storage for transmit bursts, regulation, ENABLE/BOOTED sequencing | Rev A design complete; EVT pending |
-| Simple host interface | Power, an enable line, a booted line and one UART | Defined |
-| Host-independent interface | UART plus ENABLE and BOOTED; no vendor-specific bus or required host MCU | Defined |
-| Customer MCU compatibility | Intended for STM32, MSP430, Nordic, Microchip, ESP32 and other MCUs with a compatible UART/GPIO interface and SDK port | Design target |
-| Production qualification | Qualification and release evidence through EVT, DVT, certification and PVT | In development |
-| Antenna options | SMA connector; Maxtena reference antenna. Approved antenna limits and installation conditions **[Pending decision]** | Rev A design complete; RF test pending |
-| IMEI on the label | Each module carries its IMEI so activation can start before firmware exists | In development |
-| Open firmware | MIT-licensed SDK with a portable C99 driver and a hardware abstraction layer | Alpha |
-| Telemetry Station workflow | Payload design, sizing, activation and data in one flow | Available at telemetrystation.com |
+| BEAR Module 9704 | Connects your device to Iridium through an external antenna | Rev A design review; hardware tests pending |
+| Power circuitry | Stores energy for brief transmit-current bursts | 5 V / ≥0.5 A source is the design requirement; burst margin and charge time require measurement |
+| Telemetry Station SDK | Starts the modem, transfers bytes, reports delivery and shuts down | Alpha C99 software; MSP430F169 reference integration |
+| Included sample and decoder | Demonstrates a sequence number and temperature reading | Computer demo and local decoding available |
+| Telemetry Station service | Activation and the intended data-delivery path | Confirm destination, service terms and availability for your evaluation |
 
-## The end-to-end workflow
+Your product supplies the sensor, microcontroller, compatible supply and connections. Firmware runs on your microcontroller, not inside BEAR. The host interface uses serial data and two control signals; it is designed to support different MCU families, but each requires a tested software adapter and electrical compatibility review.
 
-1. **Design the message** in the Payload Optimizer. Download `payload.c` and `payload.h`. Note the bytes per message.
-2. **Integrate the module.** Wire power, ENABLE, BOOTED and the UART to your microcontroller ([integration guide](06_Integration_Guide.md)).
-3. **Add the SDK.** Implement the platform interface for your MCU and connect your encoder.
-4. **Read the IMEI.** The firmware prints it and the next steps when the modem is ready.
-5. **Size and activate.** Enter your needs in the calculator, then activate with the IMEI. You receive your topic ID.
-6. **Send.** Messages flow to Telemetry Station.
+## Start with a result
 
-You can use the BEAR Module with other data services. The workflow above is the one we design, document and support end to end.
+1. **Try one sample on your computer.** See the example 21.5 °C reading.
+2. **Check your hardware path.** The [setup guide](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md#3-pick-your-path) identifies the reference host and prerequisites.
+3. **Read and activate your actual module ID.** Keep the included sample format initially.
+4. **Send once.** Check satellite delivery and the decoded value at your configured destination.
+5. **Connect your sensor.** Reuse the format if it fits; otherwise generate a new codec and configure its matching decoder.
 
-## Host and validation status
+No live hardware setup has yet established this full journey. The [release checklist](../RD_CHECKLIST.md) tracks what remains before it can be sold as a beginner-ready kit.
 
-The TI MSP430F169 is the SDK's first reference host and a current validation target. SDK validation on BEAR engineering units is planned at G2 (EVT); see the [roadmap](../ROADMAP.md).
+## Is it a fit?
 
-## Commercial scale
+The intended applications send occasional small readings: environmental monitoring, remote infrastructure, agricultural sensors, marine/polar instruments and asset tracking. Antenna placement, available power and reporting frequency determine suitability. Prototype and field measurements are required before making performance commitments.
 
-| Stage | What you get | Status |
-|---|---|---|
-| Evaluate | Evaluation unit, quickstarts and engineering documentation; firm kit dates published when supply and validation are confirmed | Planned; date **[Pending decision]** |
-| Pilot | Small quantities with support and a stable configuration | Planned; terms **[Pending decision]** |
-| Production | Volume pricing, controlled revisions, change notification, supply commitments and published service status/SLA | Planned; terms **[Pending decision]** |
+The modem's large-message capability does not describe the SDK's default capacity: the reference configuration reserves 64 application bytes per message. [Memory and configuration](../../Telemetry_Station_SDK/README.md#configuration) must be reviewed for the selected host.
 
-Pricing, lead times and terms are published at general availability. See [Ordering and support](11_Ordering_and_Support.md).
+## Availability
+
+Evaluation kits, pilot supply and production configurations are planned. Contents, price and lead times are not confirmed. Target sales availability is April 1, 2027, subject to validation, approvals and production readiness. Public interfaces are documented here.
+
+**Next:** [request evaluation details](11_Ordering_and_Support.md) with your sensor, host, power source, location and reporting interval.

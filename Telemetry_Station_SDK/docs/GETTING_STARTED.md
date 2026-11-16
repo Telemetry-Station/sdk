@@ -15,7 +15,7 @@ Keep the included example message for your first test. You can design a compact 
 
 ## 1. What problem this solves
 
-Your sensor is somewhere with no cellular or Wi-Fi coverage. You want it to send a small reading, a few bytes every few minutes or hours, to a server you can query. The Iridium satellite network covers the whole Earth, so a satellite modem on your board can do that.
+Your sensor is beyond cellular or Wi-Fi service. You want a small reading to arrive at a destination you can use. BEAR provides the Iridium connection; actual delivery still depends on service activation, antenna installation and sky view.
 
 Talking to an Iridium modem takes real work: a serial command protocol, a careful power-up and power-down sequence, message segmenting, delivery tracking. This SDK does that part in portable C so your application only says "send these bytes" and gets "delivered" or "failed" back.
 
@@ -42,44 +42,63 @@ The **module** is the satellite radio hardware. Your **microcontroller** is the 
 | **MO / MT** | Mobile-originated (device to cloud) and mobile-terminated (cloud to device) |
 | **Power management** | The module's supply circuitry. See below |
 
-**Power management, briefly.** A satellite modem idles on little power but pulls large, short current bursts when it transmits. Many small supplies cannot provide those bursts and will brown out. The module smooths this out and supports the ENABLE/BOOTED sequence performed by the SDK and host. You only drive an `ENABLE` pin and watch a `BOOTED` pin.
+**Power management, briefly.** A satellite modem idles on little power but pulls large, short current bursts when it transmits. Many small supplies cannot provide those bursts and will brown out. The module smooths this out and supports the ENABLE/BOOTED sequence performed by the SDK and host. Your platform adapter qualifies the stored energy before startup; the SDK then sequences the `ENABLE` and `BOOTED` signals.
 
 ## 2. See it work with no hardware
 
-You need a downloaded copy of this repository, **CMake** (the build tool), and a **C compiler** (the tool that turns the code into a program). Open a terminal in the repository folder—the folder containing this README's parent `Telemetry_Station_SDK` directory. These commands are for macOS/Linux or a compatible shell with the tools already installed.
+**Goal:** send one simulated reading and see **21.5 °C** decoded on your computer. The value is example data, not a live sensor measurement.
+
+You need a downloaded copy of this repository, Python 3, CMake and C development tools. Open a terminal in the repository folder (`sdk`). Check your tools:
+
+```sh
+python3 --version
+cmake --version
+```
+
+Run the guided sample:
+
+```sh
+python3 Telemetry_Station_SDK/tools/try_sample.py
+```
+
+On Windows, use `py -3` instead of `python3` if that is how Python is installed. The script checks for CMake, builds in a temporary directory, runs the sample and removes the temporary build. CMake reports a missing C compiler during preparation.
+
+Look for these lines among the diagnostic events:
+
+```text
+Sample sensor: 21.5 C (example data, not a live sensor). Sending once.
+Sample payload (without transport CRC): 000000d7
+Simulated delivery confirmed.
+Module stopped. The simulated power-down is complete.
+Local decode preview: sample 0, temperature 21.5 C
+This preview decodes the local sample; it is not a cloud receipt.
+```
+
+**Success:** the command exits successfully with that decoded value and completed shutdown. The driver runs against a simulated modem. No hardware, satellite, account or cloud destination is involved. The printed module ID is fictional; do not activate it.
+
+### Prefer manual build commands?
+
+From the repository folder:
 
 ```sh
 cd Telemetry_Station_SDK
 cmake -S . -B build
-cmake --build build
+cmake --build build --config Debug
 ./build/simulated_demo
 ```
 
-You should see:
+For a Windows multi-configuration build, run `build\Debug\simulated_demo.exe` in PowerShell. Source: [complete demo](../examples/host/simulated_demo.c).
 
-```text
-[    48 ms] TS_EVENT_READY         detail=0
-[    53 ms] TS_EVENT_IMEI          detail=0
-Modem IMEI: 300000000000001
-1. Size your plan: https://telemetrystation.com/calculators/certus?payloadBytes=4
-2. Activate: https://telemetrystation.com/activate/certus
-[    81 ms] TS_EVENT_MO_ACCEPTED   detail=9
-[   122 ms] TS_EVENT_MO_DELIVERED  detail=9
-[   137 ms] TS_EVENT_STOPPED       detail=0
-BOOTED is low: it is now safe to remove power from the module.
-```
-
-**Success:** both `TS_EVENT_MO_DELIVERED` and `TS_EVENT_STOPPED` appear. No real satellite message was sent, and the printed ID `300000000000001` is fictional. Do not use it for activation.
-
-| What you see | What to do |
+| What you see | Next action |
 |---|---|
-| `cmake: command not found` | Install CMake, reopen the terminal, and try again |
-| C compiler not found | Install your operating system's C development tools, then rerun the configure command |
-| The source directory does not contain `CMakeLists.txt` | Start in the downloaded repository folder, then run `cd Telemetry_Station_SDK` once |
-| Build failed | Read the first error above the final failure message; report that error and your operating system |
-| Program not found after a successful Windows build | With a multi-configuration generator, run `cmake --build build --config Debug`, then `build\Debug\simulated_demo.exe` in PowerShell |
+| Python is not found | Use `py -3` on Windows if installed, install Python 3, or use the manual CMake commands |
+| CMake is not found | Install CMake, reopen the terminal and rerun the command |
+| C compiler is not found | Install your operating system's C development tools, then rerun preparation |
+| File or source directory not found | Open the terminal in the downloaded `sdk` folder; avoid running `cd Telemetry_Station_SDK` twice |
+| Build error | Save the first compiler error and your operating system/tool versions; [report the issue](https://github.com/Telemetry-Station/sdk/issues) |
+| You see delivery but no temperature or shutdown | The run is incomplete. Save the output and report the issue before proceeding |
 
-That is the whole life of one message: start, ready, IMEI, send, delivered, shut down. The modem here is simulated ([`tests/sim_modem.c`](../tests/sim_modem.c)); the driver is the real one. Read [`examples/host/simulated_demo.c`](../examples/host/simulated_demo.c), about 80 lines, to see the API in use.
+**Next:** [check your hardware path](#3-pick-your-path). Do not buy a board based only on the demo working.
 
 ## 3. Pick your path
 
@@ -90,7 +109,7 @@ That is the whole life of one message: start, ready, IMEI, send, delivered, shut
 | Arduino, ESP32, STM32 or another microcontroller | No ready-to-use BEAR adapter is included for these boards. An embedded developer must complete and validate [a port](PORTING.md). The separate Arduino LaunchPad example is for different hardware |
 | A computer and a modem on a USB serial adapter | `ports/posix` supplies a UART transport only; real ENABLE/BOOTED control is required before use |
 
-## 4. Check a BEAR Module on an MSP430F169 (flash and go)
+## 4. Check a BEAR Module on an MSP430F169
 
 **Engineering setup; not a beginner kit.** The F169 example checks the connection and prints a result for each step. With the topic left at zero, it reads the module ID and skips sending; no airtime activation is needed for that checkout. It does not establish electrical safety or production readiness.
 
@@ -122,7 +141,7 @@ A complete validated shopping list, labeled cable kit and tested toolchain insta
    Apply VIN with ENABLE low before MCU initialization. Qualify stored energy using the engineering unit’s supplied test procedure. The F169 port waits 60 s from initialization before ENABLE, a provisional bench policy requiring EVT validation; PG is not charge-ready. Keep VIN applied between cycles. See [power requirements](../../BEAR_Module/docs/04_Power_Management.md).
 2. **Build and flash.** In CCS, import [`ccs/bear9704_sdk_msp430f169.projectspec`](../ccs/bear9704_sdk_msp430f169.projectspec), build, and flash. From the command line, `python3 tools/build_f169.py --order orders/bench.json` builds an image with the console enabled. It does not flash the board; program the generated `firmware.out` with your probe.
 3. **Open the console** at **115200 8N1** on the adapter. Any terminal works; colour is ANSI.
-4. **Start from a confirmed stopped modem using the engineering unit’s setup procedure.** Supply qualification starts first; the first ENABLE waits for the provisional 60 s gate. Subsequent cycles start after a 10-minute idle interval (`report_interval_ms`) following completion.
+4. **Start from a confirmed stopped modem using the engineering unit’s setup procedure.** Supply qualification starts first; the first ENABLE waits for the provisional 60 s gate. The default bench configuration runs one checkout and then stays idle. Repetition is an explicit configuration choice.
 
 This excerpt comes from the host test of the F169 firmware, including the charge wait. It is not a hardware measurement; the IMEI is fictional:
 
@@ -151,18 +170,44 @@ These are simulated timings, not a promised setup or delivery time. The IMEI is 
 
 1. Copy the **real module's IMEI** from its checkout. Do not copy the fictional number above.
 2. Arrange service activation and obtain your **topic ID** using the printed activation instructions. The included F169 application sample is 4 bytes; the SDK adds a 2-byte integrity check to its transmitted payload. Confirm service sizing with your provider.
-3. Configure the topic in the build path you actually use:
+3. Configure the topic in the build path you actually use. **With a valid topic, the next startup attempts one send automatically.** Prepare the antenna, sky view and console before starting the new image:
 
    | Build path | Setting to change |
    |---|---|
-   | Python build script | Set `topic_id` in `orders/bench.json` to your assigned number, then run `python3 tools/build_f169.py --order orders/bench.json` from `Telemetry_Station_SDK`. This creates a new `firmware.out` in the output directory printed by the script; program that image with your probe |
+   | Python build script | Copy `orders/bench.json` to a local, uncommitted order file, set `topic_id` to your assigned number, keep `report_interval_ms` at `0`, then run `python3 tools/build_f169.py --order /path/to/your-order.json` from `Telemetry_Station_SDK`. This creates a new `firmware.out` in the output directory printed by the script; program that image with your probe |
    | Imported CCS project | Change the project's `TS_TOPIC_ID=0` compiler definition to your assigned topic, rebuild, and program the resulting image. Editing `orders/bench.json` does not change an already imported CCS project |
 
 4. Keep the included payload code and buffer settings unchanged. With the antenna installed and a clear sky view, run the checkout under the engineering setup procedure.
 5. Look for **`PASS Delivery`**. “Message queued” only means the modem accepted it. Confirm the sample also appears at the service destination configured for your account; satellite confirmation does not prove your own dashboard received it.
 6. After delivery, confirm **`PASS Power down`** before removing the module's input supply. If shutdown reports `CHECK`, follow the engineering unit's recovery procedure.
 
-The F169 sample sends a counter and a fixed example temperature of **21.5 °C**. It is not reading a real temperature sensor. Repeated cycles are enabled; the default waits 10 minutes between completed cycles and can use airtime once a topic is configured. Stop the evaluation after a clean shutdown if you only want one sample. Later cycles print a one-line summary.
+The F169 sample sends a counter and a fixed example temperature of **21.5 °C**. It is not reading a real temperature sensor. The default runs **one checkout per startup**, then reports `Checkout complete; automatic repeats disabled.` Topic zero sends nothing. A valid topic enables one sample; startup is the deliberate send action. Start another run only after confirmed clean shutdown using the engineering unit’s recovery/setup procedure. Do not reset to bypass a fault. To opt into repeated reporting, set `report_interval_ms` in a Python build order, or `REPORT_INTERVAL_MS` in CCS, to a positive idle interval such as `600000` for 10 minutes after completion. Repeated sends can use airtime.
+
+### See the decoded reading
+
+A delivered message is useful only when you can find and interpret it. Confirm the destination and access method with your service provider before the live test; this repository does not provision a dashboard, webhook or inbox.
+
+1. At the agreed destination, locate the message for your **actual module**, assigned topic and test time.
+2. Confirm that its format uses sample schema `ts-payload-v1-5a82b543`. The schema ID is configuration metadata; it is not included in every message.
+3. Obtain the message bytes as hexadecimal. From the repository root, run the included decoder with the **six bytes including transport CRC**:
+
+   ```sh
+   python3 Telemetry_Station_SDK/tools/decode_sample.py YOUR_RECEIVED_HEX
+   ```
+
+4. If the service already removed the two CRC bytes, use `--payload-only` with the remaining four bytes. This explicit mode cannot verify transport integrity. Try a local example now:
+
+   ```sh
+   python3 Telemetry_Station_SDK/tools/decode_sample.py --payload-only 000000d7
+   ```
+
+   Expected fields: `sequence: 0`, `temperature_c: 21.5`, and `integrity: "not_checked"`.
+
+5. For a real first F169 sample, expect sequence `0` and `21.5 °C`. This temperature is synthetic. Match your source reading and destination record again after connecting a real sensor.
+
+The decoder only supports the included schema. A checksum failure is a failed check, not a reading to display. A new payload schema needs its matching decoder. CRC verification detects accidental corruption, not the sender's identity.
+
+**Next:** after the real sample appears at the destination and shutdown passes, [connect your sensor](#5-put-it-in-your-project).
 
 **RESULT** is PASS when every step passed, WARN when something works but needs attention (for example 0 bars indoors), and CHECK when a step needs your attention before the module can be used. A CHECK step marks the steps that depend on it as SKIP, and the report distinguishes shutdown from FAULT_HOLD. Keep polling after faults; only STOPPED confirms ENABLE/BOOTED low.
 
@@ -184,14 +229,12 @@ You can see every outcome without hardware: `build/test_checkout transcript 1234
 
 Do this after the included sample is delivered. This section is for the developer integrating your sensor and microcontroller.
 
-1. **Design your message.** Open the [Payload Optimizer](https://telemetrystation.com/payload-optimizer), describe your readings, and download `payload.c` and `payload.h`. Note the **bytes per message**.
-2. **Connect your encoder.** Edit [`examples/common/app_payload.c`](../examples/common/app_payload.c) to call the generated code. Set `TS_MAX_PAYLOAD` to your bytes per message.
-3. **Write or choose a port.** Seven required callbacks plus the supply-ready gate in a `ts_platform_t` struct connect the SDK to your UART, a millisecond clock, and two GPIO pins.
-4. **Wire the module.** `ENABLE` (output from your MCU), `BOOTED` (input), UART `TXD`/`RXD` crossed, common ground. Check logic voltages on both sides before powering. The F169 wiring is in the [integration guide](../../BEAR_Module/docs/06_Integration_Guide.md).
-5. **Run it.** The firmware prints the **IMEI** and the next steps. You do not need a topic ID for this.
-6. **Activate.** Put your bytes per message into the [calculator](https://telemetrystation.com/calculators/certus), then [activate](https://telemetrystation.com/activate/certus) the IMEI. You get a **topic ID**.
-7. **Set `TS_TOPIC_ID`**, rebuild, go outdoors with a clear view of the sky, and send.
-8. **Wait for `TS_EVENT_MO_DELIVERED`.** Queued is not delivered.
+1. **Keep the working host and connection.** For a different MCU, complete [the porting checklist](PORTING.md) and validate that hardware before proceeding.
+2. **Read your sensor.** Replace the synthetic `reading = {0, 215}` in the [F169 application](../examples/msp430f169/main.c) with a validated sensor reading in tenths of a degree Celsius. Decide how missing or invalid readings are represented; do not transmit them as real measurements.
+3. **Keep the sample format if it fits.** It carries a 16-bit sequence number and a signed temperature in tenths °C. If you need different fields, use the [Payload Optimizer](https://telemetrystation.com/payload-optimizer), retain the exported schema, and update the [sensor binding](../examples/common/app_payload.c), its header and receiver decoder together. Check buffer, RAM and stack capacity.
+4. **Send once on your activated topic.** Use `ts_bear_can_send()` and check the submission result. Wait for delivery; a timeout can mean the outcome is unknown.
+5. **Compare the actual reading with the decoded destination value.** Check units, scale, sequence number and device identity. Then confirm clean shutdown.
+6. **Choose a reporting schedule.** Enable repeated cycles only after the single-message path works and you have reviewed airtime, battery use and duplicate handling.
 
 The main loop is short:
 
@@ -230,7 +273,7 @@ Print names instead of numbers while debugging: add `src/ts_names.c` and use `ts
 
 **Is it ready for production?** It is alpha, version 0.2, and the hardware is in development. Use it now to evaluate and prototype, and see [Status and roadmap](../../README.md#status-and-roadmap) for what comes next.
 
-**How big is it?** About 0.8 KB of RAM with defaults in the host build. The complete F169 checkout firmware (driver, checkout, console) uses about 18.9 KB of flash and 2025 of 2048 bytes of RAM including the 512-byte stack; the build gates a worst-case stack of 384 bytes. See [Design notes](DESIGN.md#memory) and the [engineering baseline](ENGINEERING.md).
+**How big is it?** About 0.8 KB of RAM with defaults in the host build. A previous F169 build used about 18.9 KB of flash and 2025 of 2048 bytes of RAM including the 512-byte stack, with a 384-byte static worst-case stack estimate. These are baseline figures, not a measurement of the revised image. Rebuild with the TI toolchain and check the current manifest before programming. See [Design notes](DESIGN.md#memory) and the [engineering baseline](ENGINEERING.md).
 
 **Will it retry a failed send?** No, on purpose. A retry after an unknown result can double-send. You decide.
 
@@ -238,12 +281,4 @@ Print names instead of numbers while debugging: add `src/ts_names.c` and use `ts
 
 **Where do I ask questions?** Open an issue on GitHub.
 
-### 2026-11-03 engineering revision
-
-The [engineering baseline](ENGINEERING.md) supersedes earlier examples where they
-show a placeholder payload, imply that every FAULT is powered down, assume
-unbounded clock/console waits, or imply a target build was not performed.
-`TS_FAULT_HOLD` needs continued polling and reviewed hardware recovery; restart
-also checks BOOTED. `ts_f169_init()` returns success/failure. The bench order and CCS
-project enable the checkout console; the other orders leave it off. Follow the new order/build and hardware
-validation procedures before adapting this bench example to a product.
+**Next:** use the [hardware validation procedure](../tests/hardware/README.md) before deployment. It checks the electrical behavior, fault recovery and timing that a computer simulation cannot establish.
