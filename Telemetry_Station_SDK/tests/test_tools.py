@@ -3,14 +3,28 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def module(name):
  s=importlib.util.spec_from_file_location(name,ROOT/'tools'/f'{name}.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
-build=module('build_f169');production=module('production_record')
+build=module('build_f169');production=module('production_record');sample=module('decode_sample')
 class Tests(unittest.TestCase):
  def test_order(self):
   import json
   o=json.loads((ROOT/'orders/bench.json').read_text());build.validate(o)
-  for key,value in [('receive_mt',1),('topic_id',12),('schema_id','bad'),('line_capacity',255),('order_id','../x')]:
+  self.assertEqual(o['report_interval_ms'],0)
+  repeated=copy.deepcopy(o);repeated['report_interval_ms']=600000;build.validate(repeated)
+  for key,value in [('receive_mt',1),('topic_id',12),('schema_id','bad'),('line_capacity',255),('order_id','../x'),('report_interval_ms',-1),('report_interval_ms',True)]:
    bad=copy.deepcopy(o);bad[key]=value
    with self.assertRaises(ValueError):build.validate(bad)
+ def test_sample_decoder(self):
+  import json
+  schema=json.loads((ROOT/'examples/common/generated/schema.json').read_text())
+  self.assertEqual(sample.SCHEMA_ID,schema['schemaId'])
+  self.assertEqual(schema['exampleHex'],'1234ff85')
+  self.assertEqual(sample.decode('1234ff85',True)['temperature_c'],-12.3)
+  self.assertEqual(sample.decode('000000d7',True)['temperature_c'],21.5)
+  self.assertEqual(sample.decode('1234ff85',True)['sequence'],4660)
+  # Fixed vector shared with the generated sample codec; CRC checked against the C SDK.
+  self.assertEqual(sample.decode('1234ff852d78')['integrity'],'crc_verified')
+  for text,mode in [('1234ff852d79',False),('000000d7',False),('1234ff852d78',True),('zz',True),('',False)]:
+   with self.assertRaises(ValueError):sample.decode(text,mode)
  def test_production(self):
   with tempfile.TemporaryDirectory() as d:
    root=Path(d);(root/'measurement').write_text('real evidence fixture');h=hashlib.sha256((root/'measurement').read_bytes()).hexdigest()

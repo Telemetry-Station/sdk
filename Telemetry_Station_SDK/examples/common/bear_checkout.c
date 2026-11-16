@@ -607,9 +607,13 @@ static bool build_header(bear_checkout_t *ck)
         put(ck, TS_ENABLE_MT ? "on" : "off");
         put(ck, ", payload max ");
         put_u32(ck, TS_MAX_PAYLOAD, 1u, ' ');
-        put(ck, " B, cycle every ");
-        put_u32(ck, ck->cfg.interval_ms / 1000u, 1u, ' ');
-        put(ck, " s");
+        if (ck->cfg.interval_ms) {
+            put(ck, " B, cycle every ");
+            put_u32(ck, ck->cfg.interval_ms / 1000u, 1u, ' ');
+            put(ck, " s");
+        } else {
+            put(ck, " B, one checkout");
+        }
         end_line(ck);
         return true;
     case 8: put(ck, BC_RULE); return true;
@@ -648,6 +652,11 @@ static bool build_summary(bear_checkout_t *ck, uint32_t now)
         return true;
     case 2: put(ck, BC_RULE); return true;
     case 3:
+        if (!ck->cfg.interval_ms) {
+            put(ck, " Checkout complete; automatic repeats disabled.");
+            end_line(ck);
+            return true;
+        }
         put(ck, " Next cycle in ");
         put_u32(ck, ck->cfg.interval_ms / 1000u, 1u, ' ');
         put(ck, " s ");

@@ -276,7 +276,17 @@ static void check_lines(void)
 static void test_firmware_first_flash(void)
 {
     board_init();
+#if REPORT_INTERVAL_MS == 0
+    board.stop_ms = TS_F169_CHARGE_WAIT_MS + 150000u;
+    assert(run_firmware(NULL, 0) == 0);
+    SEE("one checkout");
+    SEE("Checkout complete; automatic repeats disabled.");
+    NOT_SEE("Cycle 2");
+    NOT_SEE("Next cycle in");
+    assert(board.enable_rises == 1u);
+#else
     assert(run_firmware("Cycle 3 ", 1) == 0);
+#endif
     check_lines();
     SEE("Telemetry Station SDK v" TS_SDK_VERSION_STRING "  |  BEAR Module 9704 checkout");
     SEE(" Board    MSP430F169, XT2 8 MHz");
@@ -290,9 +300,11 @@ static void test_firmware_first_flash(void)
     SEE("PASS   Satellite signal     4/5 bars");
     SEE("PASS   Power down           BOOTED low after");
     SEE(" RESULT   PASS");
+#if REPORT_INTERVAL_MS > 0
     SEE("Cycle 2  PASS");
     SEE("Cycle 3  PASS");
     SEE("(3/3 cycles passed)");
+#endif
     NOT_SEE("CHECK");
 #if TS_TOPIC_ID >= 64u
     {
@@ -302,7 +314,7 @@ static void test_firmware_first_flash(void)
     }
     SEE("PASS   Message queued       accepted as message 9");
     SEE("PASS   Delivery             confirmed by Iridium");
-    assert(count_of(board.m.sent_log, "PUT messageOriginate ") == 3u);
+    assert(count_of(board.m.sent_log, "PUT messageOriginate ") == (REPORT_INTERVAL_MS ? 3u : 1u));
     NOT_SEE("Next steps");
 #else
     SEE(" Topic    not set; send test skipped");
@@ -365,7 +377,7 @@ static void test_firmware_headless(void)
     assert(run_firmware(NULL, 0) == 0);
     assert(board.console_len == 0u);
     assert(!(ME1 & UTXE0) && !(P3SEL & (BIT4 | BIT5)) && !(IE1 & UTXIE0));
-    assert(board.enable_rises == 3u);
+    assert(board.enable_rises == (REPORT_INTERVAL_MS ? 3u : 1u));
     assert(strstr(board.m.sent_log, "PUT messageOriginate "));
     assert(!(P1OUT & BIT0) && !(P1IN & BIT1));
 }

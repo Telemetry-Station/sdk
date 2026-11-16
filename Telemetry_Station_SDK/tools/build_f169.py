@@ -11,7 +11,7 @@ def validate(order):
     if not isinstance(order['order_id'],str) or not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,47}',order['order_id']): raise ValueError('Invalid order_id')
     for k in ['receive_mt','gnss','console','watchdog']:
         if type(order[k]) is not bool: raise ValueError(k+' must be a JSON boolean')
-    for k,lo,hi in [('topic_id',0,65535),('payload_max',4,1024),('line_capacity',256,4096),('report_interval_ms',1,2147483647)]:
+    for k,lo,hi in [('topic_id',0,65535),('payload_max',4,1024),('line_capacity',256,4096),('report_interval_ms',0,2147483647)]:
         if type(order[k]) is not int or not lo<=order[k]<=hi: raise ValueError(k+' outside limits')
     if 0 < order['topic_id'] < 64: raise ValueError('Topic must be zero (disabled) or >=64')
     if 4*((order['payload_max']+4)//3)+160 > order['line_capacity']: raise ValueError('Line too small for payload')

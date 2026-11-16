@@ -7,6 +7,6 @@
   "watchdog": false,
   "payload_max": 64,
   "line_capacity": 256,
-  "report_interval_ms": 600000,
+  "report_interval_ms": 0,
   "schema_id": "ts-payload-v1-5a82b543"
 }

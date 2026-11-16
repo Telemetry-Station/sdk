@@ -115,7 +115,7 @@ if(NOT CMAKE_CROSSCOMPILING)
     endif()
 
     add_executable(simulated_demo examples/host/simulated_demo.c)
-    target_link_libraries(simulated_demo ts_sim_modem telemetry_station_sdk)
+    target_link_libraries(simulated_demo ts_sim_modem ts_example_payload)
     add_test(NAME simulated_demo COMMAND simulated_demo)
 
     if(UNIX)
@@ -159,20 +159,24 @@ if(NOT CMAKE_CROSSCOMPILING)
     # Runs the MSP430F169 port, console and example firmware on the host
     # against the register stub and a board model, calling the interrupt
     # handlers directly. Once without a topic (activation) and once with one.
-    # <topic>_<console>: first flash with/without a topic, and a headless build.
-    foreach(variant 0_1 1234_1 1234_0)
+    # <topic>_<console>_<interval>: activation/send, console/headless, repeat/once.
+    foreach(variant 0_1_60000 1234_1_60000 1234_0_60000 0_1_0 1234_1_0 1234_0_0)
         string(REPLACE "_" ";" parts ${variant})
         list(GET parts 0 topic)
         list(GET parts 1 console)
+        list(GET parts 2 interval)
         set(name test_f169_firmware_${topic})
         if(NOT console)
             set(name test_f169_firmware_headless)
+        endif()
+        if(interval EQUAL 0)
+            string(APPEND name "_once")
         endif()
         add_executable(${name} tests/test_f169_port.c
             ports/msp430f169/ts_f169_port.c ports/msp430f169/ts_f169_console.c)
         target_include_directories(${name} PRIVATE tests/stubs ports/msp430f169)
         target_compile_definitions(${name} PRIVATE
-            TS_ENABLE_CONSOLE=${console} TS_TOPIC_ID=${topic}u)
+            TS_ENABLE_CONSOLE=${console} TS_TOPIC_ID=${topic}u REPORT_INTERVAL_MS=${interval}UL)
         target_link_libraries(${name} ts_bear_checkout ts_example_payload ts_sim_modem)
         string(REPLACE "test_" "" test_name ${name})
         add_test(NAME ${test_name} COMMAND ${name})

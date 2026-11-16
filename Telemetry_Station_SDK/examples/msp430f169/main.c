@@ -12,20 +12,20 @@
  *
  * Flash it, open the console (USART0, P3.4 TXD, 115200 8N1) and the first
  * modem cycle prints a full checkout: every step of power-up, handshake,
- * IMEI, signal, send and power-down with PASS / WARN / FAIL / SKIP and a
+ * IMEI, signal, send and power-down with PASS / WARN / CHECK / SKIP and a
  * plain-language hint for each failure. Every later cycle prints a one-line
- * summary (plus any WARN/FAIL rows), so leaving it running is a soak test.
+ * summary (plus any WARN/CHECK rows) when repetition is explicitly enabled.
  *
  * VIN remains applied; the modem is enabled only while it has work:
  *
- *   wait REPORT_INTERVAL_MS -> checkout cycle (ENABLE high ... BOOTED low) -> wait
+ *   checkout cycle -> idle; REPORT_INTERVAL_MS > 0 enables repeated cycles
  *
  * Until TS_TOPIC_ID is set (after activation) no message is sent; the report
  * shows the IMEI and the activation steps instead.
  */
 
 #ifndef REPORT_INTERVAL_MS
-#define REPORT_INTERVAL_MS 600000UL /* Idle for 10 minutes after each completed cycle. */
+#define REPORT_INTERVAL_MS 0UL /* One checkout. Set a positive idle interval to opt into repeats. */
 #endif
 
 /* ANSI colours in the console. Set to 0 for terminals that show "[32m". */
@@ -112,7 +112,7 @@ int main(void)
         ts_bear_poll(&bear);
         now = port.millis(port.user);
         if (!bear_checkout_running(&checkout) &&
-            (!started || now - last_start >= REPORT_INTERVAL_MS)) {
+            (!started || (REPORT_INTERVAL_MS > 0 && now - last_start >= REPORT_INTERVAL_MS))) {
             size_t length = next_payload(&reading, payload, sizeof payload);
             (void)bear_checkout_begin(&checkout, now, length ? payload : NULL, length);
             started = true;

@@ -64,7 +64,7 @@ typedef struct {
     const char *wiring;   /* Header text, for example "ENABLE P1.0, BOOTED P1.1". */
     const char *console;  /* Header text, for example "115200 8N1 on P3.4". */
     uint16_t topic;       /* Below TS_MIN_TOPIC_ID: the send checks are skipped. */
-    uint32_t interval_ms; /* Time between cycles, shown in the report. */
+    uint32_t interval_ms; /* Display only: 0 means one checkout; caller schedules repeats. */ /* Time between cycles, shown in the report. */
     bool color;           /* ANSI colours for the status tags. */
     bool verbose_all;     /* Full report every cycle, not only the first. */
 } bc_config_t;
