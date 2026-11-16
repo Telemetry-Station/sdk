@@ -85,7 +85,7 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [ ] Serial/lot traceability linked to IMEI, hardware revision, and unit test results.
 - [ ] Production configuration consistent with the qualified design and applicable approvals.
 - [ ] ESD-protective packaging, labeling, production supply, and fulfillment ready.
-- [ ] Customer interface/mechanical documentation available through the [hardware index](hardware/README.md).
+- [ ] Manufacturing release approved and customer interface/mechanical documentation available through the [hardware index](hardware/README.md).
 
 ## Customer release
 
@@ -123,7 +123,7 @@ These are proposed release gates, not claims about the current engineering proto
 ## Progress update — 2026-11-07
 
 G1 (design) remains **in progress** at **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for review.
-Approved customer interface drawings are planned.
+Customer interface drawings are planned.
 Boards are not ordered until the modem land pattern is confirmed.
 No hardware has been built. Validation on BEAR hardware is **NOT YET RUN**. The April 1, 2027 availability target
 remains tentative.

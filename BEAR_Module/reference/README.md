@@ -1,6 +1,6 @@
 # Supporting references
 
-You can follow the BEAR setup using the guided setup. These references are for deeper integration and engineering review.
+Start with the guided setup to connect BEAR and send your first reading. These references support deeper integration and engineering review.
 
 **[Return to guided setup →](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md)**
 

@@ -74,6 +74,6 @@ The exact standards list and test scope is confirmed with the accredited test la
 |---|---|
 | Export classification (ECCN, HS code) | Classification to be determined and published with ordering information **[Pending decision]** |
 | Warranty | None. Modules are sold as-is under the [Telemetry Station Terms](https://telemetrystation.com/terms#hardware-warranty) |
-| Hardware design access | Public interface documentation does not grant access to fabrication files or restricted vendor material |
+| Integration documentation | Use the [hardware index](../hardware/README.md) for available interface and mechanical information |
 
 **Next:** [check the release criteria](../RD_CHECKLIST.md) and request the evidence needed for your market.

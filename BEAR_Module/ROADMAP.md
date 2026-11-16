@@ -49,8 +49,7 @@ The BEAR Module 9704 is the first product. Further family members will share the
 ## Progress update — 2026-11-07
 
 G1 (design) remains **in progress**, at status **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for
-review, including an 80 × 60 mm four-layer PCB. Approved customer interface drawings are planned;
-
+review, including an 80 × 60 mm four-layer PCB. Customer interface drawings are planned.
 
 Before boards are ordered, the modem land pattern must be confirmed. Rev A uses a 2.0 A burst-current design
 envelope, not a modem specification; actual current will be measured at G2 (EVT). No hardware has been built,
