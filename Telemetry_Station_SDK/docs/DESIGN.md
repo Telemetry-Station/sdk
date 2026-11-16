@@ -33,7 +33,7 @@ The driver is **cooperative and polled**. You call `ts_bear_poll()` from your ma
 |---|---|
 | Call `ts_bear_poll()` every 1 ms (validate worst-case service latency) | The 230400 baud UART delivers a byte about every 43 µs. Your port's receive ring buffer absorbs the gap between polls. Size it for your loop period |
 | Never call the driver from an interrupt | The driver is not re-entrant. Interrupts only move bytes into ring buffers and count milliseconds |
-| Each call does bounded work | At most `TS_POLL_BYTE_BUDGET` bytes are read, one line is parsed, and one segment is encoded. Nothing waits |
+| Each call does bounded work | At most `TS_POLL_BYTE_BUDGET` bytes are read; each completed line within that budget may be parsed. Port callbacks and event handlers must also return promptly. Nothing waits |
 | Events arrive inside `ts_bear_poll()` | The callback runs in your main loop context, so it needs no locking. Keep it short. Do not call `ts_bear_poll()` from it |
 | Sleep between polls | Wake on any interrupt (the examples use a 1 ms tick) |
 
@@ -118,6 +118,8 @@ Buffer sizes follow `TS_LINE_CAP` (twice) and `TS_MAX_PAYLOAD` (up to twice), se
 **No automatic retry.** A failed send can still have reached the network, and a repeat would be a duplicate. Your application decides, and puts a sequence number in the payload.
 
 **Delivered is not accepted.** `TS_EVENT_MO_ACCEPTED` means the modem queued the message. Only `TS_EVENT_MO_DELIVERED` means it was acknowledged.
+
+**Serial fault containment.** Receive callbacks may return zero, one byte (the requested capacity), or a negative error. Larger counts take the existing I/O fault path. A NUL byte inside a serial line reports `TS_ERR_PROTOCOL` and discards that entire line through its carriage-return terminator. Neither the apparently valid prefix nor the remaining suffix is processed as a reply. The next complete line can be processed normally; the pending command retains its original timeout. This is framing protection, not a claim that every possible malformed JSON input is rejected.
 
 **Corruption check.** The driver appends a CRC-16 to each message and verifies it on received messages. It detects corruption. It does not authenticate or encrypt.
 

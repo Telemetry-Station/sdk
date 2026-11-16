@@ -90,6 +90,10 @@ with its terminator. GNSS regressions reject malformed bytes at each of the six
 UBX header positions and recover a valid fix, including when a rejected byte is
 the start of an overlapping sync sequence.
 
+## Fault checks behind the sample
+
+The driver checks its serial adapter's byte counts and rejects lines containing an embedded NUL instead of accepting a damaged reply's prefix. Regression tests also verify recovery at the next complete line. These protections preserve the same setup, send and shutdown API; they do not replace hardware validation. See the [engineering evidence](docs/ENGINEERING.md#serial-and-configuration-checks).
+
 ## Things to know before you deploy
 
 - A message reported as **queued** is not **delivered**. Wait for `TS_EVENT_MO_DELIVERED`.

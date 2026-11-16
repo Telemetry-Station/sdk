@@ -111,6 +111,14 @@ it and the linker can discard it. Therefore its RAM numbers do not include an
 instantiated GNSS context or additional transport rings. Measure the integrated
 variant before release. Source protocol: u-blox UBX-13003221 R28, NAV-PVT.
 
+## Serial and configuration checks
+
+The receive boundary validates the port's returned byte count before using the byte. Impossible counts use the existing I/O fault and shutdown behavior. NUL-containing lines are discarded through the next carriage return, with a protocol-error event; parsing resumes at the following line without a restart or automatic retransmission.
+
+Regression tests inject both faults through the real driver and simulated transport. They check that a damaged reply cannot publish a signal value, that the next complete reply remains usable, and that a callback contract violation follows fault cleanup. These are software checks, not measurements of electrical noise or target UART timing.
+
+The configuration test invokes the selected host C compiler to check accepted and rejected boundaries. Poll budgets must fit the 16-bit loop counter (1–65535); feature flags, including the automatic IMEI query, must be 0 or 1. Defaults and valid application behavior are unchanged. Target builds and latency measurements remain separate requirements.
+
 ## Evidence and production
 
 `tests/coverage.py` builds two configurations (GNSS and MT enabled, with the

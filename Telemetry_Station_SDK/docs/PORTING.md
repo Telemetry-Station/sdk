@@ -10,9 +10,9 @@ The driver never touches hardware directly. It calls the functions in a `ts_plat
 
 | Function | What it does |
 |---|---|
-| `serial_read` | Return the number of bytes stored (the driver asks for one), `0` if none, negative on error (such as lost bytes). Returns `int16_t`. Never block. |
-| `serial_write` | Accept up to `length` bytes and return how many were taken (`int16_t`). May take fewer. Never block. |
-| `millis` | Milliseconds since start. Wraparound is handled. |
+| `serial_read` | Return the number of bytes stored (the driver asks for one), `0` if none, negative on error (such as lost bytes). Returns `int16_t` and must never exceed the requested capacity. Never block. |
+| `serial_write` | Accept up to `length` bytes and return how many were taken (`int16_t`). May take fewer, never more than requested. Never block. |
+| `millis` | Monotonic elapsed milliseconds that keep advancing while the SDK runs. Do not use a clock that jumps when calendar time is corrected. Wraparound is handled. |
 | `power_start` / `power_stop` | Assert/deassert ENABLE only; never switch VIN here. |
 | `supply_ready` | Nonblocking stored-energy qualification before ENABLE. Template fails closed until implemented. NULL means the application explicitly qualifies supply before every start. |
 | `uart_enable` | Enable the UART, or disable it and make its pins inputs so the module is not back-powered. |
@@ -42,7 +42,9 @@ Hardware details are in the [BEAR Module documentation](../../BEAR_Module/README
 6. Send a message only after you have activated the modem and set `TS_TOPIC_ID`.
 7. Before deployment, add a hardware watchdog kicked once per main-loop pass, and decide what your product does after `TS_FAULT`. See [Design notes](DESIGN.md#watchdog).
 
-Run the host tests (`ctest`) with your compiler's warnings enabled to confirm the portable code builds cleanly. They do not test your port.
+Run the host tests (`ctest`) with your compiler's warnings enabled to confirm the portable code builds cleanly. They do not test your port. Inject a receive overflow/error and verify the existing fault/shutdown path. A callback claiming more bytes than requested is rejected as `TS_ERR_IO`; this detects a broken callback contract but cannot undo a buffer overwrite performed inside a port.
+
+Build-time checks reject invalid feature flags and poll budgets outside 1–65535, keeping the loop counter representable on 16-bit hosts. The default remains 64 bytes. Passing this check does not establish that a large budget meets your target latency; measure the configured port.
 
 
 ## Rev A integration contract — 2026-11-15

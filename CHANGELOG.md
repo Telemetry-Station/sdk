@@ -8,6 +8,13 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## Unreleased
 
+### Serial boundary and configuration hardening
+- Reject impossible receive-callback byte counts through the existing `TS_ERR_IO` fault/shutdown path, matching the transmit-side contract checks.
+- Reject embedded NUL bytes in serial lines with `TS_ERR_PROTOCOL`; discard the complete damaged line and resume at the next carriage-return boundary. Pending commands keep their original timeouts.
+- Reject poll budgets that cannot fit a 16-bit loop counter and non-boolean automatic-IMEI flags at compile time; defaults and the public API are unchanged.
+- Added fault regressions and compiler-driven configuration boundary checks. Clarified monotonic-clock and callback requirements without changing the first-use workflow.
+
+
 ### Guided sensor-to-insight setup
 - Reviewed every Markdown page for purpose, prerequisites, clear next actions and evidence-based status; consolidated the first-use flow and corrected conflicting power/fault descriptions.
 - Added `tools/try_sample.py` to prepare and run a simulated sensor reading. The demo uses the F169 sample codec, shows a decoded 21.5 °C preview and clearly marks simulated delivery and fictional identifiers.
