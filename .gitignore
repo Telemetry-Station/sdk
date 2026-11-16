@@ -69,7 +69,7 @@ __pycache__/
 # Local agent tooling is not part of the customer SDK
 /.codex/
 
-# Manufacturing sources and fabrication outputs belong outside this repository.
+# Exclude manufacturing source files and fabrication outputs.
 *.kicad_sch
 *.kicad_pcb
 *.kicad_pro

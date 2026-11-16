@@ -8,6 +8,10 @@ Telemetry Station SDK follows [semantic versioning](https://semver.org). Before 
 
 ## Unreleased
 
+### Customer documentation
+- Focused product guides on available integration resources and consistent Telemetry Station branding.
+- Clarified publication checks for contributions, examples and hardware deliverables.
+
 ### Serial boundary and configuration hardening
 - Reject impossible receive-callback byte counts through the existing `TS_ERR_IO` fault/shutdown path, matching the transmit-side contract checks.
 - Reject embedded NUL bytes in serial lines with `TS_ERR_PROTOCOL`; discard the complete damaged line and resume at the next carriage-return boundary. Pending commands keep their original timeouts.
