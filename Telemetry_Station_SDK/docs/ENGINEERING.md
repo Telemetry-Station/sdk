@@ -1,5 +1,9 @@
 # Embedded engineering baseline
 
+This page records the rules for building a reproducible firmware image and the evidence still needed before deployment. It is a reviewer’s reference, not the first setup tutorial.
+
+**Start a new integration:** [run the sample](GETTING_STARTED.md). **Review a build:** follow [Build and order contract](#build-and-order-contract), then the [physical validation procedure](../tests/hardware/README.md).
+
 The SDK remains a portable C99 **host** library for BEAR, not firmware inside the
 BEAR module. The F169 example is a bench integration, not an approved production
 sensor application. Its sample temperature is synthetic; topic zero blocks sends.
@@ -14,9 +18,9 @@ debugger evidence, and independent production acceptance criteria.
 
 ## Build and order contract
 
-`orders/bench.json` is the general-purpose starting order. JSON booleans select
+`orders/bench.json` is the first-use order: one checkout, no outgoing message until a topic is assigned. Other orders retain their explicit repeat intervals. Copy an order to a local uncommitted file before adding an assigned identifier. JSON booleans select
 MT, GNSS, console and watchdog; payload size, line capacity, topic and cadence are
-validated. Unknown keys, numeric booleans, invalid topics and mismatched schema
+validated. A zero report interval runs one checkout; a positive interval explicitly enables repeats after completion. Unknown keys, numeric booleans, invalid topics and mismatched schema
 identity fail. There is no implied customer production configuration.
 
 ```
@@ -33,7 +37,7 @@ runs `ofd430 --call_graph` on the image and computes the worst-case static stack
 the deepest main-loop path plus the nested interrupts, with every indirect call
 assumed to reach any port or example function. It fails when less than 64 bytes
 of the reserved stack remain and records `stack_static` in the manifest. The
-bench order measures 384 of 512 bytes. This static bound excludes recursion
+previous bench baseline measured 384 of 512 bytes; regenerate the target manifest for the revised image before programming. This static bound excludes recursion
 (none exists) and is not a high-water measurement. The CLI never programs a target. A failing build
 cannot leave a new PASS manifest beside a stale image.
 
@@ -61,7 +65,7 @@ The bench order and CCS project enable the checkout console (USART0, P3.4,
 The console is a 128-byte ring drained by the USART0 TX interrupt. Writes are
 all-or-nothing and never wait: the checkout keeps its pending text and retries on
 a later loop, so nothing is lost and the modem UART is never starved. See
-[Getting started](GETTING_STARTED.md#4-check-a-bear-module-on-an-msp430f169-flash-and-go)
+[Getting started](GETTING_STARTED.md#4-check-a-bear-module-on-an-msp430f169)
 for the checkout transcript and troubleshooting table. Watchdog requires a verified ACLK source and is off in the bench order.
 The bench example explicitly consumes/discards MT; product applications must
 replace that policy rather than interpret unauthenticated MT as commands.
@@ -149,3 +153,5 @@ characterization. No actual product policy or limits are approved here.
 - Poll every 1 ms for the reference configuration. At 230400 8N1 the input rate is 23040 bytes/s: a 64-byte poll budget requires a sustained interval below 2.78 ms. A 128-slot ring has 127 usable bytes, about 5.51 ms burst capacity. Budget both drain throughput and worst-case interrupt/loop latency; validate on the target.
 - Unpowered host inputs must tolerate driven module outputs or have isolation. Buffer Ioff only applies when the buffer supply itself is zero. A disabled host UART does not establish electrical isolation.
 - Adding `supply_ready` changes the platform struct and CHARGING changes state values. Rebuild all objects together; use symbolic enums and zero-initialize platform structs. NULL supply gates remain supported only under the explicit external-qualification contract.
+
+**Next:** [record physical validation](../tests/hardware/README.md) for the exact image and configuration you intend to use.

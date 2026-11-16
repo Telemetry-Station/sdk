@@ -1,5 +1,9 @@
 # F169 / BEAR hardware validation
 
+These tests establish whether the software works safely on real electronics. A passing computer simulation cannot establish supply behavior, wiring, radio delivery or timing. This procedure is for the engineer qualifying the exact kit or product.
+
+**Before testing:** obtain the engineering unit’s approved limits and recovery procedure. Follow [the connection guide](../../../BEAR_Module/docs/06_Integration_Guide.md), then record each observation below.
+
 Status: **NOT YET RUN**. No board, probe connection, firmware programming, Iridium
 transmission, GNSS reception or physical measurement was performed by these tools.
 
@@ -57,3 +61,5 @@ Rev A release gates added 2026-11-15:
 - Test host reset during boot and while running using an approved recovery procedure. The reference initialization drives ENABLE low; it is not a safe hot-attach/reset recovery implementation.
 - Measure powered-BEAR/unpowered-host injection and retained-bank behavior after VIN removal; qualify host I/O or add isolation.
 - Capture worst-case UART service latency and overflow behavior. Exercise READY with the automatic IMEI query, checked send acceptance, delivery and shutdown with outstanding MT data.
+
+**Next:** retain the measurements with the image identity and [review release requirements](../../../BEAR_Module/RD_CHECKLIST.md). A firmware checkout PASS alone is not deployment approval.

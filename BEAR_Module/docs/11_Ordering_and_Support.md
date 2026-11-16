@@ -1,6 +1,10 @@
 # 11 Ordering and Support
 
-Document ID: BEAR-OS-9704 | Revision: P1 | Status: Preliminary
+Evaluation kits and production modules are planned; ordering, kit contents, prices and firm lead times are not yet confirmed. The SDK and computer sample are available now.
+
+**[Request evaluation details →](https://telemetrystation.com/contact)** Include your sensor, host board, deployment location, reporting frequency, power source and desired data destination.
+
+Document ID: BEAR-OS-9704 | Revision: P2 (2026-11-15) | Status: Preliminary
 
 ## Part numbers
 
@@ -23,11 +27,11 @@ Pricing and lead times **[Pending decision]** will be published before ordering 
 
 ## Packaging and labeling
 
-Each module ships in ESD-protective packaging. The label carries the part number, serial number, hardware revision, and IMEI as text and as a scannable code (target).
+The release plan requires ESD-protective packaging for each module. The label carries the part number, serial number, hardware revision, and IMEI as text and as a scannable code (target).
 
 ## Telemetry Station service
 
-Module hardware and airtime are separate. Activate the IMEI at telemetrystation.com after sizing your messages with the Payload Optimizer and calculator. See the [root README](../../README.md).
+Module hardware and airtime are separate. Activate the IMEI at telemetrystation.com after confirming service sizing for the included sample; customize the payload after the first successful delivery. See the [root README](../../README.md).
 
 ## Lifecycle
 
@@ -56,9 +60,11 @@ The public launch package is planned to include:
 
 - Revision-A datasheet PDF and customer interface/mechanical drawings.
 - Arduino, STM32 and Raspberry Pi SDK quickstarts, with tested platform/toolchain versions stated in each guide.
-- Sample payload decoders and matching test vectors.
+- Sample decoder and golden vectors are available for the included sequence/temperature format; customer destination walkthroughs remain planned.
 - Public product/service status page and approved SLA.
 - Repository changelog (already available at [`../../CHANGELOG.md`](../../CHANGELOG.md)).
 - Firm evaluation-kit availability dates, published once build, validation and supply are confirmed.
 
 Availability and scope updates for these resources are listed in the [roadmap](../ROADMAP.md) and [R&D and release checklist](../RD_CHECKLIST.md). Target sales availability is April 1, 2027, subject to validation, approvals, and production readiness; this is not a confirmed release date.
+
+**Next:** [contact Telemetry Station](https://telemetrystation.com/contact) for kit availability and the service destination you will use for the first sample.

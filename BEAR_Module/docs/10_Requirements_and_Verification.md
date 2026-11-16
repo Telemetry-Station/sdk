@@ -1,6 +1,10 @@
 # 10 Requirements and Verification
 
-Document ID: BEAR-RV-9704 | Revision: P3 (2026-11-15) | Status: Preliminary
+This is the evidence checklist behind product claims. Each row says what must work, how it will be checked and whether that check is complete. A documented design is not the same as a tested module.
+
+**For a quick decision:** [review product readiness](../RD_CHECKLIST.md). Use the requirement IDs below when asking for evidence or reporting a failed check.
+
+Document ID: BEAR-RV-9704 | Revision: P4 (2026-11-15) | Status: Preliminary
 
 Each requirement has an ID, a verification method (**T**est, **I**nspection, **A**nalysis, **D**emonstration) and a status. **Designed (Rev A)** means the current design implements the requirement, but hardware testing is pending. Remaining open limits are marked **[Pending decision]**. Verified limits will be published in the [datasheet](../datasheet/BEAR-9704_Datasheet.md).
 
@@ -74,3 +78,5 @@ The MSP430F169 is the first reference host, not a product-use requirement. STM32
 | DVT | Environmental, EMC pre-scan, RF performance, full requirements pass |
 | Certification | Accredited laboratory testing |
 | PVT and production | Process validation, functional test at every unit |
+
+**Next:** [run the hardware validation plan](../../Telemetry_Station_SDK/tests/hardware/README.md) and record measurements against the applicable requirements.

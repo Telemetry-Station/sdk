@@ -1,7 +1,8 @@
-# PCB
+# Board layout summary
 
-Rev A layout summary for customer integration. Native KiCad files, fabrication outputs and internal RF calculations
-are not included in this SDK. Approved design deliverables will be published separately.
+BEAR is a separate board that mounts inside your product. This page explains the preliminary Rev A layout for integration review. You are not expected to fabricate it.
+
+**For enclosure planning:** [use the mechanical requirements](../../docs/08_Mechanical_and_Environmental.md) and request the approved customer drawings before committing dimensions.
 
 | Topic | Rev A implementation |
 |---|---|
@@ -13,5 +14,6 @@ are not included in this SDK. Approved design deliverables will be published sep
 | Fabrication | IPC-6012 Class 2, IPC-A-600 Class 2, Tg ≥ 150 °C |
 | Test access | TP1 bank, TP2 modem supply, TP3 3.3 V, TP4 CHG_STAT, TP5 CHG_PG, TP6 bank midpoint, TP7 GND, TP8 protected VIN, TP9-TP11 WAKE_OUT, WAKE_IN, SYNC. ENABLE, BOOTED and UART are probed at J1 |
 
-Public design-release deliverables **[Pending decision]**: approved fabrication files, assembly drawings, schematic
-and mechanical model with revision metadata, applicable licenses and required attribution. This summary is not a fabrication definition.
+The layout is still in design review; RF and power performance require physical validation. Test pads are engineering access points, not the normal customer setup interface.
+
+**Next:** [review module mounting and antenna clearance](../../docs/08_Mechanical_and_Environmental.md) for your enclosure.

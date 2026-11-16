@@ -1,6 +1,10 @@
 # 07 Firmware Interface
 
-Document ID: BEAR-FW-9704 | Revision: P3 (2026-11-15) | Status: Preliminary
+The SDK turns “send this reading” into the modem’s startup, communication and shutdown steps. This page explains what your firmware must provide and what each result actually proves.
+
+**Start here:** [run the included sample](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md). Use the tables below when connecting your application to the driver.
+
+Document ID: BEAR-FW-9704 | Revision: P4 (2026-11-15) | Status: Preliminary
 
 The BEAR Module 9704 is controlled by the [Telemetry Station SDK](../../Telemetry_Station_SDK), a portable C99 library. This document maps the module's hardware signals to the SDK, so hardware and firmware engineers can work from one reference.
 
@@ -12,7 +16,7 @@ The BEAR Module 9704 is controlled by the [Telemetry Station SDK](../../Telemetr
 | BOOTED | `boot_ready()` | Waits for high before enabling the UART. After shutdown, waits for low before allowing a restart |
 | TXD, RXD | `serial_read()`, `serial_write()`, `uart_enable()` | Never blocks. Disables the UART and tri-states its pins when the module is off |
 | (timing) | `millis()` | Drives all timeouts. Wrap-around is handled |
-| TX_ACTIVE, WAKE_IN, WAKE_OUT | Not used by the SDK today | Available to your application |
+| TX_ACTIVE, WAKE_IN, WAKE_OUT | Not used by the SDK today | TX_ACTIVE on J1; wake signals reserved on test pads, not supported by the SDK |
 
 **Supply qualification (t_VIN).** The SDK does not switch VIN. `ts_bear_start()` enters `TS_CHARGING` when the platform's `supply_ready()` gate is false; ENABLE stays low and UART stays isolated. It boots only after the gate passes, and faults after `TS_CHARGE_TIMEOUT_MS` (120 s default). A NULL gate explicitly requires the application to qualify the supply before every start. The F169 bench port uses a provisional 60 s wait from initialization with VIN already valid and continuously applied; qualify this policy at EVT. See [power management](04_Power_Management.md).
 
@@ -49,7 +53,7 @@ Read the state with `ts_bear_state()`. Only `TS_EVENT_STOPPED` confirms ENABLE a
 
 ## Typical duty-cycled application
 
-The module is the largest consumer on the board, so a battery product starts it only when there is something to send. The whole pattern is a three-state loop, implemented in [`examples/msp430f169/main.c`](../../Telemetry_Station_SDK/examples/msp430f169/main.c):
+A battery application can reduce idle consumption by starting the modem only for a report. Measure the resulting energy use on hardware. The reference application defaults to one checkout; a positive report interval enables repeated cycles in [`examples/msp430f169/main.c`](../../Telemetry_Station_SDK/examples/msp430f169/main.c):
 
 ```text
 SLEEPING --(report interval elapsed)--> WORKING --(delivered or failed)--> FINISHING --(TS_OFF)--> SLEEPING
@@ -107,3 +111,5 @@ MCU compatibility depends on meeting the module's released electrical/timing lim
 | Driver against a simulated modem | Passing in CI, with strict warnings and sanitizers |
 | Driver against BEAR Module EVT hardware | Planned at G2; schedule **[Pending decision]** |
 | MSP430F169 port on target | Validation target; BEAR EVT validation is at G2 |
+
+**Next:** [implement or review your platform adapter](../../Telemetry_Station_SDK/docs/PORTING.md), then test it with the included sample.

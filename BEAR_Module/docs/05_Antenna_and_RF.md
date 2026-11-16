@@ -1,6 +1,10 @@
 # 05 Antenna and RF
 
-Document ID: BEAR-RF-9704 | Revision: P2 | Status: Preliminary (Rev A design values; not RF-tested)
+The antenna is the module’s connection to the sky. Placement and enclosure can determine whether a correctly wired device delivers messages. RF means radio frequency; the engineering values below describe that connection.
+
+**Start here:** [choose and place the antenna](#choosing-and-placing-an-antenna) using the engineering unit’s approved test configuration. The listed reference antenna is not yet a qualified customer installation.
+
+Document ID: BEAR-RF-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; not RF-tested)
 
 ## Overview
 
@@ -53,3 +57,5 @@ Message delivery time depends on satellite visibility. Plan for variable deliver
 ## Regulatory note
 
 Antenna and installation choices affect RF exposure and regulatory compliance. Approved configurations, antenna gain limits, separation distances, labeling and installation guidance **[Pending decision]** will be published with the certification package. BEAR Rev A is not certified; do not deploy it as a qualified radio product. See [09 Compliance and quality](09_Compliance_and_Quality.md).
+
+**Next:** [run the first-message procedure](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md#send-the-included-sample-before-adding-your-sensor) in the approved engineering setup.

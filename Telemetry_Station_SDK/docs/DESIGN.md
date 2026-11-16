@@ -1,5 +1,9 @@
 # Design notes
 
+The SDK keeps your application responsive while it starts the modem, sends data and shuts down. This page explains those guarantees and their limits so a reviewer can judge whether the software fits the product.
+
+**Integrating first?** Use [Getting started](GETTING_STARTED.md). Read the state, timeout and memory details below when reviewing or changing the driver.
+
 For firmware engineers who want to know how the driver works, what it guarantees, and where it deliberately does not do something. Nothing here has been measured on a BEAR Module or a microcontroller yet. Where a number comes from a computer build, it says so.
 
 ## Shape of the code
@@ -107,7 +111,7 @@ Buffer sizes follow `TS_LINE_CAP` (twice) and `TS_MAX_PAYLOAD` (up to twice), se
 |---|---|
 | Return codes (`ts_result_t`) | Every function that can fail returns one. Bad arguments and misuse are rejected, never asserted |
 | Events (`TS_EVENT_ERROR`, `TS_EVENT_MO_FAILED`) | Problems found later, while polling |
-| `TS_FAULT` | Unrecoverable for this session. The driver has powered the module down. Call `ts_bear_start()` to try again |
+| `TS_FAULT` | Faulted session; shutdown is not guaranteed. Inspect the error and BOOTED, continue polling as required, and use the reviewed recovery procedure. Restart is rejected while BOOTED is high |
 
 `ts_result_name()`, `ts_event_name()` and `ts_state_name()` give readable names for logs.
 
@@ -139,7 +143,7 @@ The driver itself has none. The port owns the interrupts, and the F169 port show
 
 C99. The library builds clean with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wundef`. CI also builds with `-Werror`, runs the tests under AddressSanitizer and UBSan, and runs the Clang static analyzer. Fixed-width integer types are used throughout the public interface.
 
-The code follows the usual embedded rules (no heap, no recursion, bounded loops, named constants, every wait has a timeout), and is written to be easy to check with a MISRA C tool. A formal compliance report is on the roadmap. If you need a checker now, run yours in CI against `src/`.
+The code follows the usual embedded rules (no heap, no recursion, bounded loops, named constants, protocol waits have timeouts; the nonblocking fault hold preserves the boot handshake), and is written to be easy to check with a MISRA C tool. A formal compliance report is on the roadmap. If you need a checker now, run yours in CI against `src/`.
 
 ## Testing
 
@@ -162,12 +166,5 @@ The code follows the usual embedded rules (no heap, no recursion, bounded loops,
 - UART settings are fixed by the module (230400, 8N1).
 - Nothing is persisted. After power loss, you start again and your application decides what to resend.
 
-### 2026-11-03 engineering revision
 
-The [engineering baseline](ENGINEERING.md) supersedes earlier examples where they
-show a placeholder payload, imply that every FAULT is powered down, assume
-unbounded clock/console waits, or imply a target build was not performed.
-`TS_FAULT_HOLD` needs continued polling and reviewed hardware recovery; restart
-also checks BOOTED. `ts_f169_init()` returns success/failure. Console is disabled
-by default and best-effort when enabled. Follow the new order/build and hardware
-validation procedures before adapting this bench example to a product.
+**Next:** [run the documented build and checks](ENGINEERING.md#build-and-order-contract) before proposing a driver change.

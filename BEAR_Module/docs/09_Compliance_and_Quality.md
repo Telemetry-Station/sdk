@@ -1,6 +1,10 @@
 # 09 Compliance and Quality
 
-Document ID: BEAR-CQ-9704 | Revision: P2 | Status: Preliminary
+BEAR Rev A is not certified or production-qualified. This page separates planned approvals and factory controls from evidence already available. A selected modem or antenna does not by itself approve your finished product.
+
+**For a deployment decision:** [contact support](11_Ordering_and_Support.md) with your countries and installation, and check the [release status](../RD_CHECKLIST.md). The tables below are plans, not certificates.
+
+Document ID: BEAR-CQ-9704 | Revision: P3 (2026-11-15) | Status: Preliminary
 
 Customers integrating a radio module need to know which approvals exist, what is inherited from the modem, and what is left to them. This document lays out the plan. Listed regions are markets under assessment, not committed approvals. Certificates are published here as they are issued.
 
@@ -49,7 +53,7 @@ The exact standards list and test scope is confirmed with the accredited test la
 | Design process | Gated development (see [Roadmap](../ROADMAP.md)), design reviews at each gate, requirements traceability ([10](10_Requirements_and_Verification.md)) |
 | Manufacturing quality | Contract manufacturing with IPC-A-610 Class 2 workmanship and IPC J-STD-001 soldering, targeting an ISO 9001 certified partner |
 | PCB | Built to IPC-6012 |
-| Testing | Every unit passes an automated functional test, including a power-sequencing check and a UART loopback to the modem |
+| Testing | Production target: every unit must pass an automated functional test, including power sequencing and modem communication; not yet implemented and qualified |
 | Traceability | Serial number, lot and date code, linked to the modem IMEI and test results |
 | Configuration control | Hardware revision letters. Changes recorded in the revision history. See [11](11_Ordering_and_Support.md) |
 | Non-conformance | Internal process for failure analysis and corrective action |
@@ -70,4 +74,6 @@ The exact standards list and test scope is confirmed with the accredited test la
 |---|---|
 | Export classification (ECCN, HS code) | Classification to be determined and published with ordering information **[Pending decision]** |
 | Warranty | None. Modules are sold as-is under the [Telemetry Station Terms](https://telemetrystation.com/terms#hardware-warranty) |
-| Hardware design license | Published separately with approved design files, revision metadata and required third-party attribution **[Pending decision]** |
+| Hardware design access | Public interface documentation does not grant access to fabrication files or restricted vendor material |
+
+**Next:** [check the release criteria](../RD_CHECKLIST.md) and request the evidence needed for your market.

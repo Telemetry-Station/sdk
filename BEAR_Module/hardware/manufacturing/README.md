@@ -1,5 +1,9 @@
 # Manufacturing
 
+This is the planned factory process for producing and checking complete modules. Customers integrate the module; they do not manufacture it from this repository. Production qualification and per-unit test limits remain pending.
+
+**For a buying decision:** [check release readiness](../../RD_CHECKLIST.md). The stages below describe intended controls, not completed production evidence.
+
 | Stage | Process |
 |---|---|
 | Fabrication | PCBs to IPC-6012 |
@@ -10,3 +14,5 @@
 | Packaging | ESD protective |
 
 Quality targets are in [09 Compliance and quality](../../docs/09_Compliance_and_Quality.md). Planned verification phases are in the [requirements and verification plan](../../docs/10_Requirements_and_Verification.md). Production test fixture design, data format, limits and retention period **[Pending decision]** will be defined before PVT.
+
+**Next:** [ask support](../../docs/11_Ordering_and_Support.md) for the released revision, traceability and test evidence applicable to an order.

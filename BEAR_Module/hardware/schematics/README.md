@@ -1,7 +1,8 @@
-# Schematics
+# Circuit overview
 
-Customer-facing block-level description of the BEAR Module 9704 Rev A design. Approved schematic deliverables will be
-published separately with revision metadata, applicable licenses and required attribution. This summary is not a fabrication definition.
+This shows how BEAR’s power storage, modem and host connections work together. It helps explain the product; it is not a schematic for manufacturing or a guide to changing components.
+
+**[Start with the wiring checklist →](../../docs/06_Integration_Guide.md)** Use the diagram below only as supporting context.
 
 ```mermaid
 flowchart LR
@@ -19,8 +20,10 @@ flowchart LR
 | Charge control | Limits input current and charges the bank | U2 BQ25173, 0.40 A typical, 4.18 V |
 | Energy storage | Supplies transmit bursts so the host source can be modest | C1, C2 5 F in series (2.5 F), 15 kΩ balancing |
 | Regulation | Modem and logic rails | Modem V_BAT direct from the bank; U8 3.3 V LDO for V_IO and buffers |
-| Host interface and sequencing | UART, ENABLE, BOOTED, TX_ACTIVE with level compatibility and unpowered isolation | U3-U7 SN74LVC1G125; 100 kΩ default-state resistors |
+| Host interface and sequencing | UART, ENABLE, BOOTED, TX_ACTIVE with defined logic levels; an unpowered host may need external isolation | U3-U7 SN74LVC1G125; 100 kΩ default-state resistors |
 | RF path | Modem to antenna connector | 50 Ω microstrip to J2 SMA |
 | Indicators | Power and ready | None in Rev A; CHG_STAT/CHG_PG on test pads. LEDs considered for Rev B **[Pending decision]** |
 
 Related: [03 Hardware interface](../../docs/03_Hardware_Interface.md), [04 Power management](../../docs/04_Power_Management.md), [05 Antenna and RF](../../docs/05_Antenna_and_RF.md).
+
+**Next:** [check power requirements](../../docs/04_Power_Management.md) before selecting the host supply.

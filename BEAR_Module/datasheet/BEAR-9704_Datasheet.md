@@ -2,7 +2,11 @@
 
 # BEAR Module 9704 Datasheet
 
-Document ID: BEAR-DS-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; not yet measured)
+Use this reference to check power, pins, dimensions and timing for BEAR Module 9704. These are preliminary design values; this document does not establish that hardware has passed validation.
+
+**New to the product?** Read the [product brief](../docs/01_Product_Brief.md). **Connecting hardware?** Follow the [integration checklist](../docs/06_Integration_Guide.md), then use these tables to verify compatibility.
+
+Document ID: BEAR-DS-9704 | Revision: P4 (2026-11-15) | Status: Preliminary (Rev A design values; not yet measured)
 
 Preliminary information. Specifications may change. Values below are the Rev A design values, not measured or released specifications. Items that can only be established by measurement are marked **Characterize at EVT**. Remaining open items, including vendor limits awaiting publication clearance, are marked **[Pending decision]**.
 
@@ -11,8 +15,8 @@ The BEAR Module 9704 is designed as a host-independent satellite communications 
 ## Features
 
 - Iridium 9704 satellite modem for IoT messaging
-- Power management with managed boot and shutdown
-- 2.5 F supercapacitor energy storage for transmit bursts, so a 5 V / 0.5 A host source is sufficient
+- Power circuitry with boot and shutdown sequenced by the host/SDK
+- 2.5 F supercapacitor energy storage for transmit bursts, with a 5 V / ≥0.5 A source design requirement; burst margin remains unmeasured
 - UART interface, 230400 baud 8N1
 - ENABLE and BOOTED handshake signals
 - SMA antenna connector (50 Ω); Maxtena M1621HCT-P-SMA reference antenna
@@ -43,7 +47,7 @@ flowchart LR
 | VIN | In | Supply |
 | GND | Power | Ground |
 | ENABLE | In | High starts the module. Low starts shutdown |
-| BOOTED | Out | High when ready. Low when shut down |
+| BOOTED | Out | High when boot completes; not proof of network readiness. Low after shutdown |
 | TXD | Out | Serial data to host |
 | RXD | In | Serial data from host |
 | TX_ACTIVE | Out | Optional transmit indicator |
@@ -113,6 +117,9 @@ See [11 Ordering and support](../docs/11_Ordering_and_Support.md).
 
 | Revision | Date | Change |
 |---|---|---|
+| P4 | 2026-11-15 | Clarify integration steps, design-value status, BOOTED meaning and host-owned sequencing |
 | P3 | 2026-11-15 | Correct supply qualification and unpowered-host limits; synchronize SDK lifecycle requirements |
 | P2 | 2026-11-07 | Rev A design values: connector and pinout, supply, logic levels, protection, t_VIN, RF and mechanical. Unpublished modem currents and timing marked for EVT characterization |
 | P1 | October 2026 | Preliminary release |
+
+**Next:** [connect using the integration checklist](../docs/06_Integration_Guide.md); stop at the first unmet prerequisite.

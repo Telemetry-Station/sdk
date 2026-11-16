@@ -1,6 +1,10 @@
 # 06 Integration Guide
 
-Document ID: BEAR-IG-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values)
+Use this checklist to connect a BEAR engineering unit and prove that it starts, communicates and stops correctly. It is the wiring reference for the guided setup, not a promise that any development board works unchanged.
+
+**Start here:** [check your host and tools](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md#3-pick-your-path). Continue below only with the engineering unit’s setup procedure and compatible hardware.
+
+Document ID: BEAR-IG-9704 | Revision: P4 (2026-11-15) | Status: Preliminary (Rev A design values)
 
 How to connect a BEAR Module 9704 to a microcontroller and bring it up with the Telemetry Station SDK. BEAR is host-independent. The TI MSP430F169 is the first SDK reference host and worked example; STM32, MSP430, Nordic, Microchip, ESP32 and other hosts are intended integration targets when their electrical characteristics meet the released module specification and a suitable SDK port is available.
 
@@ -15,7 +19,7 @@ How to connect a BEAR Module 9704 to a microcontroller and bring it up with the 
 | Iridium antenna | SMA; reference: Maxtena M1621HCT-P-SMA. Needs a clear sky view. Approved gain limits and RF-exposure conditions **[Pending decision]**; engineering evaluation only |
 | Host microcontroller | One UART at 230400 baud, two GPIO pins, a millisecond timer, 3.3 V-compatible logic and an SDK port |
 | USB-serial adapter | Optional, for a debug console |
-| Telemetry Station account | For the calculator and activation |
+| Service account | For live activation and delivery; not needed for the computer demo or topic-zero module checkout |
 | Host cable | Molex Micro-Fit 3.0 43025-1000 housing with 43030-0007 crimp terminals |
 
 ## Connections
@@ -82,3 +86,5 @@ Work through these in order. Stop at the first step that fails.
 | Message stays accepted, not delivered | No satellite view, or the topic is not activated | Move outdoors. Check the activation and `TS_TOPIC_ID` |
 | Reset during transmit | Supply sag | Check the source and wiring. See [04 Power management](04_Power_Management.md) |
 | Start fails right after a shutdown | Module still shutting down | Wait for `TS_EVENT_STOPPED` before starting again |
+
+**Next:** [send and decode the included sample](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md#send-the-included-sample-before-adding-your-sensor) before changing the sensor payload.

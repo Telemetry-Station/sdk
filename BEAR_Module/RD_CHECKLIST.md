@@ -2,9 +2,13 @@
 
 # BEAR Module 9704 R&D and Release Checklist
 
-Document ID: BEAR-RD-9704 | Revision: P3 | Status: Preliminary
+This checklist defines when BEAR can be called ready. Checked boxes describe completed work at the stated scope; they do not turn a preliminary design into a validated product.
 
-Updated: 2026-11-07 | Current stage: **G1 - Design** (Rev A design review required)
+**Buying decision:** start with [the evaluation guide](../docs/EVALUATION.md). **Setup quality:** use the [beginner acceptance criteria](#beginner-setup-acceptance-criteria) below.
+
+Document ID: BEAR-RD-9704 | Revision: P4 (2026-11-15) | Status: Preliminary
+
+Updated: 2026-11-15 | Current stage: **G1 - Design** (Rev A design review required)
 
 ## Availability
 
@@ -44,9 +48,9 @@ See the [roadmap](ROADMAP.md) for milestone details and the [requirements and ve
 - [x] Input-voltage range (5.0 V ±5 %), source requirement (≥ 0.5 A), burst-energy storage (2.5 F supercapacitor bank), and protection (P-FET reverse polarity, 6.0 V TVS, 18 V charger OVP) specified in [power management](docs/04_Power_Management.md).
 - [x] Host connector (Molex Micro-Fit 3.0 43045-1012), mating parts, pin assignments, 3.3 V logic thresholds, absolute ratings, and unpowered-host behavior specified in the [hardware interface](docs/03_Hardware_Interface.md).
 - [x] Antenna/RF configuration (SMA, 50 Ω; Maxtena M1621HCT-P-SMA reference antenna), connection requirements, and integration constraints specified in [antenna and RF](docs/05_Antenna_and_RF.md).
-- [x] Dimensions (80 × 60 mm), mounting (4 × M3), and connector positions specified in [mechanical and environmental](docs/08_Mechanical_and_Environmental.md). Environmental limits require DVT validation; approved mechanical files will be published separately.
+- [x] Dimensions (80 × 60 mm), mounting (4 × M3), and connector positions specified in [mechanical and environmental](docs/08_Mechanical_and_Environmental.md). Environmental limits require DVT validation; approved customer mechanical drawings remain pending.
 - [x] Rev A schematic, routed four-layer PCB, populated BOM and fabrication outputs completed for design review.
-- [x] Rev P2 preliminary datasheet available with Rev A design values.
+- [x] Preliminary datasheet available with Rev A design values.
 - [ ] Rev A design review closed, including confirmation of the modem land pattern.
 - [ ] Modem supply current and t_BOOT / t_DOWN / t_UART timing measured; Iridium does not publish them.
 
@@ -111,6 +115,7 @@ These are proposed release gates, not claims about the current engineering proto
 
 | Date | Revision | Summary |
 |---|---|---|
+| 2026-11-15 | P4 | Clarify readiness and first-use path; single-checkout firmware and local decoder available; full kit and live validation remain pending |
 | 2026-11-07 | P3 | Rev A KiCad design complete (design review required). Detailed-design inputs filled from Rev A; Altium replaced by KiCad. |
 | 2026-11-03 | P2 | Progress update: design in progress, SDK bench checkout available; no production gate advanced. |
 | 2026-10-29 | P1 | Initial product-readiness checklist. Current status: design in progress. Tentative sales target: April 1, 2027. |
@@ -118,7 +123,7 @@ These are proposed release gates, not claims about the current engineering proto
 ## Progress update — 2026-11-07
 
 G1 (design) remains **in progress** at **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for review.
-Approved design deliverables will be published separately.
+Approved customer interface drawings are planned.
 Boards are not ordered until the modem land pattern is confirmed.
 No hardware has been built. Validation on BEAR hardware is **NOT YET RUN**. The April 1, 2027 availability target
 remains tentative.

@@ -1,12 +1,16 @@
-# Security
+# Protecting your device and data
 
-Please report vulnerabilities privately through GitHub's "Report a vulnerability" option on this repository rather than a public issue.
+The SDK checks messages for accidental corruption. It does **not** encrypt readings or verify who sent an incoming message. A successful delivery or CRC check is not proof of confidentiality or authenticity.
 
-Supported versions: the latest release only. The project is alpha (see [CHANGELOG.md](CHANGELOG.md)).
+**Found a vulnerability? [Report it privately →](https://github.com/Telemetry-Station/sdk/security/advisories/new)** Use GitHub’s “Report a vulnerability” option; do not post exploit details or credentials in a public issue. If that option is unavailable, [contact Telemetry Station](https://telemetrystation.com/contact) to arrange a private reporting channel before sending sensitive details.
 
-Notes for users:
+## Before connecting a product
 
-- The message CRC16 detects accidental corruption only. It does not authenticate or encrypt data.
-- Treat all data received from the modem as untrusted input. The driver bounds every buffer and rejects malformed lines, and the tests run under AddressSanitizer. Fuzz testing is on the roadmap.
-- The SDK adds no encryption or authentication. If your data is sensitive, protect it inside your payload.
-- Do not commit topic IDs, account details, or other credentials you were given by Telemetry Station.
+- Define how your application authenticates and protects sensitive payloads. Do not treat unauthenticated incoming data as device commands.
+- Keep credentials, account details and assigned customer topic/device identifiers out of public commits, screenshots and issue logs. Use placeholders or synthetic values in examples.
+- Review malformed-input and duplicate-message behavior. The driver bounds its buffers and tests run with memory-error detection; fuzz testing and independent review remain planned.
+- Pin the SDK version used by your product and review changes before upgrading.
+
+Supported versions: the latest release only. This is an alpha project; see the [changelog](CHANGELOG.md).
+
+**Next:** include your security requirements in the [integration and deployment review](Telemetry_Station_SDK/tests/hardware/README.md). For ordinary setup errors, use the [troubleshooting guide](Telemetry_Station_SDK/docs/GETTING_STARTED.md#6-when-it-does-not-work).

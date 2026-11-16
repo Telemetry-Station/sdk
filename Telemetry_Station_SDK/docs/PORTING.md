@@ -1,5 +1,9 @@
 # Porting to a new microcontroller
 
+A port is the small adapter between the SDK and your microcontroller’s pins, serial connection and clock. A new board needs this adapter implemented and tested before its application can send a reading.
+
+**First check:** [does the reference setup match your board?](GETTING_STARTED.md#3-pick-your-path) If it does, use that setup. Otherwise this is a firmware-development task; the template alone cannot operate hardware.
+
 The driver never touches hardware directly. It calls the functions in a `ts_platform_t` ([`include/ts_platform.h`](../include/ts_platform.h)). To support a new MCU, fill in that struct. Start from [`ports/template/ts_port_template.c`](../ports/template/ts_port_template.c), which compiles as-is and has a TODO at each step. The MSP430F169 version in [`ports/msp430f169/`](../ports/msp430f169/ts_f169_port.c) is a worked example.
 
 ## What you provide
@@ -22,7 +26,7 @@ The BEAR Module 9704 talks 8N1 at 230400 baud. Check your MCU's clock can produc
 
 ## What "power management" means
 
-The Iridium modem draws very little power while idle and short, large bursts of current when it transmits. A bare microcontroller supply usually cannot supply those bursts and may reset. The BEAR Module includes **power management**: circuitry that regulates the supply to the modem, copes with the bursts, and provides an ENABLE/BOOTED interface sequenced by the SDK after the host qualifies stored energy. Your firmware only needs to drive an enable line and watch a "booted" signal. These are the `power_start`, `power_stop` and `boot_ready` functions above.
+The Iridium modem draws very little power while idle and short, large bursts of current when it transmits. A bare microcontroller supply usually cannot supply those bursts and may reset. The BEAR Module includes **power management**: circuitry that regulates the supply to the modem, copes with the bursts, and provides an ENABLE/BOOTED interface sequenced by the SDK after the host qualifies stored energy. Your adapter must qualify supply readiness, drive ENABLE, read BOOTED and manage the serial interface without blocking. These are the `power_start`, `power_stop` and `boot_ready` functions above.
 
 The modem needs a complete shutdown handshake: after `power_stop`, wait for `boot_ready` to read low before restarting or removing main power. The driver does this and reports `TS_EVENT_STOPPED` when it is safe.
 
@@ -32,7 +36,7 @@ Hardware details are in the [BEAR Module documentation](../../BEAR_Module/README
 
 1. Copy `ports/template/ts_port_template.c` and fill in the seven required callbacks and the supply_ready gate.
 2. Add the `src/` files to your build (`ts_names.c` and `ts_activation.c` are optional) and `include/` to your include path.
-3. Apply VIN, establish ENABLE low, configure the supply-ready gate, then call `ts_bear_init`, `ts_bear_start` and `ts_bear_poll` every 1 ms in your main loop.
+3. Apply VIN, establish ENABLE low, configure the supply-ready gate, initialize the driver once and request startup once. Call only `ts_bear_poll()` every 1 ms in the main loop; check API results and validate worst-case service latency.
 4. Size your UART receive buffer for your loop period: at 230400 baud a byte arrives every 43 microseconds.
 5. Connect to the module and watch for `TS_EVENT_READY`, then `TS_EVENT_IMEI`.
 6. Send a message only after you have activated the modem and set `TS_TOPIC_ID`.
@@ -40,15 +44,6 @@ Hardware details are in the [BEAR Module documentation](../../BEAR_Module/README
 
 Run the host tests (`ctest`) with your compiler's warnings enabled to confirm the portable code builds cleanly. They do not test your port.
 
-### 2026-11-03 engineering revision
-
-The [engineering baseline](ENGINEERING.md) supersedes earlier examples where they
-show a placeholder payload, imply that every FAULT is powered down, assume
-unbounded clock/console waits, or imply a target build was not performed.
-`TS_FAULT_HOLD` needs continued polling and reviewed hardware recovery; restart
-also checks BOOTED. `ts_f169_init()` returns success/failure. Console is disabled
-by default and best-effort when enabled. Follow the new order/build and hardware
-validation procedures before adapting this bench example to a product.
 
 ## Rev A integration contract — 2026-11-15
 
@@ -59,3 +54,5 @@ validation procedures before adapting this bench example to a product.
 - Poll every 1 ms for the reference configuration. At 230400 8N1 the input rate is 23040 bytes/s: a 64-byte poll budget requires a sustained interval below 2.78 ms. A 128-slot ring has 127 usable bytes, about 5.51 ms burst capacity. Budget both drain throughput and worst-case interrupt/loop latency; validate on the target.
 - Unpowered host inputs must tolerate driven module outputs or have isolation. Buffer Ioff only applies when the buffer supply itself is zero. A disabled host UART does not establish electrical isolation.
 - Adding `supply_ready` changes the platform struct and CHARGING changes state values. Rebuild all objects together; use symbolic enums and zero-initialize platform structs. NULL supply gates remain supported only under the explicit external-qualification contract.
+
+**Next:** [validate the completed adapter on hardware](../tests/hardware/README.md). Computer tests alone do not validate a new port.

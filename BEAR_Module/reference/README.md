@@ -1,15 +1,16 @@
-# Reference
+# Supporting references
 
-External documents and standards used alongside the BEAR Module 9704.
+You can follow the BEAR setup using the guided setup. These references are for deeper integration and engineering review.
 
-| Resource | Link |
+**[Return to guided setup →](../../Telemetry_Station_SDK/docs/GETTING_STARTED.md)**
+
+| Resource | When you need it |
 |---|---|
-| Telemetry Station SDK | [`../../Telemetry_Station_SDK`](../../Telemetry_Station_SDK) |
-| Payload Optimizer | https://telemetrystation.com/payload-optimizer |
-| Iridium 9704 technical documentation | Obtained from Iridium under its applicable access and licensing terms |
+| [SDK](../../Telemetry_Station_SDK/README.md) | Add messaging to your firmware |
+| [Payload Optimizer](https://telemetrystation.com/payload-optimizer) | Change the sample message fields after the first delivery works |
+| [Public hardware references](../hardware/README.md) | Review signals, physical fit and component functions |
+| Iridium 9704 technical documentation | Review modem requirements; obtain from Iridium under its access and licensing terms |
 
-BEAR's Rev A design uses KiCad. This SDK contains customer-facing product and integration documentation. Approved design deliverables will be published separately with revision metadata, attribution and applicable licenses; see the [hardware index](../hardware/README.md).
+Unverified limits remain marked pending in the relevant document. Obtain vendor documentation directly from its publisher under the applicable terms.
 
-Restricted vendor documentation is not redistributed here. Vendor-derived specifications are published only when a public source or publication permission has been established. Unverified modem limits and regulatory integration conditions remain **[Pending decision]**.
-
-Standards referenced: IEC 60068, IEC 61000-4-x, IPC-A-610, IPC J-STD-001, IPC-6012, ANSI/ESD S20.20, RoHS, REACH. Iridium datasheets and the modem developer documentation are obtained from Iridium.
+Standards named in the engineering plan include IEC 60068, IEC 61000-4-x, IPC-A-610, IPC J-STD-001, IPC-6012 and ANSI/ESD S20.20, with RoHS and REACH design requirements. Listing a standard is not a claim of compliance; see [approval and quality status](../docs/09_Compliance_and_Quality.md).

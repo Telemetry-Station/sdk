@@ -1,20 +1,18 @@
-# Hardware Design Files
+# Hardware integration references
 
-Customer-facing hardware summaries for the BEAR Module 9704. The current KiCad design is **Rev A** and its status
-is **DESIGN REVIEW REQUIRED**. Before boards are ordered, the modem land pattern must be confirmed. Rev A is not
-built, validated or certified. Customer deliverables will be published with their applicable licenses.
+Use these summaries to understand how the module connects, fits and will be tested.
 
-The [R&D and release checklist](../RD_CHECKLIST.md) tracks hardware validation, certification, production readiness
-and target availability.
+**[Connect your module →](../docs/06_Integration_Guide.md)** Start with the integration checklist. These folders are supporting references, not a kit assembly or fabrication package.
 
-| Folder | Contents | Status |
+| Reference | What it answers | Status |
 |---|---|---|
-| [`interfaces/`](interfaces/bear-9704_signals.csv) | Machine-readable signal list with Rev A pin assignments and electrical limits | Rev A design values |
-| [`bom/`](bom/BEAR-9704_BOM.csv) | Key-component summary by function; not a full assembly BOM | Rev A design values |
-| [`schematics/`](schematics/README.md) | Block-level description; full schematic release pending | Customer summary |
-| [`pcb/`](pcb/README.md) | Stack-up and layout summary; fabrication-file release pending | Customer summary |
-| [`mechanical/`](mechanical/README.md) | Outline and mounting summary; customer drawings and model release pending | Rev A design values |
-| [`manufacturing/`](manufacturing/README.md) | Build, test and serialization process | Process outline published |
+| [Signal list](interfaces/bear-9704_signals.csv) | Which connector pin carries each signal? | Preliminary Rev A design values |
+| [Component summary](bom/BEAR-9704_BOM.csv) | Which major components perform each function? | Public summary; not a complete assembly BOM |
+| [Circuit overview](schematics/README.md) | How do power and communication blocks connect? | Public functional summary |
+| [Board layout summary](pcb/README.md) | How is the module physically organized? | Preliminary Rev A design |
+| [Mechanical summary](mechanical/README.md) | What space and mounting does it need? | Approved customer drawings/model pending |
+| [Production plan](manufacturing/README.md) | How will finished modules be checked? | Planned process, not qualified production |
 
-Licensing and required third-party attribution for approved hardware design files will be stated with those files.
-The repository MIT license does not grant rights to restricted vendor documents or separately licensed designs.
+Rev A is in design review. Hardware has not been built, validated or certified. See the [release checklist](../RD_CHECKLIST.md) for evidence still required.
+
+**Next:** verify your host against the [datasheet](../datasheet/BEAR-9704_Datasheet.md) and request approved customer interface drawings through [support](../docs/11_Ordering_and_Support.md).

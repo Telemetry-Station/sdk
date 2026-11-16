@@ -1,6 +1,10 @@
 # 08 Mechanical and Environmental
 
-Document ID: BEAR-ME-9704 | Revision: P2 | Status: Preliminary (Rev A design values)
+Use this page to decide whether BEAR could fit your enclosure and operating environment. Dimensions are preliminary; temperature, weather exposure and other environmental limits are not yet qualified. The bare board is not weatherproof.
+
+**Before finalizing an enclosure:** review the dimensions below and [request the approved customer drawing and antenna constraints](11_Ordering_and_Support.md).
+
+Document ID: BEAR-ME-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values)
 
 ## Mechanical
 
@@ -15,7 +19,7 @@ Document ID: BEAR-ME-9704 | Revision: P2 | Status: Preliminary (Rev A design val
 | RF connector | J2 Amphenol 132134 SMA jack, vertical, for the Maxtena M1621HCT-P-SMA or another Iridium-compliant antenna |
 | PCB | Four-layer FR-4, 1.6 mm, ENIG, IPC-6012 Class 2. Inner layer 1 is a continuous ground plane; RF microstrip on fabricator-controlled impedance |
 | Indicators | None in Rev A. Charger status (CHG_STAT) and power-good (CHG_PG) are on test pads TP4 and TP5. LEDs are considered for Rev B **[Pending decision]** |
-| Labeling | Product name, part number, serial number, IMEI and a scannable code |
+| Labeling | Planned: product name, part number, serial number, IMEI and a scannable code |
 
 Mechanical deliverables published at release:
 
@@ -58,3 +62,5 @@ The modem and regulators dissipate most heat during transmit bursts. In Rev A th
 ## Environmental testing (planned)
 
 Tests are planned against applicable IEC 60068 methods (temperature, humidity, vibration, shock). Severity levels and acceptance criteria for fixed outdoor sensing, marine/polar and mobile use **[Pending decision]** will be defined before DVT and recorded in its report.
+
+**Next:** [request the customer interface drawings](11_Ordering_and_Support.md) before committing an enclosure design.

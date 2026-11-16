@@ -1,6 +1,10 @@
 # 03 Hardware Interface
 
-Document ID: BEAR-HI-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; verification pending at EVT)
+This is the connection contract: which wire does what, which voltages are compatible, and when the module may start or stop. A wrong connection can interrupt communication or damage hardware.
+
+**Before wiring:** [follow the integration checklist](06_Integration_Guide.md). The tables below are for checking a specific host against the preliminary Rev A interface.
+
+Document ID: BEAR-HI-9704 | Revision: P4 (2026-11-15) | Status: Preliminary (Rev A design values; verification pending at EVT)
 
 This document defines how a host system connects to the BEAR Module 9704. The signal set, directions and sequencing below are defined. Connector, pin assignment and electrical limits are Rev A design values; hardware verification is pending at EVT.
 
@@ -124,3 +128,5 @@ The interface is designed for 3.3 V class microcontrollers. Every host signal pa
 | RF connector | J2: Amphenol 132134 SMA jack, vertical, 50 Ω |
 | Mating parts | Molex 43025-1000 housing with 43030-0007 crimp terminals; SMA plug antenna or cable |
 | Evaluation adapter board | Define and publish with the evaluation-kit interface package **[Pending decision]** |
+
+**Next:** [work through the integration checklist](06_Integration_Guide.md) with these limits at hand.

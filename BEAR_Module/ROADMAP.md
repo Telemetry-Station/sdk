@@ -2,7 +2,11 @@
 
 # Roadmap
 
-Document ID: BEAR-RM-001 | Revision: P3 | 2026-11-07
+This page answers “what must happen before I can deploy it?” The project is in design review; hardware testing, approvals and production preparation remain ahead.
+
+**Next:** use the [release checklist](RD_CHECKLIST.md) for completion evidence, or [request evaluation availability](docs/11_Ordering_and_Support.md).
+
+Document ID: BEAR-RM-001 | Revision: P4 (2026-11-15) | 2026-11-15
 
 BEAR Module products move through standard hardware development gates toward a host-independent, production-qualified satellite communications module. Each gate has defined exit criteria, so you can see exactly what a given status means. Dates are published with each gate as it is scheduled. Qualification is not complete while the product is in G1.
 
@@ -27,7 +31,7 @@ The [R&D and release checklist](RD_CHECKLIST.md) summarizes completed and remain
 | Payload Optimizer export for the SDK | See telemetrystation.com/payload-optimizer |
 | Host MCU compatibility | Designed to be host-independent; STM32, MSP430, Nordic, Microchip, ESP32 and other MCU ports are intended and validated individually |
 | Customer quickstarts | Arduino, STM32 and Raspberry Pi guides planned; exact supported versions and validation status tracked per guide |
-| Sample decoders | Example decode projects and test vectors planned for publication |
+| Sample decoders | Local sample decoder and golden vectors available; guided live destination setup remains planned |
 | Changelog | Public repository [changelog](../CHANGELOG.md) |
 | Public service status and SLA | Public status page and service-level terms planned; URL, availability objectives and response targets **[Pending decision]** |
 | Evaluation-kit availability | Firm public dates are a launch-readiness deliverable; date **[Pending decision]** until build and supply readiness are confirmed |
@@ -45,7 +49,7 @@ The BEAR Module 9704 is the first product. Further family members will share the
 ## Progress update — 2026-11-07
 
 G1 (design) remains **in progress**, at status **DESIGN REVIEW REQUIRED**. The Rev A KiCad design is complete for
-review, including an 80 × 60 mm four-layer PCB. Approved design deliverables will be published separately;
+review, including an 80 × 60 mm four-layer PCB. Approved customer interface drawings are planned;
 
 
 Before boards are ordered, the modem land pattern must be confirmed. Rev A uses a 2.0 A burst-current design
@@ -53,5 +57,5 @@ envelope, not a modem specification; actual current will be measured at G2 (EVT)
 so no later gate has been advanced.
 
 The [SDK](../Telemetry_Station_SDK/README.md) is ready for bench use, with 100% line and branch test coverage and a
-flash-and-go MSP430F169 checkout that reports each step on the serial console. Validation on BEAR hardware is
+single-checkout MSP430F169 reference application that reports each step on the serial console. Validation on BEAR hardware is
 **NOT YET RUN**. The April 1, 2027 availability target remains tentative.

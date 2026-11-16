@@ -1,19 +1,23 @@
 # 04 Power Management
 
-Document ID: BEAR-PM-9704 | Revision: P3 (2026-11-15) | Status: Preliminary (Rev A design values; measurement pending at EVT)
+BEAR stores energy so a small supply can support brief transmit bursts. That storage must charge before startup, and it can remain energized after the input supply is removed. The current design still needs a host that qualifies charging and follows the shutdown procedure.
+
+**Your next decision:** check the regulated source and startup assumptions under [What it means for your design](#what-it-means-for-your-design), then follow the [connection guide](06_Integration_Guide.md).
+
+Document ID: BEAR-PM-9704 | Revision: P4 (2026-11-15) | Status: Preliminary (Rev A design values; measurement pending at EVT)
 
 ## What power management means
 
 A satellite modem is a demanding electrical load. Most of the time it draws little. When it transmits, it draws short bursts of much higher current. A supply sized only for a typical microcontroller can sag during a burst. The modem or the microcontroller can then reset, and messages fail in ways that are hard to diagnose.
 
-A power-managed module takes this problem off your design. In the BEAR Module, power management means four jobs:
+The module reduces the supply design work, but source sizing and stored-energy qualification still require validation. In the BEAR Module, power management means four jobs:
 
 | Job | What it does for you |
 |---|---|
 | **Protect** | Guards the input against reversed connections, over-voltage and transients from cables and batteries |
 | **Regulate** | Converts your supply into the exact voltages the modem needs |
 | **Store energy** | Holds energy locally so transmit bursts do not collapse your supply or require an oversized source |
-| **Sequence** | Starts and stops the modem in the order it requires, with a single ENABLE and BOOTED handshake |
+| **Sequence** | Provides the ENABLE/BOOTED interface; the host and SDK perform the required startup and shutdown order |
 
 ## Power architecture
 
@@ -64,7 +68,7 @@ Iridium does not publish the 9704's supply current, so module currents are measu
 
 Energy per message depends on how long the modem needs to find a satellite. Sky view and antenna quality matter. See [05 Antenna and RF](05_Antenna_and_RF.md).
 
-**Duty cycling.** For battery systems, the lowest energy per message comes from keeping the module off between reports, starting it just before a send, and shutting it down after delivery is confirmed. The SDK supports this with `ts_bear_start()` and `ts_bear_shutdown()`.
+**Duty cycling.** For battery systems, evaluate energy use by keeping the module off between reports, starting it just before a send, and shutting it down after delivery is confirmed. The SDK supports this with `ts_bear_start()` and `ts_bear_shutdown()`.
 
 ## Operational recommendations
 
@@ -75,3 +79,5 @@ Energy per message depends on how long the modem needs to find a satellite. Sky 
 | Do not remove VIN while BOOTED is high | Allow a clean shutdown |
 | Keep ENABLE low during your own power-up | Avoids starting the modem before your supply is stable |
 | Use the SDK's `TS_EVENT_STOPPED` before cutting power | It confirms the shutdown handshake finished |
+
+**Next:** [validate power and sequencing](../../Telemetry_Station_SDK/tests/hardware/README.md) on the actual unit before relying on a startup delay.
