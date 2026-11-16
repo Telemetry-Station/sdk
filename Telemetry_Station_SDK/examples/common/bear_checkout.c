@@ -533,6 +533,11 @@ static void build_row(bear_checkout_t *ck, uint8_t id, uint32_t now)
     put_tag(ck, ck->status[id]);
     put_padded(ck, labels[id], BC_LABEL_WIDTH);
     if (ck->status[id] == BC_RUN) {
+        if (id == BC_BOOT && ts_bear_state(ck->bear) == TS_CHARGING) {
+            put(ck, "charging power reserve; keep power connected");
+            end_line(ck);
+            return;
+        }
         put(ck, waiting_text[id]);
         put(ck, " (");
         put_u32(ck, (now - ck->mark[id]) / 1000u, 1u, ' ');
@@ -657,7 +662,7 @@ static bool build_steps(bear_checkout_t *ck)
 {
     switch (ck->cursor) {
     case 0: put(ck, "\r\n Next steps to send data:\r\n"); return true;
-    case 1: put(ck, "  1. Payload Optimizer  " TS_OPTIMIZER_URL "\r\n"); return true;
+    case 1: put(ck, "  1. Keep the included sample payload for your first send.\r\n"); return true;
     case 2: put(ck, "  2. Plan calculator    " TS_CALCULATOR_URL "\r\n"); return true;
     case 3:
         put(ck, "  3. Activate IMEI ");

@@ -1165,6 +1165,8 @@ static void test_charge_failure_report(void)
     r.bear.port.supply_ready = unqualified_supply;
     run_cycle(&r);
     assert(r.power_starts == 0);
+    assert(strstr(r.out, "charging power reserve; keep power connected"));
+    assert(!strstr(r.out, "waiting for BOOTED to rise"));
     assert(bear_checkout_status(&r.ck, BC_BOOT) == BC_FAIL);
     assert(bear_checkout_status(&r.ck, BC_LINK) == BC_SKIP);
     assert(strstr(r.out, "supply qualification failed; ENABLE not asserted"));
