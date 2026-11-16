@@ -44,6 +44,52 @@ static void ready(ts_bear9704_t *b, sim_modem_t *m)
         assert(sim_saw((m), TS_EVENT_ERROR) && (m)->last_detail == (int32_t)(reason)); \
     } while (0)
 
+/* A port must not claim more bytes than the driver requested. */
+static int16_t oversized_read(void *user, uint8_t *dst, size_t capacity)
+{
+    (void)user;
+    assert(capacity == 1u);
+    *dst = '\n';
+    return 2;
+}
+
+static void test_receive_count_contract(void)
+{
+    ts_bear9704_t b;
+    sim_modem_t m;
+    ready(&b, &m);
+    b.port.serial_read = oversized_read;
+    sim_run(&b, &m, 10);
+    assert_faulted(&b, &m, TS_ERR_IO);
+    assert(!m.booted);
+}
+
+static void test_embedded_nul_discards_entire_line(void)
+{
+    static const char damaged[] =
+        "200 constellationState {\"signal_bars\":5}\0"
+        "200 constellationState {\"signal_bars\":1}\r";
+    ts_bear9704_t b;
+    sim_modem_t m;
+    ready(&b, &m);
+    sim_override(&m, "GET constellationState", "");
+    assert(ts_bear_request_signal(&b) == TS_OK);
+    sim_run(&b, &m, 10);
+    /* Explicit length: the injected fault is a byte on the wire, not a C terminator. */
+    memcpy(m.reply, damaged, sizeof damaged - 1u);
+    m.reply_pos = 0;
+    m.reply_len = sizeof damaged - 1u;
+    sim_run(&b, &m, 20);
+    assert(sim_saw(&m, TS_EVENT_ERROR) && m.last_detail == TS_ERR_PROTOCOL);
+    assert(!sim_saw(&m, TS_EVENT_SIGNAL));
+    assert(ts_bear_signal_bars(&b) == -1);
+    assert(ts_bear_is_ready(&b));
+    /* Recovery uses the next CR-delimited line, without restarting or resending. */
+    sim_queue(&m, "200 constellationState {\"signal_bars\":3}\r");
+    sim_run(&b, &m, 20);
+    assert(sim_saw(&m, TS_EVENT_SIGNAL) && ts_bear_signal_bars(&b) == 3);
+}
+
 /* ---- Start-up ---- */
 
 static void test_setup_chooses_api_version(void)
@@ -713,6 +759,8 @@ static void test_names_cover_every_value(void)
 
 int main(void)
 {
+    test_receive_count_contract();
+    test_embedded_nul_discards_entire_line();
     test_slow_network_confirmation();
     test_setup_chooses_api_version();
     test_setup_skips_steps_already_done();

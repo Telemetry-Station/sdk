@@ -76,7 +76,8 @@
 
 #if (TS_ENABLE_MT != 0 && TS_ENABLE_MT != 1) || \
     (TS_ENABLE_CONSOLE != 0 && TS_ENABLE_CONSOLE != 1) || \
-    (TS_ENABLE_GNSS != 0 && TS_ENABLE_GNSS != 1)
+    (TS_ENABLE_GNSS != 0 && TS_ENABLE_GNSS != 1) || \
+    (TS_QUERY_IMEI_ON_READY != 0 && TS_QUERY_IMEI_ON_READY != 1)
 #error Feature flags must be 0 or 1
 #endif
 #if TS_CHARGE_TIMEOUT_MS < 1 || TS_CHARGE_TIMEOUT_MS >= 2147483648UL || \
@@ -87,8 +88,8 @@
     TS_MT_TIMEOUT_MS < 1 || TS_MT_TIMEOUT_MS >= 2147483648UL
 #error Timeouts must be in the range 1..2147483647 milliseconds
 #endif
-#if TS_POLL_BYTE_BUDGET < 1
-#error TS_POLL_BYTE_BUDGET must be positive
+#if TS_POLL_BYTE_BUDGET < 1 || TS_POLL_BYTE_BUDGET > 65535UL
+#error TS_POLL_BYTE_BUDGET must fit a 16-bit unsigned loop counter (1..65535)
 #endif
 #if TS_MAX_PAYLOAD < 1 || TS_MAX_PAYLOAD > 1024
 #error TS_MAX_PAYLOAD must be between 1 and 1024

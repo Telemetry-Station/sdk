@@ -18,12 +18,14 @@ typedef struct {
     void *user; /* Passed back to every function below. */
 
     /* Return bytes read or written, 0 if none, negative on error (a lost
-     * byte counts as an error). The UART runs 8N1 at the modem's baud rate
+     * byte counts as an error). Never return more than the supplied capacity or
+     * length. The UART runs 8N1 at the modem's baud rate
      * (230400 for the 9704). */
     int16_t (*serial_read)(void *user, uint8_t *dst, size_t capacity);
     int16_t (*serial_write)(void *user, const uint8_t *src, size_t length);
 
-    /* Milliseconds since start. Wrapping around is fine. */
+    /* Monotonic elapsed milliseconds, independent of wall-clock corrections.
+     * Wrapping around is fine; the clock must keep advancing while polled. */
     uint32_t (*millis)(void *user);
 
     /* power_start() asserts ENABLE, returning true on success; false must

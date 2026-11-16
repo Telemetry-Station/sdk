@@ -307,14 +307,19 @@ static bool read_serial(ts_bear9704_t *ctx)
     for (i = 0; i < TS_POLL_BYTE_BUDGET; ++i) {
         uint8_t byte;
         int16_t n = ctx->port.serial_read(ctx->port.user, &byte, 1);
-        if (n < 0) { ts_fail(ctx, TS_ERR_IO); return false; }
+        if (n < 0 || n > 1) { ts_fail(ctx, TS_ERR_IO); return false; }
         if (n == 0) break;
         if (byte == '\n' && ctx->rx_len == 0) continue;
-        if (ctx->rx_discard) { /* Skip the rest of an oversized line. */
+        if (ctx->rx_discard) { /* Skip the rest of a damaged or oversized line. */
             if (byte == '\r') { ctx->rx_discard = false; ctx->rx_len = 0; }
             continue;
         }
-        if (byte == '\r') {
+        if (byte == 0) {
+            /* A wire NUL must not turn a damaged line into a valid C-string prefix. */
+            ctx->rx_discard = true;
+            ctx->rx_len = 0;
+            ts_emit(ctx, TS_EVENT_ERROR, TS_ERR_PROTOCOL);
+        } else if (byte == '\r') {
             on_line(ctx);
             if (ctx->state == TS_POWERING_DOWN || ctx->state == TS_FAULT_HOLD)
                 return false;
